@@ -1,0 +1,6 @@
+{
+    "servertype": "jlink",
+    "device": "MGM240PB32VNA",
+    "interface": "SWD",
+    "serverpath": "C:/Program Files/SEGGER/JLink/JLinkGDBServerCL"
+}

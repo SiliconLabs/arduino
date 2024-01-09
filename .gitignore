@@ -1,0 +1,5 @@
+.DS_store
+package/gen
+package/gen_gsdk*
+package/install_host*
+installed.json

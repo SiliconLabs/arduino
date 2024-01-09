@@ -1,0 +1,135 @@
+# Silicon Labs Arduino Core
+###########################
+
+name=Silicon Labs
+version=1.0.0
+
+# Compiler variables
+####################
+
+runtime.tools.gcc_arm_none_eabi.path={runtime.platform.path}/../../../tools/gcc-arm-none-eabi/12.2.rel1
+compiler.warning_flags=-w
+compiler.warning_flags.none=-w
+compiler.warning_flags.default=
+compiler.warning_flags.more=-Wall
+compiler.warning_flags.all=-Wall -Wextra
+compiler.path={runtime.tools.gcc_arm_none_eabi.path}/bin/
+compiler.c.cmd=arm-none-eabi-gcc
+compiler.c.flags={build.c_flags}
+compiler.c.elf.cmd=arm-none-eabi-gcc
+compiler.c.elf.flags=
+compiler.S.cmd=arm-none-eabi-gcc
+compiler.S.flags={build.s_flags}
+compiler.cpp.cmd=arm-none-eabi-g++
+compiler.cpp.flags={build.cpp_flags}
+compiler.ar.cmd=arm-none-eabi-ar
+compiler.ar.flags=rcs
+compiler.objcopy.cmd=arm-none-eabi-objcopy
+compiler.objcopy.eep.flags=
+compiler.elf2bin.flags=-O binary
+compiler.elf2bin.cmd=arm-none-eabi-objcopy
+compiler.elf2hex.flags=-O ihex
+compiler.elf2hex.cmd=arm-none-eabi-objcopy
+compiler.ldflags={build.ld_flags} -Wl,--no-warn-rwx-segments
+compiler.ldlibs={build.ld_libs}
+compiler.size.cmd=arm-none-eabi-size
+compiler.define=-DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_SILABS="{version}" -DARDUINO_{build.board} -DARDUINO_ARCH_{build.arch}
+compiler.optimization_flags=-Os
+compiler.optimization_flags.release=-Os
+compiler.optimization_flags.debug=-O0
+
+build.extra_flags=
+
+# Add the include list and the precompiled libraries for the selected board
+compiler.silabs.flags={build.include_list}
+compiler.silabs.precompiled_libs={build.precompiled_libs}
+compiler.silabs.precompiled_gsdk={build.precompiled_gsdk}
+
+# These can be overridden in platform.local.txt
+compiler.c.extra_flags=
+compiler.c.elf.extra_flags=
+compiler.cpp.extra_flags=
+compiler.S.extra_flags=
+compiler.ar.extra_flags=
+compiler.elf2bin.extra_flags=
+compiler.elf2hex.extra_flags=
+
+
+# Compile patterns
+##################
+
+## Compile c files
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} {compiler.optimization_flags} {compiler.define} {compiler.c.extra_flags} {build.extra_flags} {compiler.silabs.flags} {includes} -MMD -MP -MF {object_file}.d  "{source_file}" -o "{object_file}"
+
+## Compile c++ files
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} {compiler.optimization_flags} {compiler.define} {compiler.cpp.extra_flags} {build.extra_flags} {compiler.silabs.flags} {includes} "{source_file}" -o "{object_file}"
+
+## Compile S files
+recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags} {compiler.optimization_flags} {compiler.define} {compiler.S.extra_flags} {build.extra_flags} {compiler.silabs.flags} {includes} "{source_file}" -o "{object_file}"
+
+## Create archives
+recipe.ar.pattern="{compiler.path}{compiler.ar.cmd}" {compiler.ar.flags} {compiler.ar.extra_flags} "{archive_file_path}" "{object_file}"
+
+## Combine gc-sections, archives, and objects
+recipe.c.combine.pattern="{compiler.path}{compiler.c.elf.cmd}" {compiler.c.elf.flags} {compiler.c.elf.extra_flags} "-T{build.ldscript}" {compiler.ldflags} {object_files} -Wl,-whole-archive "{build.path}/{archive_file}" {compiler.silabs.precompiled_gsdk} -Wl,-no-whole-archive -Wl,--start-group {compiler.ldlibs} {compiler.silabs.precompiled_libs} -Wl,--end-group -o "{build.path}/{build.project_name}.elf"
+
+## Create output (bin file)
+recipe.objcopy.bin.pattern="{compiler.path}{compiler.elf2bin.cmd}" {compiler.elf2bin.flags} {compiler.elf2bin.extra_flags} "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.bin"
+
+## Create output (hex file)
+recipe.objcopy.hex.pattern="{compiler.path}{compiler.elf2hex.cmd}" {compiler.elf2hex.flags} {compiler.elf2hex.extra_flags} "{build.path}/{build.project_name}.elf" "{build.path}/{build.project_name}.hex"
+
+## Save bin
+recipe.output.tmp_file_bin={build.project_name}.bin
+recipe.output.save_file_bin={build.project_name}.save.bin
+
+## Save hex
+recipe.output.tmp_file_hex={build.project_name}.hex
+recipe.output.save_file_hex={build.project_name}.save.hex
+
+## Compute size
+recipe.size.pattern="{compiler.path}{compiler.size.cmd}" -A "{build.path}/{build.project_name}.elf"
+recipe.size.regex=^(?:\.text|\.data|\.rodata)\s+([0-9]+).*
+recipe.size.regex.data=^(?:\.data|\.bss|\.noinit)\s+([0-9]+).*
+
+## Export Compiled Binary
+recipe.output.tmp_file={build.project_name}.hex
+recipe.output.save_file={build.project_name}.{build.variant}.hex
+
+
+# Debugger configuration
+# ----------------------------------------
+# EXPERIMENTAL feature
+debug.executable={build.path}/{build.project_name}.elf
+debug.toolchain=gcc
+debug.toolchain.path={runtime.tools.gcc_arm_none_eabi.path}/bin/
+debug.toolchain.prefix=arm-none-eabi-
+debug.server=jlinkgdbserver
+debug.server.jlinkgdbserver.path=
+debug.server.jlinkgdbserver.scripts_dir=
+debug.server.jlinkgdbserver.script=
+
+
+# Silicon Labs Simplicity Commander (flashing/erasing)
+######################################################
+
+tools.simplicitycommander.path={runtime.tools.simplicitycommander.path}
+tools.simplicitycommander.cmd.macosx=Commander_osx_1v14p5b1276.app/Contents/MacOS/commander
+tools.simplicitycommander.cmd.windows=commander.exe
+tools.simplicitycommander.cmd.linux=commander
+
+tools.simplicitycommander.upload.params.verbose=
+tools.simplicitycommander.upload.params.quiet=
+tools.simplicitycommander.upload.pattern="{path}/{cmd}" {upload.verbose} flash {build.path}/{build.project_name}.elf
+
+tools.simplicitycommander.program.params.verbose=
+tools.simplicitycommander.program.params.quiet=
+tools.simplicitycommander.program.pattern="{path}/{cmd}" {upload.verbose} flash {build.path}/{build.project_name}.elf
+
+tools.simplicitycommander.erase.params.verbose=
+tools.simplicitycommander.erase.params.quiet=
+tools.simplicitycommander.erase.pattern=
+
+tools.simplicitycommander.bootloader.params.verbose=
+tools.simplicitycommander.bootloader.params.quiet=
+tools.simplicitycommander.bootloader.pattern="{path}/{cmd}" {upload.verbose} flash {runtime.platform.path}/bootloaders/{bootloader.file}

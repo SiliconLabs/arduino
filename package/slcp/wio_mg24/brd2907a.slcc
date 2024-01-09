@@ -1,0 +1,56 @@
+!!omap
+- id: brd2907a
+- label: BRD2907A
+- package: platform
+- description: Board support for BRD2907A
+- category: Platform|Board|Third-party|SeeedStudio
+- quality: production
+- requires:
+  - name: efr32mg24b220f1536im48
+  - name: brd2907a_config
+- provides:
+  - name: brd2907a_revision
+  - name: brd2907a
+  - name: hardware_board
+  - name: hardware_board_tb
+  - name: hardware_board_has_vcom
+  - name: hardware_board_has_hfxo_freq_39mhz
+  - name: hardware_board_has_hfxo
+  - name: hardware_board_has_lfxo
+  - name: hardware_board_supports_rf_band_2400
+  - name: hardware_board_supports_1_rf_band
+  - name: hardware_board_default_rf_band
+  - name: hardware_board_default_rf_band_2400
+- recommends:
+  - id: iostream_eusart
+    instance:
+    - vcom
+  - id: bootloader_uart_driver
+  - id: simple_led
+    instance:
+    - led0
+    - led1
+  - id: simple_button
+    instance:
+    - btn0
+    - btn1
+- template_contribution: []
+- define:
+  - name: SL_BOARD_NAME
+    value: '"BRD2907A"'
+  - name: SL_BOARD_REV
+    value: '"A00"'
+  - name: HFXO_FREQ
+    value: 39000000
+  - name: HARDWARE_BOARD_SUPPORTS_RF_BAND_2400
+  - name: HARDWARE_BOARD_SUPPORTS_1_RF_BAND
+  - name: HARDWARE_BOARD_DEFAULT_RF_BAND_2400
+- tag:
+  - board:pn:BRD2907
+  - board:variant:A
+  - board:revision:A00
+  - board:device:efr32mg24b220f1536im48
+  - hardware:has:vcom
+  - hardware:has:pti
+  - hardware:has:led:2
+  - hardware:has:button:2

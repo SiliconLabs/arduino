@@ -1,0 +1,630 @@
+# Silicon Labs Arduino Core - board definitions
+###############################################
+
+
+##################################
+# SparkFun Thing Plus Matter (BLE)
+# OPN: brd2704a
+##################################
+
+thingplusmatter_ble.name=SparkFun Thing Plus Matter (BLE)
+thingplusmatter_ble.upload.tool=simplicitycommander
+thingplusmatter_ble.upload.tool.default=simplicitycommander
+thingplusmatter_ble.upload.target=sparkfunthingplus
+thingplusmatter_ble.upload.maximum_data_size=262144
+thingplusmatter_ble.upload.maximum_size=1572864
+thingplusmatter_ble.upload.protocol=jlink
+thingplusmatter_ble.upload.setup_command=
+thingplusmatter_ble.upload.use_1200bps_touch=false
+thingplusmatter_ble.upload.wait_for_upload_port=false
+thingplusmatter_ble.upload.native_usb=false
+thingplusmatter_ble.bootloader.tool=simplicitycommander
+thingplusmatter_ble.bootloader.tool.default=simplicitycommander
+thingplusmatter_ble.bootloader.file=sparkfun-thingplus-ble-bootloader-apploader.hex
+thingplusmatter_ble.build.mcu=cortex-m33
+thingplusmatter_ble.build.f_cpu=39000000
+thingplusmatter_ble.build.board=SILABS_THINGPLUSMATTER_BLE
+thingplusmatter_ble.build.core=silabs
+thingplusmatter_ble.build.variant=thingplusmatter_ble
+thingplusmatter_ble.build.variant_system_lib=
+thingplusmatter_ble.gsdk_folder=gecko_sdk_4.3.2
+thingplusmatter_ble.build.gsdk_path={build.variant.path}/{gsdk_folder}
+thingplusmatter_ble.build.precompiled_gsdk=
+
+thingplusmatter_ble.build.include_list="-I{build.variant.path}/config" "-I{build.variant.path}/autogen" "-I{build.variant.path}" "-I{build.gsdk_path}/platform/Device/SiliconLabs/MGM24/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/fem_util" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/service/hfxo_manager/inc" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/platform/peripheral/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc"
+
+thingplusmatter_ble.build.precompiled_libs="{build.gsdk_path}/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a" "{build.gsdk_path}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_config_mgm240pb32vna_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_module_efr32xg24_gcc_release.a"
+
+thingplusmatter_ble.build.board_specific_macros='-DNUM_LEDS=1' '-DLED_BUILTIN=PA8' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+thingplusmatter_ble.build.extra_flags={build.board_specific_macros} '-DMGM240PB32VNA=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2704A"' '-DSL_BOARD_REV="A00"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+thingplusmatter_ble.build.float_flags=
+
+thingplusmatter_ble.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+thingplusmatter_ble.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+thingplusmatter_ble.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+thingplusmatter_ble.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+thingplusmatter_ble.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+thingplusmatter_ble.build.ldscript={build.variant.path}/autogen/linkerfile.ld
+
+
+##########################################################
+# SparkFun Thing Plus Matter (BLE) - with precompiled GSDK
+# OPN: brd2704a
+##########################################################
+
+thingplusmatter_ble_precomp.name=SparkFun Thing Plus Matter (BLE) (precomp)
+thingplusmatter_ble_precomp.upload.tool=simplicitycommander
+thingplusmatter_ble_precomp.upload.tool.default=simplicitycommander
+thingplusmatter_ble_precomp.upload.target=sparkfunthingplus
+thingplusmatter_ble_precomp.upload.maximum_data_size=262144
+thingplusmatter_ble_precomp.upload.maximum_size=1572864
+thingplusmatter_ble_precomp.upload.protocol=jlink
+thingplusmatter_ble_precomp.upload.setup_command=
+thingplusmatter_ble_precomp.upload.use_1200bps_touch=false
+thingplusmatter_ble_precomp.upload.wait_for_upload_port=false
+thingplusmatter_ble_precomp.upload.native_usb=false
+thingplusmatter_ble_precomp.bootloader.tool=simplicitycommander
+thingplusmatter_ble_precomp.bootloader.tool.default=simplicitycommander
+thingplusmatter_ble_precomp.bootloader.file=sparkfun-thingplus-ble-bootloader-apploader.hex
+thingplusmatter_ble_precomp.build.mcu=cortex-m33
+thingplusmatter_ble_precomp.build.f_cpu=39000000
+thingplusmatter_ble_precomp.build.board=SILABS_THINGPLUSMATTER_BLE
+thingplusmatter_ble_precomp.build.core=silabs
+thingplusmatter_ble_precomp.build.variant=thingplusmatter_ble_precomp
+thingplusmatter_ble_precomp.build.variant_system_lib=
+thingplusmatter_ble_precomp.build.gsdk_path=
+thingplusmatter_ble_precomp.build.precompiled_gsdk="{build.variant.path}/gsdk/gsdk.a"
+
+thingplusmatter_ble_precomp.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/gsdk/include"
+
+thingplusmatter_ble_precomp.build.precompiled_libs="{build.variant.path}/gsdk/libbluetooth.a" "{build.variant.path}/gsdk/libnvm3_CM33_gcc.a" "{build.variant.path}/gsdk/librail_config_mgm240pb32vna_gcc.a" "{build.variant.path}/gsdk/librail_module_efr32xg24_gcc_release.a"
+
+thingplusmatter_ble_precomp.build.board_specific_macros='-DNUM_LEDS=1' '-DLED_BUILTIN=PA8' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+thingplusmatter_ble_precomp.build.extra_flags={build.board_specific_macros} '-DMGM240PB32VNA=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2704A"' '-DSL_BOARD_REV="A00"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+thingplusmatter_ble_precomp.build.float_flags=
+
+thingplusmatter_ble_precomp.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+thingplusmatter_ble_precomp.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+thingplusmatter_ble_precomp.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+thingplusmatter_ble_precomp.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+thingplusmatter_ble_precomp.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+thingplusmatter_ble_precomp.build.ldscript={build.variant.path}/gsdk/linkerfile.ld
+
+
+#####################################
+# SparkFun Thing Plus Matter (Matter)
+# OPN: brd2704a
+#####################################
+
+thingplusmatter_matter.name=SparkFun Thing Plus Matter (Matter)
+thingplusmatter_matter.upload.tool=simplicitycommander
+thingplusmatter_matter.upload.tool.default=simplicitycommander
+thingplusmatter_matter.upload.target=sparkfunthingplus
+thingplusmatter_matter.upload.maximum_data_size=262144
+thingplusmatter_matter.upload.maximum_size=1572864
+thingplusmatter_matter.upload.protocol=jlink
+thingplusmatter_matter.upload.setup_command=
+thingplusmatter_matter.upload.use_1200bps_touch=false
+thingplusmatter_matter.upload.wait_for_upload_port=false
+thingplusmatter_matter.upload.native_usb=false
+thingplusmatter_matter.bootloader.tool=simplicitycommander
+thingplusmatter_matter.bootloader.tool.default=simplicitycommander
+thingplusmatter_matter.bootloader.file=sparkfun-thingplus-matter-bootloader-storage-internal-single-512k.hex
+thingplusmatter_matter.build.mcu=cortex-m33
+thingplusmatter_matter.build.f_cpu=39000000
+thingplusmatter_matter.build.board=SILABS_THINGPLUSMATTER_MATTER
+thingplusmatter_matter.build.core=silabs
+thingplusmatter_matter.build.variant=thingplusmatter_matter
+thingplusmatter_matter.build.variant_system_lib=
+thingplusmatter_matter.gsdk_folder=gecko_sdk_4.3.2
+thingplusmatter_matter.matter_sdk_folder=matter_2.1.1
+thingplusmatter_matter.build.gsdk_path={build.variant.path}/{gsdk_folder}
+thingplusmatter_matter.build.matter_sdk_path={build.variant.path}/{matter_sdk_folder}
+thingplusmatter_matter.build.precompiled_gsdk=
+
+thingplusmatter_matter.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/autogen/zap-generated" "-I{build.variant.path}/autogen/zap-generated/app" "-I{build.variant.path}/config" "-I{build.variant.path}/config/btconf" "-I{build.variant.path}/config/common" "-I{build.variant.path}/autogen" "-I{build.variant.path}/include" "-I{build.matter_sdk_path}/examples/platform/silabs" "-I{build.matter_sdk_path}/src" "-I{build.matter_sdk_path}/src/include" "-I{build.matter_sdk_path}/src/lib" "-I{build.matter_sdk_path}/third_party/nlassert/repo/include" "-I{build.matter_sdk_path}/third_party/nlio/repo/include" "-I{build.matter_sdk_path}/zzz_generated/app-common" "-I{build.matter_sdk_path}/slc/inc" "-I{build.matter_sdk_path}/examples/platform/silabs/efr32" "-I{build.matter_sdk_path}/src/platform/silabs/efr32" "-I{build.matter_sdk_path}/examples/providers" "-I{build.matter_sdk_path}/src/app/clusters/basic-information" "-I{build.matter_sdk_path}/src/app/clusters/color-control-server" "-I{build.matter_sdk_path}/src/app/clusters/diagnostic-logs-server" "-I{build.matter_sdk_path}/src/app/clusters/door-lock-server" "-I{build.matter_sdk_path}/src/app/clusters/general-commissioning-server" "-I{build.matter_sdk_path}/src/app/clusters/general-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/groups-server" "-I{build.matter_sdk_path}/src/app/clusters/identify-server" "-I{build.matter_sdk_path}/src/app/clusters/level-control" "-I{build.matter_sdk_path}/src/app/clusters/network-commissioning" "-I{build.matter_sdk_path}/src/app/clusters/occupancy-sensor-server" "-I{build.matter_sdk_path}/src/app/clusters/on-off-server" "-I{build.matter_sdk_path}/src/app/clusters/ota-requestor" "-I{build.matter_sdk_path}/third_party/silabs/gecko_sdk/util/third_party/segger/systemview/SEGGER" "-I{build.matter_sdk_path}/src/app/clusters/software-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/switch-server" "-I{build.matter_sdk_path}/src/app/clusters/window-covering-server" "-I{build.gsdk_path}/platform/Device/SiliconLabs/MGM24/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/fem_util" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc" "-I{build.gsdk_path}/platform/service/hfxo_manager/inc" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/driver/leddrv/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/util/third_party/openthread/include" "-I{build.gsdk_path}/util/third_party/openthread/include/openthread" "-I{build.gsdk_path}/util/third_party/openthread/src/core" "-I{build.gsdk_path}/util/third_party/openthread/third_party/tcplp" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms/utils" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/efr32" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/include" "-I{build.gsdk_path}/platform/peripheral/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/sidewalk" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_rssi" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/plugin/security_manager" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc"
+
+thingplusmatter_matter.build.precompiled_libs="{build.gsdk_path}/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a" "{build.gsdk_path}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a" "{build.gsdk_path}/protocol/openthread/libs/libsl_openthread_efr32mg2x_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_config_mgm240pb32vna_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_multiprotocol_module_efr32xg24_gcc_release.a"
+
+thingplusmatter_matter.build.board_specific_macros='-DARDUINO_MATTER' '-DNUM_LEDS=1' '-DLED_BUILTIN=PA8' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+thingplusmatter_matter.build.extra_flags={build.board_specific_macros} '-DCHIP_CRYPTO_PLATFORM=1' '-DIS_DEMO_LIGHT=1' '-DNVM3_DEFAULT_MAX_OBJECT_SIZE=4092' '-DNVM3_DEFAULT_NVM_SIZE=40960' '-DOPENTHREAD_CONFIG_LOG_OUTPUT=OPENTHREAD_CONFIG_LOG_OUTPUT_APP' '-DSL_STATUS_LED=0' '-D_WANT_REENT_SMALL=1' '-DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=<lib/address_resolve/AddressResolve_DefaultImpl.h>' '-DCHIP_HAVE_CONFIG_H=1' '-DCURRENT_TIME_NOT_IMPLEMENTED=1' '-DSILABS_OTA_ENABLED=1' '-DRTT_USE_ASM=0' '-DOPENTHREAD_CONFIG_CLI_TRANSPORT=OT_CLI_TRANSPORT_CONSOLE' '-DCONFIG_ENABLE_EUART=1' '-DMGM24=1' '-DENABLE_WSTK_LEDS=1' '-DMGM240PB32VNA=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2704A"' '-DSL_BOARD_REV="A00"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DOPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS=0' '-DRADIO_CONFIG_DMP_SUPPORT=1' '-DOPENTHREAD_CORE_CONFIG_PLATFORM_CHECK_FILE="openthread-core-efr32-config-check.h"' '-DOPENTHREAD_PROJECT_CORE_CONFIG_FILE="openthread-core-efr32-config.h"' '-DOPENTHREAD_CONFIG_FILE="sl_openthread_generic_config.h"' '-DOPENTHREAD_FTD=1' '-DSL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE="sl_openthread_features_config.h"' '-DBUFFER_SIZE_DOWN=0' '-DBUFFER_SIZE_UP=768' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=1' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSL_OPENTHREAD_CUSTOM_CLI_ENABLE=1' '-DSLI_RADIOAES_REQUIRES_MASKING=1' '-DconfigNUM_USER_THREAD_LOCAL_STORAGE_POINTERS=0' '-DconfigNUM_THREAD_LOCAL_STORAGE_POINTERS=2'
+
+thingplusmatter_matter.build.float_flags=
+
+thingplusmatter_matter.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+thingplusmatter_matter.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-sign-compare -Wno-psabi -mcmse --specs=nano.specs -g
+
+thingplusmatter_matter.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -std=gnu++17 -Wall -Wextra -fno-exceptions -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-psabi -fno-strict-aliasing -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-common -Wno-sign-compare --specs=nano.specs -g
+
+thingplusmatter_matter.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--wrap=malloc -Wl,--wrap=free -Wl,--wrap=realloc -Wl,--wrap=calloc -Wl,--wrap=MemoryAlloc -Wl,--wrap=_malloc_r -Wl,--wrap=_realloc_r -Wl,--wrap=_free_r -Wl,--wrap=_calloc_r -Wl,--gc-sections
+
+thingplusmatter_matter.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys
+
+thingplusmatter_matter.build.ldscript={build.variant.path}/autogen/linkerfile.ld
+
+
+###########################################################################
+# SparkFun Thing Plus Matter (Matter) - with prebuilt GSDK and Matter stack
+# OPN: brd2704a
+###########################################################################
+
+thingplusmatter_matter_precomp.name=SparkFun Thing Plus Matter (Matter) (precomp)
+thingplusmatter_matter_precomp.upload.tool=simplicitycommander
+thingplusmatter_matter_precomp.upload.tool.default=simplicitycommander
+thingplusmatter_matter_precomp.upload.target=sparkfunthingplus
+thingplusmatter_matter_precomp.upload.maximum_data_size=262144
+thingplusmatter_matter_precomp.upload.maximum_size=1572864
+thingplusmatter_matter_precomp.upload.protocol=jlink
+thingplusmatter_matter_precomp.upload.setup_command=
+thingplusmatter_matter_precomp.upload.use_1200bps_touch=false
+thingplusmatter_matter_precomp.upload.wait_for_upload_port=false
+thingplusmatter_matter_precomp.upload.native_usb=false
+thingplusmatter_matter_precomp.bootloader.tool=simplicitycommander
+thingplusmatter_matter_precomp.bootloader.tool.default=simplicitycommander
+thingplusmatter_matter_precomp.bootloader.file=sparkfun-thingplus-matter-bootloader-storage-internal-single-512k.hex
+thingplusmatter_matter_precomp.build.mcu=cortex-m33
+thingplusmatter_matter_precomp.build.f_cpu=39000000
+thingplusmatter_matter_precomp.build.board=SILABS_THINGPLUSMATTER_MATTER
+thingplusmatter_matter_precomp.build.core=silabs
+thingplusmatter_matter_precomp.build.variant=thingplusmatter_matter_precomp
+thingplusmatter_matter_precomp.build.variant_system_lib=
+thingplusmatter_matter_precomp.gsdk_folder=gecko_sdk_4.3.2
+thingplusmatter_matter_precomp.matter_sdk_folder=matter_2.1.1
+thingplusmatter_matter_precomp.build.gsdk_path={build.variant.path}/gsdk/{gsdk_folder}
+thingplusmatter_matter_precomp.build.matter_sdk_path={build.variant.path}/gsdk/{matter_sdk_folder}
+thingplusmatter_matter_precomp.build.precompiled_gsdk="{build.variant.path}/gsdk/gsdk.a"
+
+thingplusmatter_matter_precomp.build.include_list="-I{build.variant.path}/gsdk" "-I{build.variant.path}/gsdk/autogen/zap-generated" "-I{build.variant.path}/gsdk/autogen/zap-generated/app" "-I{build.variant.path}/gsdk/config" "-I{build.variant.path}/gsdk/config/btconf" "-I{build.variant.path}/gsdk/config/common" "-I{build.variant.path}/gsdk/autogen" "-I{build.variant.path}/gsdk/include" "-I{build.matter_sdk_path}/examples/platform/silabs" "-I{build.matter_sdk_path}/src" "-I{build.matter_sdk_path}/src/include" "-I{build.matter_sdk_path}/src/lib" "-I{build.matter_sdk_path}/third_party/nlassert/repo/include" "-I{build.matter_sdk_path}/third_party/nlio/repo/include" "-I{build.matter_sdk_path}/zzz_generated/app-common" "-I{build.matter_sdk_path}/slc/inc" "-I{build.matter_sdk_path}/examples/platform/silabs/efr32" "-I{build.matter_sdk_path}/src/platform/silabs/efr32" "-I{build.matter_sdk_path}/examples/providers" "-I{build.matter_sdk_path}/src/app/clusters/basic-information" "-I{build.matter_sdk_path}/src/app/clusters/color-control-server" "-I{build.matter_sdk_path}/src/app/clusters/diagnostic-logs-server" "-I{build.matter_sdk_path}/src/app/clusters/door-lock-server" "-I{build.matter_sdk_path}/src/app/clusters/general-commissioning-server" "-I{build.matter_sdk_path}/src/app/clusters/general-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/groups-server" "-I{build.matter_sdk_path}/src/app/clusters/identify-server" "-I{build.matter_sdk_path}/src/app/clusters/level-control" "-I{build.matter_sdk_path}/src/app/clusters/network-commissioning" "-I{build.matter_sdk_path}/src/app/clusters/occupancy-sensor-server" "-I{build.matter_sdk_path}/src/app/clusters/on-off-server" "-I{build.matter_sdk_path}/src/app/clusters/ota-requestor" "-I{build.matter_sdk_path}/third_party/silabs/gecko_sdk/util/third_party/segger/systemview/SEGGER" "-I{build.matter_sdk_path}/src/app/clusters/software-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/switch-server" "-I{build.matter_sdk_path}/src/app/clusters/window-covering-server" "-I{build.gsdk_path}/platform/Device/SiliconLabs/MGM24/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/fem_util" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc" "-I{build.gsdk_path}/platform/service/hfxo_manager/inc" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/driver/leddrv/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/util/third_party/openthread/include" "-I{build.gsdk_path}/util/third_party/openthread/include/openthread" "-I{build.gsdk_path}/util/third_party/openthread/src/core" "-I{build.gsdk_path}/util/third_party/openthread/third_party/tcplp" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms/utils" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/efr32" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/include" "-I{build.gsdk_path}/platform/peripheral/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/sidewalk" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_rssi" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/plugin/security_manager" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc"
+
+thingplusmatter_matter_precomp.build.precompiled_libs="{build.variant.path}/gsdk/libbluetooth.a" "{build.variant.path}/gsdk/libnvm3_CM33_gcc.a" "{build.variant.path}/gsdk/libsl_openthread_efr32mg2x_gcc.a" "{build.variant.path}/gsdk/librail_config_mgm240pb32vna_gcc.a" "{build.variant.path}/gsdk/librail_multiprotocol_module_efr32xg24_gcc_release.a"
+
+thingplusmatter_matter_precomp.build.board_specific_macros='-DARDUINO_MATTER' '-DNUM_LEDS=1' '-DLED_BUILTIN=PA8' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+thingplusmatter_matter_precomp.build.extra_flags={build.board_specific_macros} '-DCHIP_CRYPTO_PLATFORM=1' '-DIS_DEMO_LIGHT=1' '-DNVM3_DEFAULT_MAX_OBJECT_SIZE=4092' '-DNVM3_DEFAULT_NVM_SIZE=40960' '-DOPENTHREAD_CONFIG_LOG_OUTPUT=OPENTHREAD_CONFIG_LOG_OUTPUT_APP' '-DSL_STATUS_LED=0' '-D_WANT_REENT_SMALL=1' '-DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=<lib/address_resolve/AddressResolve_DefaultImpl.h>' '-DCHIP_HAVE_CONFIG_H=1' '-DCURRENT_TIME_NOT_IMPLEMENTED=1' '-DSILABS_OTA_ENABLED=1' '-DRTT_USE_ASM=0' '-DOPENTHREAD_CONFIG_CLI_TRANSPORT=OT_CLI_TRANSPORT_CONSOLE' '-DCONFIG_ENABLE_EUART=1' '-DMGM24=1' '-DENABLE_WSTK_LEDS=1' '-DMGM240PB32VNA=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2704A"' '-DSL_BOARD_REV="A00"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DOPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS=0' '-DRADIO_CONFIG_DMP_SUPPORT=1' '-DOPENTHREAD_CORE_CONFIG_PLATFORM_CHECK_FILE="openthread-core-efr32-config-check.h"' '-DOPENTHREAD_PROJECT_CORE_CONFIG_FILE="openthread-core-efr32-config.h"' '-DOPENTHREAD_CONFIG_FILE="sl_openthread_generic_config.h"' '-DOPENTHREAD_FTD=1' '-DSL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE="sl_openthread_features_config.h"' '-DBUFFER_SIZE_DOWN=0' '-DBUFFER_SIZE_UP=768' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=1' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSL_OPENTHREAD_CUSTOM_CLI_ENABLE=1' '-DSLI_RADIOAES_REQUIRES_MASKING=1' '-DconfigNUM_USER_THREAD_LOCAL_STORAGE_POINTERS=0' '-DconfigNUM_THREAD_LOCAL_STORAGE_POINTERS=2'
+
+thingplusmatter_matter_precomp.build.float_flags=
+
+thingplusmatter_matter_precomp.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+thingplusmatter_matter_precomp.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-sign-compare -Wno-psabi -mcmse --specs=nano.specs -g
+
+thingplusmatter_matter_precomp.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -std=gnu++17 -Wall -Wextra -fno-exceptions -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-psabi -fno-strict-aliasing -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-common -Wno-sign-compare --specs=nano.specs -g
+
+thingplusmatter_matter_precomp.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--wrap=malloc -Wl,--wrap=free -Wl,--wrap=realloc -Wl,--wrap=calloc -Wl,--wrap=MemoryAlloc -Wl,--wrap=_malloc_r -Wl,--wrap=_realloc_r -Wl,--wrap=_free_r -Wl,--wrap=_calloc_r -Wl,--gc-sections
+
+thingplusmatter_matter_precomp.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys
+
+thingplusmatter_matter_precomp.build.ldscript={build.variant.path}/gsdk/linkerfile.ld
+
+
+#########################
+# xG24 Explorer Kit (BLE)
+# OPN: brd2703a
+#########################
+
+xg24explorerkit.name=xG24 Explorer Kit (BLE)
+xg24explorerkit.upload.tool=simplicitycommander
+xg24explorerkit.upload.tool.default=simplicitycommander
+xg24explorerkit.upload.target=xg24explorerkit
+xg24explorerkit.upload.maximum_data_size=262144
+xg24explorerkit.upload.maximum_size=1572864
+xg24explorerkit.upload.protocol=jlink
+xg24explorerkit.upload.setup_command=
+xg24explorerkit.upload.use_1200bps_touch=false
+xg24explorerkit.upload.wait_for_upload_port=false
+xg24explorerkit.upload.native_usb=false
+xg24explorerkit.bootloader.tool=simplicitycommander
+xg24explorerkit.bootloader.tool.default=simplicitycommander
+xg24explorerkit.bootloader.file=xg24-explorer-kit-ble-bootloader-apploader.hex
+xg24explorerkit.build.mcu=cortex-m33
+xg24explorerkit.build.f_cpu=78000000
+xg24explorerkit.build.board=SILABS_XG24EXPLORERKIT
+xg24explorerkit.build.core=silabs
+xg24explorerkit.build.variant=xg24explorerkit
+xg24explorerkit.build.variant_system_lib=
+xg24explorerkit.gsdk_folder=gecko_sdk_4.3.2
+xg24explorerkit.build.gsdk_path={build.variant.path}/{gsdk_folder}
+xg24explorerkit.build.precompiled_gsdk=
+
+xg24explorerkit.build.include_list="-I{build.variant.path}/config" "-I{build.variant.path}/autogen" "-I{build.variant.path}" "-I{build.gsdk_path}/platform/Device/SiliconLabs/EFR32MG24/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/service/hfxo_manager/inc" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/platform/peripheral/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/sidewalk" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc"
+
+xg24explorerkit.build.precompiled_libs="{build.gsdk_path}/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a" "{build.gsdk_path}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_efr32xg24_gcc_release.a"
+
+xg24explorerkit.build.board_specific_macros='-DNUM_LEDS=2' '-DLED_BUILTIN=PA4' '-DLED_BUILTIN_1=PA7' '-DNUM_BTN=2' '-DBTN_BUILTIN=PB2' '-DBTN_BUILTIN_1=PB3' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+xg24explorerkit.build.extra_flags={build.board_specific_macros} '-DEFR32MG24B210F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2703A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xg24explorerkit.build.float_flags=
+
+xg24explorerkit.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+xg24explorerkit.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg24explorerkit.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg24explorerkit.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+xg24explorerkit.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+xg24explorerkit.build.ldscript={build.variant.path}/autogen/linkerfile.ld
+
+
+#################################################
+# xG24 Explorer Kit (BLE) - with precompiled GSDK
+# OPN: brd2703a
+#################################################
+
+xg24explorerkit_precomp.name=xG24 Explorer Kit (BLE) (precomp)
+xg24explorerkit_precomp.upload.tool=simplicitycommander
+xg24explorerkit_precomp.upload.tool.default=simplicitycommander
+xg24explorerkit_precomp.upload.target=xg24explorerkit
+xg24explorerkit_precomp.upload.maximum_data_size=262144
+xg24explorerkit_precomp.upload.maximum_size=1572864
+xg24explorerkit_precomp.upload.protocol=jlink
+xg24explorerkit_precomp.upload.setup_command=
+xg24explorerkit_precomp.upload.use_1200bps_touch=false
+xg24explorerkit_precomp.upload.wait_for_upload_port=false
+xg24explorerkit_precomp.upload.native_usb=false
+xg24explorerkit_precomp.bootloader.tool=simplicitycommander
+xg24explorerkit_precomp.bootloader.tool.default=simplicitycommander
+xg24explorerkit_precomp.bootloader.file=xg24-explorer-kit-ble-bootloader-apploader.hex
+xg24explorerkit_precomp.build.mcu=cortex-m33
+xg24explorerkit_precomp.build.f_cpu=78000000
+xg24explorerkit_precomp.build.board=SILABS_XG24EXPLORERKIT
+xg24explorerkit_precomp.build.core=silabs
+xg24explorerkit_precomp.build.variant=xg24explorerkit_precomp
+xg24explorerkit_precomp.build.variant_system_lib=
+xg24explorerkit_precomp.build.gsdk_path=
+xg24explorerkit_precomp.build.precompiled_gsdk="{build.variant.path}/gsdk/gsdk.a"
+
+xg24explorerkit_precomp.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/gsdk/include"
+
+xg24explorerkit_precomp.build.precompiled_libs="{build.variant.path}/gsdk/libbluetooth.a" "{build.variant.path}/gsdk/libnvm3_CM33_gcc.a" "{build.variant.path}/gsdk/librail_efr32xg24_gcc_release.a"
+
+xg24explorerkit_precomp.build.board_specific_macros='-DNUM_LEDS=2' '-DLED_BUILTIN=PA4' '-DLED_BUILTIN_1=PA7' '-DNUM_BTN=2' '-DBTN_BUILTIN=PB2' '-DBTN_BUILTIN_1=PB3' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+xg24explorerkit_precomp.build.extra_flags={build.board_specific_macros} '-DEFR32MG24B210F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2703A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xg24explorerkit_precomp.build.float_flags=
+
+xg24explorerkit_precomp.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+xg24explorerkit_precomp.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg24explorerkit_precomp.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg24explorerkit_precomp.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+xg24explorerkit_precomp.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+xg24explorerkit_precomp.build.ldscript={build.variant.path}/gsdk/linkerfile.ld
+
+
+############################
+# xG24 Explorer Kit (Matter)
+# OPN: brd2703a
+############################
+
+xg24explorerkit_matter.name=xG24 Explorer Kit (Matter)
+xg24explorerkit_matter.upload.tool=simplicitycommander
+xg24explorerkit_matter.upload.tool.default=simplicitycommander
+xg24explorerkit_matter.upload.target=xg24explorerkit
+xg24explorerkit_matter.upload.maximum_data_size=262144
+xg24explorerkit_matter.upload.maximum_size=1572864
+xg24explorerkit_matter.upload.protocol=jlink
+xg24explorerkit_matter.upload.setup_command=
+xg24explorerkit_matter.upload.use_1200bps_touch=false
+xg24explorerkit_matter.upload.wait_for_upload_port=false
+xg24explorerkit_matter.upload.native_usb=false
+xg24explorerkit_matter.bootloader.tool=simplicitycommander
+xg24explorerkit_matter.bootloader.tool.default=simplicitycommander
+xg24explorerkit_matter.bootloader.file=xg24-explorer-kit-bootloader-storage-internal-single-512k.hex
+xg24explorerkit_matter.build.mcu=cortex-m33
+xg24explorerkit_matter.build.f_cpu=39000000
+xg24explorerkit_matter.build.board=SILABS_XG24EXPLORERKIT_MATTER
+xg24explorerkit_matter.build.core=silabs
+xg24explorerkit_matter.build.variant=xg24explorerkit_matter
+xg24explorerkit_matter.build.variant_system_lib=
+xg24explorerkit_matter.gsdk_folder=gecko_sdk_4.3.2
+xg24explorerkit_matter.matter_sdk_folder=matter_2.1.1
+xg24explorerkit_matter.build.gsdk_path={build.variant.path}/{gsdk_folder}
+xg24explorerkit_matter.build.matter_sdk_path={build.variant.path}/{matter_sdk_folder}
+xg24explorerkit_matter.build.precompiled_gsdk=
+
+xg24explorerkit_matter.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/autogen/zap-generated" "-I{build.variant.path}/autogen/zap-generated/app" "-I{build.variant.path}/config" "-I{build.variant.path}/config/btconf" "-I{build.variant.path}/config/common" "-I{build.variant.path}/autogen" "-I{build.variant.path}/include" "-I{build.matter_sdk_path}/examples/platform/silabs" "-I{build.matter_sdk_path}/src" "-I{build.matter_sdk_path}/src/include" "-I{build.matter_sdk_path}/src/lib" "-I{build.matter_sdk_path}/third_party/nlassert/repo/include" "-I{build.matter_sdk_path}/third_party/nlio/repo/include" "-I{build.matter_sdk_path}/zzz_generated/app-common" "-I{build.matter_sdk_path}/slc/inc" "-I{build.matter_sdk_path}/examples/platform/silabs/efr32" "-I{build.matter_sdk_path}/src/platform/silabs/efr32" "-I{build.matter_sdk_path}/examples/providers" "-I{build.matter_sdk_path}/src/app/clusters/basic-information" "-I{build.matter_sdk_path}/src/app/clusters/color-control-server" "-I{build.matter_sdk_path}/src/app/clusters/diagnostic-logs-server" "-I{build.matter_sdk_path}/src/app/clusters/door-lock-server" "-I{build.matter_sdk_path}/src/app/clusters/general-commissioning-server" "-I{build.matter_sdk_path}/src/app/clusters/general-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/groups-server" "-I{build.matter_sdk_path}/src/app/clusters/identify-server" "-I{build.matter_sdk_path}/src/app/clusters/level-control" "-I{build.matter_sdk_path}/src/app/clusters/network-commissioning" "-I{build.matter_sdk_path}/src/app/clusters/occupancy-sensor-server" "-I{build.matter_sdk_path}/src/app/clusters/on-off-server" "-I{build.matter_sdk_path}/src/app/clusters/ota-requestor" "-I{build.matter_sdk_path}/third_party/silabs/gecko_sdk/util/third_party/segger/systemview/SEGGER" "-I{build.matter_sdk_path}/src/app/clusters/software-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/switch-server" "-I{build.matter_sdk_path}/src/app/clusters/window-covering-server" "-I{build.gsdk_path}/platform/Device/SiliconLabs/EFR32MG24/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/fem_util" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc" "-I{build.gsdk_path}/platform/service/hfxo_manager/inc" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/driver/leddrv/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/util/third_party/openthread/include" "-I{build.gsdk_path}/util/third_party/openthread/include/openthread" "-I{build.gsdk_path}/util/third_party/openthread/src/core" "-I{build.gsdk_path}/util/third_party/openthread/third_party/tcplp" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms/utils" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/efr32" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/include" "-I{build.gsdk_path}/platform/peripheral/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/sidewalk" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_rssi" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/plugin/security_manager" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc"
+
+xg24explorerkit_matter.build.precompiled_libs="{build.gsdk_path}/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a" "{build.gsdk_path}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a" "{build.gsdk_path}/protocol/openthread/libs/libsl_openthread_efr32mg2x_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_multiprotocol_efr32xg24_gcc_release.a"
+
+xg24explorerkit_matter.build.board_specific_macros='-DARDUINO_MATTER' '-DNUM_LEDS=2' '-DLED_BUILTIN=PA4' '-DLED_BUILTIN_1=PA7' '-DNUM_BTN=2' '-DBTN_BUILTIN=PB2' '-DBTN_BUILTIN_1=PB3' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+xg24explorerkit_matter.build.extra_flags={build.board_specific_macros} '-DCHIP_CRYPTO_PLATFORM=1' '-DIS_DEMO_LIGHT=1' '-DNVM3_DEFAULT_MAX_OBJECT_SIZE=4092' '-DNVM3_DEFAULT_NVM_SIZE=40960' '-DSL_STATUS_LED=0' '-D_WANT_REENT_SMALL=1' '-DconfigNUM_THREAD_LOCAL_STORAGE_POINTERS=2' '-DconfigNUM_USER_THREAD_LOCAL_STORAGE_POINTERS=0' '-DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=<lib/address_resolve/AddressResolve_DefaultImpl.h>' '-DCHIP_HAVE_CONFIG_H=1' '-DCURRENT_TIME_NOT_IMPLEMENTED=1' '-DMBEDTLS_USER_CONFIG_FILE=<sli_psa_builtin_config.h>' '-DOPENTHREAD_CONFIG_DETERMINISTIC_ECDSA_ENABLE=0' '-DOPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS=0' '-DSILABS_OTA_ENABLED=1' '-DRTT_USE_ASM=0' '-DENABLE_WSTK_LEDS=1' '-DEFR32MG24B210F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2703A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DRADIO_CONFIG_DMP_SUPPORT=1' '-DOPENTHREAD_CORE_CONFIG_PLATFORM_CHECK_FILE="openthread-core-efr32-config-check.h"' '-DOPENTHREAD_PROJECT_CORE_CONFIG_FILE="openthread-core-efr32-config.h"' '-DOPENTHREAD_CONFIG_FILE="sl_openthread_generic_config.h"' '-DOPENTHREAD_FTD=1' '-DSL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE="sl_openthread_features_config.h"' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=1' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xg24explorerkit_matter.build.float_flags=
+
+xg24explorerkit_matter.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+xg24explorerkit_matter.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-sign-compare -Wno-psabi -mcmse --specs=nano.specs -g
+
+xg24explorerkit_matter.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -std=gnu++17 -Wall -Wextra -fno-exceptions -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-psabi -fno-strict-aliasing -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-common -Wno-sign-compare --specs=nano.specs -g
+
+xg24explorerkit_matter.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--wrap=malloc -Wl,--wrap=free -Wl,--wrap=realloc -Wl,--wrap=calloc -Wl,--wrap=MemoryAlloc -Wl,--wrap=_malloc_r -Wl,--wrap=_realloc_r -Wl,--wrap=_free_r -Wl,--wrap=_calloc_r -Wl,--gc-sections
+
+xg24explorerkit_matter.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys
+
+xg24explorerkit_matter.build.ldscript={build.variant.path}/autogen/linkerfile.ld
+
+
+##################################################################
+# xG24 Explorer Kit (Matter) - with prebuilt GSDK and Matter stack
+# OPN: brd2703a
+##################################################################
+
+xg24explorerkit_matter_precomp.name=xG24 Explorer Kit (Matter) (precomp)
+xg24explorerkit_matter_precomp.upload.tool=simplicitycommander
+xg24explorerkit_matter_precomp.upload.tool.default=simplicitycommander
+xg24explorerkit_matter_precomp.upload.target=xg24explorerkit
+xg24explorerkit_matter_precomp.upload.maximum_data_size=262144
+xg24explorerkit_matter_precomp.upload.maximum_size=1572864
+xg24explorerkit_matter_precomp.upload.protocol=jlink
+xg24explorerkit_matter_precomp.upload.setup_command=
+xg24explorerkit_matter_precomp.upload.use_1200bps_touch=false
+xg24explorerkit_matter_precomp.upload.wait_for_upload_port=false
+xg24explorerkit_matter_precomp.upload.native_usb=false
+xg24explorerkit_matter_precomp.bootloader.tool=simplicitycommander
+xg24explorerkit_matter_precomp.bootloader.tool.default=simplicitycommander
+xg24explorerkit_matter_precomp.bootloader.file=xg24-explorer-kit-bootloader-storage-internal-single-512k.hex
+xg24explorerkit_matter_precomp.build.mcu=cortex-m33
+xg24explorerkit_matter_precomp.build.f_cpu=39000000
+xg24explorerkit_matter_precomp.build.board=SILABS_XG24EXPLORERKIT_MATTER
+xg24explorerkit_matter_precomp.build.core=silabs
+xg24explorerkit_matter_precomp.build.variant=xg24explorerkit_matter_precomp
+xg24explorerkit_matter_precomp.build.variant_system_lib=
+xg24explorerkit_matter_precomp.gsdk_folder=gecko_sdk_4.3.2
+xg24explorerkit_matter_precomp.matter_sdk_folder=matter_2.1.1
+xg24explorerkit_matter_precomp.build.gsdk_path={build.variant.path}/gsdk/{gsdk_folder}
+xg24explorerkit_matter_precomp.build.matter_sdk_path={build.variant.path}/gsdk/{matter_sdk_folder}
+xg24explorerkit_matter_precomp.build.precompiled_gsdk="{build.variant.path}/gsdk/gsdk.a"
+
+xg24explorerkit_matter_precomp.build.include_list="-I{build.variant.path}/gsdk" "-I{build.variant.path}/gsdk/autogen/zap-generated" "-I{build.variant.path}/gsdk/autogen/zap-generated/app" "-I{build.variant.path}/gsdk/config" "-I{build.variant.path}/gsdk/config/btconf" "-I{build.variant.path}/gsdk/config/common" "-I{build.variant.path}/gsdk/autogen" "-I{build.variant.path}/gsdk/include" "-I{build.matter_sdk_path}/examples/platform/silabs" "-I{build.matter_sdk_path}/src" "-I{build.matter_sdk_path}/src/include" "-I{build.matter_sdk_path}/src/lib" "-I{build.matter_sdk_path}/third_party/nlassert/repo/include" "-I{build.matter_sdk_path}/third_party/nlio/repo/include" "-I{build.matter_sdk_path}/zzz_generated/app-common" "-I{build.matter_sdk_path}/slc/inc" "-I{build.matter_sdk_path}/examples/platform/silabs/efr32" "-I{build.matter_sdk_path}/src/platform/silabs/efr32" "-I{build.matter_sdk_path}/examples/providers" "-I{build.matter_sdk_path}/src/app/clusters/basic-information" "-I{build.matter_sdk_path}/src/app/clusters/color-control-server" "-I{build.matter_sdk_path}/src/app/clusters/diagnostic-logs-server" "-I{build.matter_sdk_path}/src/app/clusters/door-lock-server" "-I{build.matter_sdk_path}/src/app/clusters/general-commissioning-server" "-I{build.matter_sdk_path}/src/app/clusters/general-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/groups-server" "-I{build.matter_sdk_path}/src/app/clusters/identify-server" "-I{build.matter_sdk_path}/src/app/clusters/level-control" "-I{build.matter_sdk_path}/src/app/clusters/network-commissioning" "-I{build.matter_sdk_path}/src/app/clusters/occupancy-sensor-server" "-I{build.matter_sdk_path}/src/app/clusters/on-off-server" "-I{build.matter_sdk_path}/src/app/clusters/ota-requestor" "-I{build.matter_sdk_path}/third_party/silabs/gecko_sdk/util/third_party/segger/systemview/SEGGER" "-I{build.matter_sdk_path}/src/app/clusters/software-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/switch-server" "-I{build.matter_sdk_path}/src/app/clusters/window-covering-server" "-I{build.gsdk_path}/platform/Device/SiliconLabs/EFR32MG24/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/fem_util" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc" "-I{build.gsdk_path}/platform/service/hfxo_manager/inc" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/driver/leddrv/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/util/third_party/openthread/include" "-I{build.gsdk_path}/util/third_party/openthread/include/openthread" "-I{build.gsdk_path}/util/third_party/openthread/src/core" "-I{build.gsdk_path}/util/third_party/openthread/third_party/tcplp" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms/utils" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/efr32" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/include" "-I{build.gsdk_path}/platform/peripheral/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/sidewalk" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_rssi" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/plugin/security_manager" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc"
+
+xg24explorerkit_matter_precomp.build.precompiled_libs="{build.variant.path}/gsdk/libbluetooth.a" "{build.variant.path}/gsdk/libnvm3_CM33_gcc.a" "{build.variant.path}/gsdk/libsl_openthread_efr32mg2x_gcc.a" "{build.variant.path}/gsdk/librail_multiprotocol_efr32xg24_gcc_release.a"
+
+xg24explorerkit_matter_precomp.build.board_specific_macros='-DARDUINO_MATTER' '-DNUM_LEDS=2' '-DLED_BUILTIN=PA4' '-DLED_BUILTIN_1=PA7' '-DNUM_BTN=2' '-DBTN_BUILTIN=PB2' '-DBTN_BUILTIN_1=PB3' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_DAC_HW=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+xg24explorerkit_matter_precomp.build.extra_flags={build.board_specific_macros} '-DCHIP_CRYPTO_PLATFORM=1' '-DIS_DEMO_LIGHT=1' '-DNVM3_DEFAULT_MAX_OBJECT_SIZE=4092' '-DNVM3_DEFAULT_NVM_SIZE=40960' '-DSL_STATUS_LED=0' '-D_WANT_REENT_SMALL=1' '-DconfigNUM_THREAD_LOCAL_STORAGE_POINTERS=2' '-DconfigNUM_USER_THREAD_LOCAL_STORAGE_POINTERS=0' '-DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=<lib/address_resolve/AddressResolve_DefaultImpl.h>' '-DCHIP_HAVE_CONFIG_H=1' '-DCURRENT_TIME_NOT_IMPLEMENTED=1' '-DMBEDTLS_USER_CONFIG_FILE=<sli_psa_builtin_config.h>' '-DOPENTHREAD_CONFIG_DETERMINISTIC_ECDSA_ENABLE=0' '-DOPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS=0' '-DSILABS_OTA_ENABLED=1' '-DRTT_USE_ASM=0' '-DENABLE_WSTK_LEDS=1' '-DEFR32MG24B210F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2703A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DRADIO_CONFIG_DMP_SUPPORT=1' '-DOPENTHREAD_CORE_CONFIG_PLATFORM_CHECK_FILE="openthread-core-efr32-config-check.h"' '-DOPENTHREAD_PROJECT_CORE_CONFIG_FILE="openthread-core-efr32-config.h"' '-DOPENTHREAD_CONFIG_FILE="sl_openthread_generic_config.h"' '-DOPENTHREAD_FTD=1' '-DSL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE="sl_openthread_features_config.h"' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=1' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xg24explorerkit_matter_precomp.build.float_flags=
+
+xg24explorerkit_matter_precomp.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+xg24explorerkit_matter_precomp.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-sign-compare -Wno-psabi -mcmse --specs=nano.specs -g
+
+xg24explorerkit_matter_precomp.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -std=gnu++17 -Wall -Wextra -fno-exceptions -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-psabi -fno-strict-aliasing -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-common -Wno-sign-compare --specs=nano.specs -g
+
+xg24explorerkit_matter_precomp.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--wrap=malloc -Wl,--wrap=free -Wl,--wrap=realloc -Wl,--wrap=calloc -Wl,--wrap=MemoryAlloc -Wl,--wrap=_malloc_r -Wl,--wrap=_realloc_r -Wl,--wrap=_free_r -Wl,--wrap=_calloc_r -Wl,--gc-sections
+
+xg24explorerkit_matter_precomp.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys
+
+xg24explorerkit_matter_precomp.build.ldscript={build.variant.path}/gsdk/autogen/linkerfile.ld
+
+
+####################
+# xG27 Dev Kit (BLE)
+# OPN: brd2602a
+####################
+
+xg27devkit.name=xG27 Dev Kit (BLE)
+xg27devkit.upload.tool=simplicitycommander
+xg27devkit.upload.tool.default=simplicitycommander
+xg27devkit.upload.target=xg27devkit
+xg27devkit.upload.maximum_data_size=65536
+xg27devkit.upload.maximum_size=786432
+xg27devkit.upload.protocol=jlink
+xg27devkit.upload.setup_command=
+xg27devkit.upload.use_1200bps_touch=false
+xg27devkit.upload.wait_for_upload_port=false
+xg27devkit.upload.native_usb=false
+xg27devkit.bootloader.tool=simplicitycommander
+xg27devkit.bootloader.tool.default=simplicitycommander
+xg27devkit.bootloader.file=bg27-devkit-bootloader-apploader.hex
+xg27devkit.build.mcu=cortex-m33
+xg27devkit.build.f_cpu=76800000
+xg27devkit.build.board=SILABS_XG27DEVKIT
+xg27devkit.build.core=silabs
+xg27devkit.build.variant=xg27devkit
+xg27devkit.build.variant_system_lib=
+xg27devkit.gsdk_folder=gecko_sdk_4.3.2
+xg27devkit.build.gsdk_path={build.variant.path}/{gsdk_folder}
+xg27devkit.build.precompiled_gsdk=
+
+xg27devkit.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/autogen" "-I{build.variant.path}/config" "-I{build.gsdk_path}/platform/Device/SiliconLabs/EFR32BG27/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_cryptoacc_library/include" "-I{build.gsdk_path}/platform/security/sl_component/sl_cryptoacc_library/src" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/hardware/driver/mx25_flash_shutdown/inc/sl_mx25_flash_shutdown_usart" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg27" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc"
+
+xg27devkit.build.precompiled_libs="{build.gsdk_path}/protocol/bluetooth/lib/EFR32XG27/GCC/libbluetooth.a" "{build.gsdk_path}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_efr32xg27_gcc_release.a"
+
+xg27devkit.build.board_specific_macros='-DNUM_LEDS=1' '-DLED_BUILTIN=PA4' '-DNUM_BTN=1' '-DBTN_BUILTIN=PB3' '-DNUM_HW_SERIAL=2' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+xg27devkit.build.extra_flags={build.board_specific_macros} '-DEFR32BG27C140F768IM40=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2602A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xg27devkit.build.float_flags=
+
+xg27devkit.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+xg27devkit.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg27devkit.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg27devkit.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+xg27devkit.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+xg27devkit.build.ldscript={build.variant.path}/autogen/linkerfile.ld
+
+
+############################################
+# xG27 Dev Kit (BLE) - with precompiled GSDK
+# OPN: brd2602a
+############################################
+
+xg27devkit_precomp.name=xG27 Dev Kit (BLE) (precomp)
+xg27devkit_precomp.upload.tool=simplicitycommander
+xg27devkit_precomp.upload.tool.default=simplicitycommander
+xg27devkit_precomp.upload.target=xg27devkit
+xg27devkit_precomp.upload.maximum_data_size=65536
+xg27devkit_precomp.upload.maximum_size=786432
+xg27devkit_precomp.upload.protocol=jlink
+xg27devkit_precomp.upload.setup_command=
+xg27devkit_precomp.upload.use_1200bps_touch=false
+xg27devkit_precomp.upload.wait_for_upload_port=false
+xg27devkit_precomp.upload.native_usb=false
+xg27devkit_precomp.bootloader.tool=simplicitycommander
+xg27devkit_precomp.bootloader.tool.default=simplicitycommander
+xg27devkit_precomp.bootloader.file=bg27-devkit-bootloader-apploader.hex
+xg27devkit_precomp.build.mcu=cortex-m33
+xg27devkit_precomp.build.f_cpu=76800000
+xg27devkit_precomp.build.board=SILABS_XG27DEVKIT
+xg27devkit_precomp.build.core=silabs
+xg27devkit_precomp.build.variant=xg27devkit_precomp
+xg27devkit_precomp.build.variant_system_lib=
+xg27devkit_precomp.build.gsdk_path=
+xg27devkit_precomp.build.precompiled_gsdk="{build.variant.path}/gsdk/gsdk.a"
+
+xg27devkit_precomp.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/gsdk/include"
+
+xg27devkit_precomp.build.precompiled_libs="{build.variant.path}/gsdk/libbluetooth.a" "{build.variant.path}/gsdk/libnvm3_CM33_gcc.a" "{build.variant.path}/gsdk/librail_efr32xg27_gcc_release.a"
+
+xg27devkit_precomp.build.board_specific_macros='-DNUM_LEDS=1' '-DLED_BUILTIN=PA4' '-DNUM_BTN=1' '-DBTN_BUILTIN=PB3' '-DNUM_HW_SERIAL=2' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+xg27devkit_precomp.build.extra_flags={build.board_specific_macros} '-DEFR32BG27C140F768IM40=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD2602A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xg27devkit_precomp.build.float_flags=
+
+xg27devkit_precomp.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+xg27devkit_precomp.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg27devkit_precomp.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xg27devkit_precomp.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+xg27devkit_precomp.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+xg27devkit_precomp.build.ldscript={build.variant.path}/gsdk/linkerfile.ld
+
+
+###########################
+# BGM220 Explorer Kit (BLE)
+# OPN: brd4314a
+###########################
+
+bgm220explorerkit.name=BGM220 Explorer Kit (BLE)
+bgm220explorerkit.upload.tool=simplicitycommander
+bgm220explorerkit.upload.tool.default=simplicitycommander
+bgm220explorerkit.upload.target=bgm220explorerkit
+bgm220explorerkit.upload.maximum_data_size=32768
+bgm220explorerkit.upload.maximum_size=524288
+bgm220explorerkit.upload.protocol=jlink
+bgm220explorerkit.upload.setup_command=
+bgm220explorerkit.upload.use_1200bps_touch=false
+bgm220explorerkit.upload.wait_for_upload_port=false
+bgm220explorerkit.upload.native_usb=false
+bgm220explorerkit.bootloader.tool=simplicitycommander
+bgm220explorerkit.bootloader.tool.default=simplicitycommander
+bgm220explorerkit.bootloader.file=bgm220-explorer-kit-ble-bootloader-apploader.hex
+bgm220explorerkit.build.mcu=cortex-m33
+bgm220explorerkit.build.f_cpu=78000000
+bgm220explorerkit.build.board=SILABS_BGM220EXPLORERKIT
+bgm220explorerkit.build.core=silabs
+bgm220explorerkit.build.variant=bgm220explorerkit
+bgm220explorerkit.build.variant_system_lib=
+bgm220explorerkit.gsdk_folder=gecko_sdk_4.3.2
+bgm220explorerkit.build.gsdk_path={build.variant.path}/{gsdk_folder}
+bgm220explorerkit.build.precompiled_gsdk=
+
+bgm220explorerkit.build.include_list="-I{build.variant.path}/config" "-I{build.variant.path}/autogen" "-I{build.variant.path}" "-I{build.gsdk_path}/platform/Device/SiliconLabs/BGM22/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_cryptoacc_library/include" "-I{build.gsdk_path}/platform/security/sl_component/sl_cryptoacc_library/src" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/fem_util" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/sidewalk" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg22" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc"
+
+bgm220explorerkit.build.precompiled_libs="{build.gsdk_path}/protocol/bluetooth/lib/EFR32XG22/GCC/libbluetooth.a" "{build.gsdk_path}/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_config_bgm220pc22hna_gcc.a" "{build.gsdk_path}/platform/radio/rail_lib/autogen/librail_release/librail_module_efr32xg22_gcc_release.a"
+
+bgm220explorerkit.build.board_specific_macros='-DNUM_LEDS=1' '-DLED_BUILTIN=PA4' '-DNUM_BTN=1' '-DBTN_BUILTIN=PC7' '-DNUM_HW_SERIAL=1' '-DNUM_HW_SPI=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=256'
+
+bgm220explorerkit.build.extra_flags={build.board_specific_macros} '-DBGM220PC22HNA=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD4314A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+bgm220explorerkit.build.float_flags=
+
+bgm220explorerkit.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+bgm220explorerkit.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+bgm220explorerkit.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+bgm220explorerkit.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+bgm220explorerkit.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+bgm220explorerkit.build.ldscript={build.variant.path}/autogen/linkerfile.ld
+
+
+###################################################
+# BGM220 Explorer Kit (BLE) - with precompiled GSDK
+# OPN: brd4314a
+###################################################
+
+bgm220explorerkit_precomp.name=BGM220 Explorer Kit (BLE) (precomp)
+bgm220explorerkit_precomp.upload.tool=simplicitycommander
+bgm220explorerkit_precomp.upload.tool.default=simplicitycommander
+bgm220explorerkit_precomp.upload.target=bgm220explorerkit
+bgm220explorerkit_precomp.upload.maximum_data_size=32768
+bgm220explorerkit_precomp.upload.maximum_size=524288
+bgm220explorerkit_precomp.upload.protocol=jlink
+bgm220explorerkit_precomp.upload.setup_command=
+bgm220explorerkit_precomp.upload.use_1200bps_touch=false
+bgm220explorerkit_precomp.upload.wait_for_upload_port=false
+bgm220explorerkit_precomp.upload.native_usb=false
+bgm220explorerkit_precomp.bootloader.tool=simplicitycommander
+bgm220explorerkit_precomp.bootloader.tool.default=simplicitycommander
+bgm220explorerkit_precomp.bootloader.file=bgm220-explorer-kit-ble-bootloader-apploader.hex
+bgm220explorerkit_precomp.build.mcu=cortex-m33
+bgm220explorerkit_precomp.build.f_cpu=78000000
+bgm220explorerkit_precomp.build.board=SILABS_BGM220EXPLORERKIT
+bgm220explorerkit_precomp.build.core=silabs
+bgm220explorerkit_precomp.build.variant=bgm220explorerkit_precomp
+bgm220explorerkit_precomp.build.variant_system_lib=
+bgm220explorerkit_precomp.build.gsdk_path=
+bgm220explorerkit_precomp.build.precompiled_gsdk="{build.variant.path}/gsdk/gsdk.a"
+
+bgm220explorerkit_precomp.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/gsdk/include"
+
+bgm220explorerkit_precomp.build.precompiled_libs="{build.variant.path}/gsdk/libbluetooth.a" "{build.variant.path}/gsdk/libnvm3_CM33_gcc.a" "{build.variant.path}/gsdk/librail_config_bgm220pc22hna_gcc.a" "{build.variant.path}/gsdk/librail_module_efr32xg22_gcc_release.a"
+
+bgm220explorerkit_precomp.build.board_specific_macros='-DNUM_LEDS=1' '-DLED_BUILTIN=PA4' '-DNUM_BTN=1' '-DBTN_BUILTIN=PC7' '-DNUM_HW_SERIAL=1' '-DNUM_HW_SPI=1' '-DARDUINO_MAIN_TASK_STACK_SIZE=256'
+
+bgm220explorerkit_precomp.build.extra_flags={build.board_specific_macros} '-DBGM220PC22HNA=1' '-DSL_APP_PROPERTIES=1' '-DBOOTLOADER_APPLOADER=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DSL_BOARD_NAME="BRD4314A"' '-DSL_BOARD_REV="A02"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+bgm220explorerkit_precomp.build.float_flags=
+
+bgm220explorerkit_precomp.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+bgm220explorerkit_precomp.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+bgm220explorerkit_precomp.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+bgm220explorerkit_precomp.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map={build.path}/{build.project_name}.map -Wl,--gc-sections
+
+bgm220explorerkit_precomp.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+bgm220explorerkit_precomp.build.ldscript={build.variant.path}/gsdk/linkerfile.ld

@@ -54,7 +54,7 @@ void loop()
     // Publish the pressure value - you can also use 'matter_flow_sensor = current_flow'
     matter_flow_sensor.set_measured_value_cubic_meters_per_hour(current_flow);
     Serial.printf("Current flow: %.02lf m3/h\n", current_flow);
-    // Increase the humidity value
+    // Increase the flow value
     current_flow += 0.5f;
     if (current_flow > 20.0f) {
       current_flow = 0.0f;

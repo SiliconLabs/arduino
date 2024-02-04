@@ -148,7 +148,7 @@ These examples can be easily modified to work with the other boards just by chan
 
 Here's the [official Arduino guide](https://docs.arduino.cc/tutorials/mkr-wifi-1010/mkr-jlink-setup#installing-the-j-link-gdb-server-software) on using SEGGER J-Link debuggers.
 
-## Limitiations
+## Limitations
 
 The project is under constant development and there are a few things which come with some limitations.
 

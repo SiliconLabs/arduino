@@ -45,16 +45,16 @@ unsigned long pulseIn(uint8_t pin, uint8_t state, unsigned long timeout)
   unsigned long timing_start;
   unsigned long timing_result;
   unsigned long timeout_end = micros() + timeout;
-  // Wait for the pin to change to the opposite of the requested state
-  bool res = wait_for_pin_state(pin, !state, timeout_end);
+  // Wait for the pin to change to the requested state
+  bool res = wait_for_pin_state(pin, state, timeout_end);
   // Start measurment
   timing_start = micros();
   // Return 0 if we timed out
   if (!res) {
     return 0;
   }
-  // Wait for the pin to change to the requested state
-  res = wait_for_pin_state(pin, state, timeout_end);
+    // Wait for the pin to change to the opposite of the requested state
+  res = wait_for_pin_state(pin, !state, timeout_end);
   // Calculate the measurement result
   timing_result = micros() - timing_start;
   // Return 0 if we timed out

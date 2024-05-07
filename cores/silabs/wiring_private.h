@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,7 +31,6 @@ extern "C" {
   #include "em_gpio.h"
 }
 
-GPIO_Port_TypeDef getSilabsPortFromArduinoPin(uint8_t pin);
-uint32_t getSilabsPinFromArduinoPin(uint8_t pin);
+extern bool system_init_finished;
 
 #endif // WIRING_PRIVATE_H

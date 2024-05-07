@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,25 +33,18 @@ using namespace ::chip::app::Clusters;
 
 const EmberAfDeviceType gOccupancySensorDeviceTypes[] = { { DEVICE_TYPE_OCCUPANCY_SENSOR, DEVICE_VERSION_DEFAULT } };
 
-// Descriptor cluster attributes
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrsOccupancy)
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::DeviceTypeList::Id, ARRAY, kDescriptorAttributeArraySize, 0), /* device list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ServerList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* server list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ClientList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* client list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::PartsList::Id, ARRAY, kDescriptorAttributeArraySize, 0),      /* parts list */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
-
-// Humidity sensor cluster attributes
+// Occupancy sensor cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(occupancySensorAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(OccupancySensing::Attributes::Occupancy::Id, INT8U, 1, 0),           /* Measured Value */
+DECLARE_DYNAMIC_ATTRIBUTE(OccupancySensing::Attributes::Occupancy::Id, INT8U, 1, 0),            /* Occupancy */
 DECLARE_DYNAMIC_ATTRIBUTE(OccupancySensing::Attributes::FeatureMap::Id, BITMAP32, 4, 0),        /* FeatureMap */
 DECLARE_DYNAMIC_ATTRIBUTE(OccupancySensing::Attributes::ClusterRevision::Id, INT16U, 2, 0),     /* ClusterRevision */
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 
-// Humidity sensor cluster list
+// Occupancy sensor cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(occupancySensorEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(OccupancySensing::Id, occupancySensorAttrs, nullptr, nullptr),
-DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrsOccupancy, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr)
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 /***************************************************************************//**
@@ -86,12 +79,15 @@ bool MatterOccupancy::begin()
   }
 
   // Create new device
-  DeviceOccupancySensor* sensor = new (std::nothrow)DeviceOccupancySensor("sensor", "");
+  DeviceOccupancySensor* sensor = new (std::nothrow)DeviceOccupancySensor("Occupancy sensor");
   if (sensor == nullptr) {
     return false;
   }
   sensor->SetReachable(true);
-  sensor->SetChangeCallback(&HandleDeviceOccupancySensorStatusChanged);
+  sensor->SetProductName("Occupancy sensor");
+
+  // Set the device instance pointer in the base class
+  this->base_matter_device = sensor;
 
   // Create new endpoint
   EmberAfEndpointType* new_endpoint = (EmberAfEndpointType*)malloc(sizeof(EmberAfEndpointType));

@@ -9,6 +9,8 @@
    This example can be easily made compatible with the other boards just by
    changing the "device" property to a different MCU in 'debug_custom.json'.
    Please consult the 'Debugging' section of the readme on GitHub for further details.
+   In the Arduino IDE select the 'SparkFun Thing Plus Matter (BLE)' variant and 'Simplicity Commander' as the programmer.
+   If you wish to use different variants for debugging you'll need to modify the 'debug_custom.json' file accordingly.
 
    Compatible boards:
    - SparkFun Thing Plus MGM240P
@@ -23,7 +25,7 @@ void setup()
 
 void loop()
 {
-  Serial.println(getCpuTemp());
+  Serial.println(getCPUTemp());
   Serial.println(millis());
   digitalWrite(LED_BUILTIN, HIGH);
   delay(1000);

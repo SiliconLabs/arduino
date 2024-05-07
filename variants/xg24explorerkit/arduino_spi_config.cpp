@@ -50,8 +50,6 @@ SPIDRV_Init_t sl_spidrv_config = {
   .slaveStartMode = SL_SPIDRV_EUSART_MIKROE_SLAVE_START_MODE,
 };
 
-SPIDRV_Handle_t sl_spidrv_handle = sl_spidrv_eusart_mikroe_handle;
-
 SPIDRV_Init_t sl_spidrv_config_spi1 = {
   .port = SL_SPIDRV_EUSART_XG24EXPLORERKIT1_PERIPHERAL,
   .portTx = SL_SPIDRV_EUSART_XG24EXPLORERKIT1_TX_PORT,
@@ -75,8 +73,6 @@ SPIDRV_Init_t sl_spidrv_config_spi1 = {
   .csControl = SL_SPIDRV_EUSART_XG24EXPLORERKIT1_CS_CONTROL,
   .slaveStartMode = SL_SPIDRV_EUSART_XG24EXPLORERKIT1_SLAVE_START_MODE,
 };
-
-SPIDRV_Handle_t sl_spidrv_handle_spi1 = sl_spidrv_eusart_xg24explorerkit1_handle;
 
 uint8_t sl_spi_direct_transfer(void* spi_peripheral, uint8_t data)
 {

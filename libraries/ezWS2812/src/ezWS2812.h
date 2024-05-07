@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -31,25 +31,24 @@
 
 class ezWS2812 {
 public:
-  ezWS2812(uint8_t num_leds)
+  ezWS2812(uint32_t num_leds, SPIClass& SPI_peripheral = SPI) :
+    num_leds(num_leds),
+    SPI_peripheral(SPI_peripheral)
   {
-    this->num_leds = num_leds;
+    ;
   }
 
   void begin()
   {
-    SPI.begin();
-    SPISettings settings;
-    settings._clock = 8000000;
-    SPI.setDataMode(SPI_MODE1);
-    settings._bitOrder = MSBFIRST;
-    SPI.beginTransaction(settings);
+    this->SPI_peripheral.begin();
+    SPISettings settings(8000000, MSBFIRST, SPI_MODE1);
+    this->SPI_peripheral.beginTransaction(settings);
   }
 
   void end()
   {
-    SPI.endTransaction();
-    SPI.end();
+    this->SPI_peripheral.endTransaction();
+    this->SPI_peripheral.end();
   }
 
   void set_pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100)
@@ -97,7 +96,7 @@ public:
 
   void set_all(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100)
   {
-    for (uint8_t i = 0; i < this->num_leds; i++) {
+    for (uint32_t i = 0; i < this->num_leds; i++) {
       this->set_pixel(red, green, blue, brightness);
     }
     this->end_transfer();
@@ -105,20 +104,21 @@ public:
 
   void end_transfer()
   {
-    SPI.transfer(0);
+    this->SPI_peripheral.transfer(0);
     delay(1);
   }
 
 private:
   inline void one()
   {
-    SPI.transfer(0xF8);
+    this->SPI_peripheral.transfer(0xF8);
   }
 
   inline void zero()
   {
-    SPI.transfer(0xC0);
+    this->SPI_peripheral.transfer(0xC0);
   }
 
-  uint8_t num_leds;
+  uint32_t num_leds;
+  SPIClass& SPI_peripheral;
 };

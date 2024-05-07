@@ -9,8 +9,10 @@
    A WS2812 (NeoPixel) strip/ring/device needs to be connected to the board to the SPI SDO.
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
+   - xG24 Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */
@@ -21,6 +23,7 @@
 MatterDimmableLightbulb matter_dimmable_bulb;
 MatterColorLightbulb matter_color_bulb;
 ezWS2812 ledRing(8);
+void update_onboard_led(uint8_t brightness);
 void update_led_ring();
 void handle_dimmable_bulb();
 void handle_color_bulb();
@@ -35,7 +38,7 @@ void setup()
 
   // Set up the on-board LED for the dimmable bulb
   pinMode(LED_BUILTIN, OUTPUT);
-  analogWrite(LED_BUILTIN, 0);
+  update_onboard_led(0);
 
   // Set up the LED ring for the color bulb
   ledRing.begin();
@@ -55,13 +58,17 @@ void setup()
     delay(200);
   }
 
-  if (!Matter.isDeviceConnected()) {
-    Serial.println("Waiting for network connection...");
-  }
-  while (!Matter.isDeviceConnected()) {
+  Serial.println("Waiting for Thread network...");
+  while (!Matter.isDeviceThreadConnected()) {
     delay(200);
   }
-  Serial.println("Device connected");
+  Serial.println("Connected to Thread network");
+
+  Serial.println("Waiting for Matter device discovery...");
+  while (!matter_dimmable_bulb.is_online() || !matter_color_bulb.is_online()) {
+    delay(200);
+  }
+  Serial.println("Matter devices are now online");
 }
 
 void loop()
@@ -78,22 +85,22 @@ void handle_dimmable_bulb()
   // If the current state is ON and the previous was OFF - set the LED to the last brightness value
   if (matter_lightbulb_current_state && !matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    analogWrite(LED_BUILTIN, matter_dimmable_bulb.get_brightness());
+    update_onboard_led(matter_dimmable_bulb.get_brightness());
     Serial.printf("Dimmable bulb ON, brightness: %u%%\n", matter_dimmable_bulb.get_brightness_percent());
   }
 
   // If the current state is OFF and the previous was ON - turn off the LED
   if (!matter_lightbulb_current_state && matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    analogWrite(LED_BUILTIN, 0);
+    update_onboard_led(0);
     Serial.println("Dimmable bulb OFF");
   }
 
   // If the brightness changes update the LED brightness accordingly
-  static uint8_t last_brightness = 0;
+  static uint8_t last_brightness = matter_dimmable_bulb.get_brightness();
   uint8_t curr_brightness = matter_dimmable_bulb.get_brightness();
   if (last_brightness != curr_brightness) {
-    analogWrite(LED_BUILTIN, curr_brightness);
+    update_onboard_led(curr_brightness);
     last_brightness = curr_brightness;
     Serial.printf("Dimmable bulb brightness changed to %u%%\n", matter_dimmable_bulb.get_brightness_percent());
   }
@@ -146,4 +153,14 @@ void update_led_ring()
   ledRing.set_all(r, g, b);
   interrupts();
   Serial.printf("Setting color bulb to > r: %u  g: %u  b: %u\n", r, g, b);
+}
+
+void update_onboard_led(uint8_t brightness)
+{
+  // If our built-in LED is active LOW, we need to invert the brightness value
+  if (LED_BUILTIN_ACTIVE == LOW) {
+    analogWrite(LED_BUILTIN, 255 - brightness);
+  } else {
+    analogWrite(LED_BUILTIN, brightness);
+  }
 }

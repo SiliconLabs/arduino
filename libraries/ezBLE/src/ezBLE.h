@@ -31,7 +31,7 @@
 extern "C" {
   #include "sl_bluetooth.h"
 }
-#include "RingBuffer.h"
+#include "api/RingBuffer.h"
 #include "FreeRTOS.h"
 #include "semphr.h"
 
@@ -142,8 +142,8 @@ private:
   static const uint16_t max_ble_transfer_size = 250u;
   static const size_t data_buffer_size = 512u;
 
-  RingBuffer<data_buffer_size> rx_buf;
-  RingBuffer<data_buffer_size> tx_buf;
+  RingBufferN<data_buffer_size> rx_buf;
+  RingBufferN<data_buffer_size> tx_buf;
 
   SemaphoreHandle_t rx_buf_mutex;
   StaticSemaphore_t rx_buf_mutex_buf;

@@ -15,9 +15,11 @@
     - https://apps.apple.com/us/app/efr-connect-ble-mobile-app/id1030932759
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG27 DevKit
    - xG24 Explorer Kit
+   - xG24 Dev Kit
    - BGM220 Explorer Kit
 
    Author: Tamas Jozsi (Silicon Labs)
@@ -25,7 +27,7 @@
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   Serial.begin(115200);
   Serial.println("Silicon Labs BLE minimal example");
 }
@@ -67,14 +69,14 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event indicates that a new connection was opened
     case sl_bt_evt_connection_opened_id:
       Serial.println("BLE connection opened");
-      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
       break;
 
     // -------------------------------
     // This event indicates that a connection was closed
     case sl_bt_evt_connection_closed_id:
       Serial.println("BLE connection closed");
-      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
       // Restart advertising
       ble_start_advertising();
       Serial.println("BLE advertisement restarted");

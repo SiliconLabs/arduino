@@ -2,18 +2,17 @@
 ###########################
 
 name=Silicon Labs
-version=1.0.0
+version=2.0.0
 
 # Compiler variables
 ####################
 
-runtime.tools.gcc_arm_none_eabi.path={runtime.platform.path}/../../../tools/gcc-arm-none-eabi/12.2.rel1
 compiler.warning_flags=-w
 compiler.warning_flags.none=-w
 compiler.warning_flags.default=
 compiler.warning_flags.more=-Wall
 compiler.warning_flags.all=-Wall -Wextra
-compiler.path={runtime.tools.gcc_arm_none_eabi.path}/bin/
+compiler.path={runtime.tools.gcc-arm-none-eabi-12.2.rel1.path}/bin/
 compiler.c.cmd=arm-none-eabi-gcc
 compiler.c.flags={build.c_flags}
 compiler.c.elf.cmd=arm-none-eabi-gcc
@@ -37,6 +36,7 @@ compiler.define=-DF_CPU={build.f_cpu} -DARDUINO={runtime.ide.version} -DARDUINO_
 compiler.optimization_flags=-Os
 compiler.optimization_flags.release=-Os
 compiler.optimization_flags.debug=-O0
+compiler.mapfile_path="{build.path}/{build.project_name}.map"
 
 build.extra_flags=
 
@@ -59,10 +59,10 @@ compiler.elf2hex.extra_flags=
 ##################
 
 ## Compile c files
-recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} {compiler.optimization_flags} {compiler.define} {compiler.c.extra_flags} {build.extra_flags} {compiler.silabs.flags} {includes} -MMD -MP -MF {object_file}.d  "{source_file}" -o "{object_file}"
+recipe.c.o.pattern="{compiler.path}{compiler.c.cmd}" {compiler.c.flags} {compiler.optimization_flags} {compiler.define} {compiler.c.extra_flags} "-I{build.core.path}/api/deprecated" {build.extra_flags} {compiler.silabs.flags} {includes} -MMD -MP -MF "{object_file}.d"  "{source_file}" -o "{object_file}"
 
 ## Compile c++ files
-recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} {compiler.optimization_flags} {compiler.define} {compiler.cpp.extra_flags} {build.extra_flags} {compiler.silabs.flags} {includes} "{source_file}" -o "{object_file}"
+recipe.cpp.o.pattern="{compiler.path}{compiler.cpp.cmd}" {compiler.cpp.flags} {compiler.optimization_flags} {compiler.define} {compiler.cpp.extra_flags} "-I{build.core.path}/api/deprecated" {build.extra_flags} {compiler.silabs.flags} {includes} "{source_file}" -o "{object_file}"
 
 ## Compile S files
 recipe.S.o.pattern="{compiler.path}{compiler.S.cmd}" {compiler.S.flags} {compiler.optimization_flags} {compiler.define} {compiler.S.extra_flags} {build.extra_flags} {compiler.silabs.flags} {includes} "{source_file}" -o "{object_file}"
@@ -99,37 +99,66 @@ recipe.output.save_file={build.project_name}.{build.variant}.hex
 
 # Debugger configuration
 # ----------------------------------------
-# EXPERIMENTAL feature
+tools.gdb.path={runtime.tools.arm-none-eabi-gcc-12.2.rel1.path}/bin/
+tools.gdb.cmd=arm-none-eabi-gdb
+tools.gdb.cmd.windows=arm-none-eabi-gdb.exe
+
 debug.executable={build.path}/{build.project_name}.elf
 debug.toolchain=gcc
-debug.toolchain.path={runtime.tools.gcc_arm_none_eabi.path}/bin/
-debug.toolchain.prefix=arm-none-eabi-
-debug.server=jlinkgdbserver
-debug.server.jlinkgdbserver.path=
-debug.server.jlinkgdbserver.scripts_dir=
-debug.server.jlinkgdbserver.script=
+debug.toolchain.path={runtime.tools.gcc-arm-none-eabi-12.2.rel1.path}/bin/
+debug.toolchain.prefix=arm-none-eabi
+
+debug.server.openocd.path={runtime.tools.openocd-0.12.0-arduino1-static.path}/bin/openocd
+debug.server.openocd.scripts_dir={runtime.tools.openocd-0.12.0-arduino1-static.path}/share/openocd/scripts/
+
+debug.server.jlink.path=
+debug.server.jlink.scripts_dir=
+debug.server.jlink.script=
 
 
 # Silicon Labs Simplicity Commander (flashing/erasing)
 ######################################################
 
 tools.simplicitycommander.path={runtime.tools.simplicitycommander.path}
-tools.simplicitycommander.cmd.macosx=Commander_osx_1v14p5b1276.app/Contents/MacOS/commander
+tools.simplicitycommander.cmd.macosx=Commander.app/Contents/MacOS/commander
 tools.simplicitycommander.cmd.windows=commander.exe
 tools.simplicitycommander.cmd.linux=commander
 
-tools.simplicitycommander.upload.params.verbose=
+tools.simplicitycommander.upload.params.verbose=-v
 tools.simplicitycommander.upload.params.quiet=
-tools.simplicitycommander.upload.pattern="{path}/{cmd}" {upload.verbose} flash {build.path}/{build.project_name}.elf
+tools.simplicitycommander.upload.pattern="{path}/{cmd}" flash {build.path}/{build.project_name}.hex --identifybyserialport {serial.port} {upload.verbose}
 
-tools.simplicitycommander.program.params.verbose=
+tools.simplicitycommander.program.params.verbose=-v
 tools.simplicitycommander.program.params.quiet=
-tools.simplicitycommander.program.pattern="{path}/{cmd}" {upload.verbose} flash {build.path}/{build.project_name}.elf
+tools.simplicitycommander.program.pattern="{path}/{cmd}" flash {build.path}/{build.project_name}.hex --identifybyserialport {serial.port} {program.verbose}
 
-tools.simplicitycommander.erase.params.verbose=
+tools.simplicitycommander.erase.params.verbose=-v
 tools.simplicitycommander.erase.params.quiet=
-tools.simplicitycommander.erase.pattern=
+tools.simplicitycommander.erase.pattern="{path}/{cmd}" device masserase --identifybyserialport {serial.port} {erase.verbose}
 
-tools.simplicitycommander.bootloader.params.verbose=
+tools.simplicitycommander.bootloader.params.verbose=-v
 tools.simplicitycommander.bootloader.params.quiet=
-tools.simplicitycommander.bootloader.pattern="{path}/{cmd}" {upload.verbose} flash {runtime.platform.path}/bootloaders/{bootloader.file}
+tools.simplicitycommander.bootloader.pattern="{path}/{cmd}" flash {runtime.platform.path}/bootloaders/{bootloader.file} --identifybyserialport {serial.port} {bootloader.verbose}
+
+
+# OpenOCD (flashing/erasing)
+##########################
+
+tools.openocd.path={runtime.tools.openocd-0.12.0-arduino1-static.path}
+tools.openocd.cmd={path}/bin/openocd
+
+tools.openocd.upload.params.verbose=-d2
+tools.openocd.upload.params.quiet=-d0
+tools.openocd.upload.pattern={cmd} {upload.verbose} -s {path}/share/openocd/scripts/ -f interface/cmsis-dap.cfg -f target/efm32s2_g23.cfg -c "init; reset_config srst_nogate; reset halt; program {{build.path}/{build.project_name}.hex}; reset; exit"
+
+tools.openocd.program.params.verbose=-d2
+tools.openocd.program.params.quiet=-d0
+tools.openocd.program.pattern={cmd} {program.verbose} -s {path}/share/openocd/scripts/ -f interface/cmsis-dap.cfg -f target/efm32s2_g23.cfg -c "init; reset_config srst_nogate; reset halt; program {{build.path}/{build.project_name}.hex}; reset; exit"
+
+tools.openocd.erase.params.verbose=-d2
+tools.openocd.erase.params.quiet=-d0
+tools.openocd.erase.pattern={cmd} {erase.verbose} -s {path}/share/openocd/scripts/ -f interface/cmsis-dap.cfg -f target/efm32s2_g23.cfg -c "init; reset_config srst_nogate; reset halt; flash erase_sector 0 1 last; exit"
+
+tools.openocd.bootloader.params.verbose=-d2
+tools.openocd.bootloader.params.quiet=-d0
+tools.openocd.bootloader.pattern={cmd} {bootloader.verbose} -s {path}/share/openocd/scripts/ -f interface/cmsis-dap.cfg -f target/efm32s2_g23.cfg -c "init; reset_config srst_nogate; reset halt; program {{runtime.platform.path}/bootloaders/{bootloader.file}}; reset; exit"

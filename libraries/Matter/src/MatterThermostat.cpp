@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,14 +38,6 @@ constexpr CommandId thermostatIncomingCommands[] = {
   kInvalidCommandId,
 };
 
-// Descriptor cluster attributes
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrsThermostat)
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::DeviceTypeList::Id, ARRAY, kDescriptorAttributeArraySize, 0), /* device list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ServerList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* server list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ClientList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* client list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::PartsList::Id, ARRAY, kDescriptorAttributeArraySize, 0),      /* parts list */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
-
 // Temperature sensor cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(thermostatAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Thermostat::Attributes::LocalTemperature::Id, INT16S, 2, 0),                                /* Local Temperature */
@@ -63,7 +55,8 @@ DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 // Temperature sensor cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(thermostatEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(Thermostat::Id, thermostatAttrs, thermostatIncomingCommands, nullptr),
-DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrsThermostat, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr)
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 /***************************************************************************//**
@@ -98,12 +91,15 @@ bool MatterThermostat::begin()
   }
 
   // Create new device
-  DeviceThermostat* new_thermostat_device = new (std::nothrow)DeviceThermostat("thermostat", "", 20, 20);
+  DeviceThermostat* new_thermostat_device = new (std::nothrow)DeviceThermostat("Thermostat", 20, 20);
   if (new_thermostat_device == nullptr) {
     return false;
   }
   new_thermostat_device->SetReachable(true);
-  new_thermostat_device->SetChangeCallback(&HandleDeviceThermostatStatusChanged);
+  new_thermostat_device->SetProductName("Thermostat");
+
+  // Set the device instance pointer in the base class
+  this->base_matter_device = new_thermostat_device;
 
   // Create new endpoint
   EmberAfEndpointType* new_endpoint = (EmberAfEndpointType*)malloc(sizeof(EmberAfEndpointType));

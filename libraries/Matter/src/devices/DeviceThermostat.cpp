@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,18 +27,16 @@
 #include "DeviceThermostat.h"
 
 DeviceThermostat::DeviceThermostat(const char* device_name,
-                                   std::string location,
                                    int16_t local_temperature,
                                    int16_t heating_setpoint) :
-  Device(device_name, location),
+  Device(device_name),
   local_temperature(local_temperature),
   heating_setpoint(heating_setpoint),
   system_mode(0),
   abs_min_heating_setpoint(700),
   min_heating_setpoint(1600),
   abs_max_heating_setpoint(3200),
-  max_heating_setpoint(3000),
-  device_changed_callback(nullptr)
+  max_heating_setpoint(3000)
 {
   ;
 }
@@ -51,11 +49,11 @@ int16_t DeviceThermostat::GetLocalTemperatureValue()
 void DeviceThermostat::SetLocalTemperatureValue(int16_t local_temp)
 {
   bool changed = this->local_temperature != local_temp;
-  ChipLogProgress(DeviceLayer, "ThermostatDevice[%s]: new local temp='%d'", mName, local_temp);
+  ChipLogProgress(DeviceLayer, "ThermostatDevice[%s]: new local temp='%d'", this->device_name, local_temp);
   this->local_temperature = local_temp;
 
-  if (changed && this->device_changed_callback) {
-    this->device_changed_callback(this, kChanged_LocalTemperatureValue);
+  if (changed) {
+    this->HandleThermostatDeviceStatusChanged(kChanged_LocalTemperatureValue);
   }
 }
 
@@ -75,11 +73,11 @@ void DeviceThermostat::SetHeatingSetpointValue(int16_t heating_setpoint)
     heating_setpoint = this->abs_max_heating_setpoint;
   }
 
-  ChipLogProgress(DeviceLayer, "ThermostatDevice[%s]: new heating setpoint='%d'", mName, heating_setpoint);
+  ChipLogProgress(DeviceLayer, "ThermostatDevice[%s]: new heating setpoint='%d'", this->device_name, heating_setpoint);
   this->heating_setpoint = heating_setpoint;
 
-  if (changed && this->device_changed_callback) {
-    this->device_changed_callback(this, kChanged_HeatingSetpointValue);
+  if (changed) {
+    this->HandleThermostatDeviceStatusChanged(kChanged_HeatingSetpointValue);
   }
 }
 
@@ -91,23 +89,11 @@ uint8_t DeviceThermostat::GetSystemMode()
 void DeviceThermostat::SetSystemMode(uint8_t system_mode)
 {
   bool changed = this->system_mode != system_mode;
-  ChipLogProgress(DeviceLayer, "ThermostatDevice[%s]: new system mode='%u'", mName, system_mode);
+  ChipLogProgress(DeviceLayer, "ThermostatDevice[%s]: new system mode='%u'", this->device_name, system_mode);
   this->system_mode = system_mode;
 
-  if (changed && this->device_changed_callback) {
-    this->device_changed_callback(this, kChanged_SystemModeValue);
-  }
-}
-
-void DeviceThermostat::SetChangeCallback(DeviceCallback_fn device_changed_callback)
-{
-  this->device_changed_callback = device_changed_callback;
-}
-
-void DeviceThermostat::HandleDeviceChange(Device* device, Device::Changed_t change_mask)
-{
-  if (this->device_changed_callback) {
-    this->device_changed_callback(this, (DeviceThermostat::Changed_t) change_mask);
+  if (changed) {
+    this->HandleThermostatDeviceStatusChanged(kChanged_SystemModeValue);
   }
 }
 
@@ -176,4 +162,103 @@ void DeviceThermostat::SetMaxHeatingSetpoint(int16_t max_heating_setpoint)
 int16_t DeviceThermostat::GetMaxHeatingSetpoint()
 {
   return this->max_heating_setpoint;
+}
+
+EmberAfStatus DeviceThermostat::HandleReadEmberAfAttribute(ClusterId clusterId,
+                                                           chip::AttributeId attributeId,
+                                                           uint8_t* buffer,
+                                                           uint16_t maxReadLength)
+{
+  if (!this->reachable) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  using namespace ::chip::app::Clusters::Thermostat::Attributes;
+  ChipLogProgress(DeviceLayer, "HandleReadThermostatAttribute: clusterId=%lu attrId=%ld", clusterId, attributeId);
+
+  if (clusterId == chip::app::Clusters::BridgedDeviceBasicInformation::Id) {
+    return this->HandleReadBridgedDeviceBasicAttribute(clusterId, attributeId, buffer, maxReadLength);
+  }
+
+  if (clusterId != chip::app::Clusters::Thermostat::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if ((attributeId == LocalTemperature::Id) && (maxReadLength == 2)) {
+    int16_t localTemp = this->GetLocalTemperatureValue();
+    memcpy(buffer, &localTemp, sizeof(localTemp));
+  } else if ((attributeId == OccupiedHeatingSetpoint::Id) && (maxReadLength == 2)) {
+    int16_t heatingSetpoint = this->GetHeatingSetpointValue();
+    memcpy(buffer, &heatingSetpoint, sizeof(heatingSetpoint));
+  } else if ((attributeId == SystemMode::Id) && (maxReadLength == 1)) {
+    uint8_t systemMode = this->GetSystemMode();
+    memcpy(buffer, &systemMode, sizeof(systemMode));
+  } else if ((attributeId == ControlSequenceOfOperation::Id) && (maxReadLength == 1)) {
+    uint8_t seq_op = this->GetControlSequenceOfOperation();
+    memcpy(buffer, &seq_op, sizeof(seq_op));
+  } else if ((attributeId == AbsMinHeatSetpointLimit::Id) && (maxReadLength == 2)) {
+    int16_t abs_min_heat_setpoint = this->GetAbsMinHeatingSetpoint();
+    memcpy(buffer, &abs_min_heat_setpoint, sizeof(abs_min_heat_setpoint));
+  } else if ((attributeId == AbsMaxHeatSetpointLimit::Id) && (maxReadLength == 2)) {
+    int16_t abs_max_heat_setpoint = this->GetAbsMaxHeatingSetpoint();
+    memcpy(buffer, &abs_max_heat_setpoint, sizeof(abs_max_heat_setpoint));
+  } else if ((attributeId == MinHeatSetpointLimit::Id) && (maxReadLength == 2)) {
+    int16_t min_heat_setpoint = this->GetMinHeatingSetpoint();
+    memcpy(buffer, &min_heat_setpoint, sizeof(min_heat_setpoint));
+  } else if ((attributeId == MaxHeatSetpointLimit::Id) && (maxReadLength == 2)) {
+    int16_t max_heat_setpoint = this->GetMaxHeatingSetpoint();
+    memcpy(buffer, &max_heat_setpoint, sizeof(max_heat_setpoint));
+  } else if ((attributeId == FeatureMap::Id) && (maxReadLength == 4)) {
+    uint32_t featureMap = this->GetThermostatClusterFeatureMap();
+    memcpy(buffer, &featureMap, sizeof(featureMap));
+  } else if ((attributeId == ClusterRevision::Id) && (maxReadLength == 2)) {
+    uint16_t clusterRevision = this->GetThermostatClusterRevision();
+    memcpy(buffer, &clusterRevision, sizeof(clusterRevision));
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
+}
+
+EmberAfStatus DeviceThermostat::HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                                            chip::AttributeId attributeId,
+                                                            uint8_t* buffer)
+{
+  if (!this->reachable) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  using namespace ::chip::app::Clusters;
+  using namespace ::chip::app::Clusters::Thermostat::Attributes;
+  ChipLogProgress(DeviceLayer, "HandleWriteThermostatAttribute: clusterId=%lu attrId=%ld", clusterId, attributeId);
+
+  if (clusterId != chip::app::Clusters::Thermostat::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if (attributeId == OccupiedHeatingSetpoint::Id) {
+    this->SetHeatingSetpointValue(*((int16_t*)buffer));
+  } else if (attributeId == SystemMode::Id) {
+    this->SetSystemMode(*buffer);
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
+}
+
+void DeviceThermostat::HandleThermostatDeviceStatusChanged(Changed_t itemChangedMask)
+{
+  using namespace ::chip::app::Clusters;
+
+  if (itemChangedMask & kChanged_HeatingSetpointValue) {
+    ScheduleMatterReportingCallback(this->endpoint_id, Thermostat::Id, Thermostat::Attributes::OccupiedHeatingSetpoint::Id);
+  }
+  if (itemChangedMask & kChanged_LocalTemperatureValue) {
+    ScheduleMatterReportingCallback(this->endpoint_id, Thermostat::Id, Thermostat::Attributes::LocalTemperature::Id);
+  }
+  if (itemChangedMask & kChanged_SystemModeValue) {
+    ScheduleMatterReportingCallback(this->endpoint_id, Thermostat::Id, Thermostat::Attributes::SystemMode::Id);
+  }
 }

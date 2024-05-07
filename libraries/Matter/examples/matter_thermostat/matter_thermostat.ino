@@ -8,8 +8,10 @@
    The device has to be commissioned to a Matter hub first.
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
+   - xG24 Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */
@@ -21,7 +23,7 @@ MatterThermostat matter_thermostat;
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   Serial.begin(115200);
   Matter.begin();
   matter_thermostat.begin();
@@ -38,13 +40,17 @@ void setup()
     delay(200);
   }
 
-  if (!Matter.isDeviceConnected()) {
-    Serial.println("Waiting for network connection...");
-  }
-  while (!Matter.isDeviceConnected()) {
+  Serial.println("Waiting for Thread network...");
+  while (!Matter.isDeviceThreadConnected()) {
     delay(200);
   }
-  Serial.println("Device connected");
+  Serial.println("Connected to Thread network");
+
+  Serial.println("Waiting for Matter device discovery...");
+  while (!matter_thermostat.is_online()) {
+    delay(200);
+  }
+  Serial.println("Matter device is now online");
 
   // Set the local temperature to a fixed value
   matter_thermostat.set_local_temperature(21.5f);
@@ -70,11 +76,11 @@ void loop()
   if (mode_prev != mode) {
     if (mode == MatterThermostat::thermostat_mode_t::OFF) {
       Serial.println("Thermostat mode: OFF");
-      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
     }
     if (mode == MatterThermostat::thermostat_mode_t::HEAT) {
       Serial.println("Thermostat mode: HEAT");
-      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
     }
     mode_prev = mode;
   }

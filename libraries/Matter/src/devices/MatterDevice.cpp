@@ -17,154 +17,263 @@
  *    limitations under the License.
  */
 
+/* This file is part of the Silicon Labs Arduino Core */
+
 #include "MatterDevice.h"
 
 #include <cstdio>
 #include <platform/CHIPDeviceLayer.h>
+#include <app-common/zap-generated/callback.h>
 
 using namespace chip::app::Clusters::Actions;
 
-Device::Device(const char * szDeviceName, std::string szLocation)
+Device::Device(const char* device_name) :
+  reachable(false),
+  online(false),
+  identify_in_progress(false),
+  identify_time(0),
+  identify_type(0),
+  location(""),
+  endpoint_id(0)
 {
-  chip::Platform::CopyString(mName, szDeviceName);
-  mLocation   = szLocation;
-  mReachable  = false;
-  mEndpointId = 0;
+  chip::Platform::CopyString(this->device_name, device_name);
+  chip::Platform::CopyString(this->vendor_name, "Silicon Labs");
+  chip::Platform::CopyString(this->product_name, "Matter device");
+  chip::Platform::CopyString(this->serial_number, "0000000042");
 }
 
 bool Device::IsReachable()
 {
-  return mReachable;
+  return this->reachable;
 }
 
-void Device::SetReachable(bool aReachable)
+bool Device::IsOnline()
 {
-  bool changed = (mReachable != aReachable);
+  return this->online;
+}
 
-  mReachable = aReachable;
+void Device::SetOnline(bool online)
+{
+  this->online = online;
+}
 
-  if (aReachable) {
-    ChipLogProgress(DeviceLayer, "Device[%s]: ONLINE", mName);
+void Device::SetReachable(bool reachable)
+{
+  bool changed = (this->reachable != reachable);
+  if (changed) {
+    this->reachable = reachable;
+    if (reachable) {
+      ChipLogProgress(DeviceLayer, "Device[%s]: ONLINE", this->device_name);
+    } else {
+      ChipLogProgress(DeviceLayer, "Device[%s]: OFFLINE", this->device_name);
+    }
+    this->HandleDeviceStatusChanged(kChanged_Reachable);
+  }
+}
+
+void Device::SetName(const char* name)
+{
+  bool changed = (strncmp(this->device_name, name, sizeof(this->device_name)) != 0);
+  if (changed) {
+    ChipLogProgress(DeviceLayer, "Device[%s]: New DeviceName=\"%s\"", this->device_name, name);
+    chip::Platform::CopyString(this->device_name, name);
+    this->HandleDeviceStatusChanged(kChanged_Name);
+  }
+}
+
+void Device::SetVendorName(const char* vendorname)
+{
+  bool changed = (strncmp(this->vendor_name, vendorname, sizeof(this->vendor_name)) != 0);
+  if (changed) {
+    ChipLogProgress(DeviceLayer, "Device[%s]: New VendorName=\"%s\"", this->device_name, vendorname);
+    chip::Platform::CopyString(this->vendor_name, vendorname);
+    this->HandleDeviceStatusChanged(kChanged_VendorName);
+  }
+}
+
+void Device::SetProductName(const char* productname)
+{
+  bool changed = (strncmp(this->product_name, productname, sizeof(this->product_name)) != 0);
+  if (changed) {
+    ChipLogProgress(DeviceLayer, "Device[%s]: New ProductName=\"%s\"", this->device_name, productname);
+    chip::Platform::CopyString(this->product_name, productname);
+    this->HandleDeviceStatusChanged(kChanged_ProductName);
+  }
+}
+
+void Device::SetSerialNumber(const char* serialnumber)
+{
+  bool changed = (strncmp(this->serial_number, serialnumber, sizeof(this->serial_number)) != 0);
+  if (changed) {
+    ChipLogProgress(DeviceLayer, "Device[%s]: New SerialNumber=\"%s\"", this->device_name, serialnumber);
+    chip::Platform::CopyString(this->serial_number, serialnumber);
+    this->HandleDeviceStatusChanged(kChanged_SerialNumber);
+  }
+}
+
+void Device::SetLocation(std::string location)
+{
+  bool changed = (this->location.compare(location) != 0);
+  if (changed) {
+    this->location = location;
+    ChipLogProgress(DeviceLayer, "Device[%s]: New location=\"%s\"", this->device_name, this->location.c_str());
+    this->HandleDeviceStatusChanged(kChanged_Location);
+  }
+}
+
+uint32_t Device::GetBridgedDeviceBasicInformationClusterFeatureMap()
+{
+  return this->bridged_device_basic_information_cluster_feature_map;
+}
+
+uint16_t Device::GetBridgedDeviceBasicInformationClusterRevision()
+{
+  return this->bridged_device_basic_information_cluster_revision;
+}
+
+EmberAfStatus Device::HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                                  chip::AttributeId attributeId,
+                                                  uint8_t* buffer)
+{
+  return EMBER_ZCL_STATUS_FAILURE;
+}
+
+EmberAfStatus Device::HandleReadEmberAfAttribute(ClusterId clusterId,
+                                                 chip::AttributeId attributeId,
+                                                 uint8_t* buffer,
+                                                 uint16_t maxReadLength)
+{
+  return EMBER_ZCL_STATUS_FAILURE;
+}
+
+EmberAfStatus Device::HandleReadBridgedDeviceBasicAttribute(ClusterId clusterId,
+                                                            chip::AttributeId attributeId,
+                                                            uint8_t * buffer,
+                                                            uint16_t maxReadLength)
+{
+  if (!this->reachable) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  using namespace ::chip::app::Clusters::BridgedDeviceBasicInformation::Attributes;
+  ChipLogProgress(DeviceLayer, "HandleReadBridgedDeviceBasicAttribute: clusterId='%lu' attrId=%ld, maxReadLength=%d", clusterId, attributeId, maxReadLength);
+
+  if (clusterId != chip::app::Clusters::BridgedDeviceBasicInformation::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if ((attributeId == Reachable::Id) && (maxReadLength == 1)) {
+    *buffer = this->IsReachable() ? 1 : 0;
+  } else if ((attributeId == NodeLabel::Id) && (maxReadLength == 32)) {
+    MutableByteSpan zclNameSpan(buffer, maxReadLength);
+    MakeZclCharString(zclNameSpan, this->GetName());
+  } else if ((attributeId == VendorName::Id) && (maxReadLength == 32)) {
+    MutableByteSpan zclNameSpan(buffer, maxReadLength);
+    MakeZclCharString(zclNameSpan, this->GetVendorName());
+  } else if ((attributeId == ProductName::Id) && (maxReadLength == 32)) {
+    MutableByteSpan zclNameSpan(buffer, maxReadLength);
+    MakeZclCharString(zclNameSpan, this->GetProductName());
+  } else if ((attributeId == SerialNumber::Id) && (maxReadLength == 32)) {
+    MutableByteSpan zclNameSpan(buffer, maxReadLength);
+    MakeZclCharString(zclNameSpan, this->GetSerialNumber());
+  } else if ((attributeId == ClusterRevision::Id) && (maxReadLength == 2)) {
+    uint16_t rev = this->GetBridgedDeviceBasicInformationClusterRevision();
+    memcpy(buffer, &rev, sizeof(rev));
+  } else if ((attributeId == FeatureMap::Id) && (maxReadLength == 4)) {
+    uint32_t featureMap = this->GetBridgedDeviceBasicInformationClusterFeatureMap();
+    memcpy(buffer, &featureMap, sizeof(featureMap));
   } else {
-    ChipLogProgress(DeviceLayer, "Device[%s]: OFFLINE", mName);
+    return EMBER_ZCL_STATUS_FAILURE;
   }
 
-  if (changed) {
-    HandleDeviceChange(this, kChanged_Reachable);
-  }
+  return EMBER_ZCL_STATUS_SUCCESS;
 }
 
-void Device::SetName(const char * szName)
+void Device::HandleDeviceStatusChanged(Changed_t itemChangedMask)
 {
-  bool changed = (strncmp(mName, szName, sizeof(mName)) != 0);
+  using namespace ::chip::app::Clusters;
 
-  ChipLogProgress(DeviceLayer, "Device[%s]: New Name=\"%s\"", mName, szName);
-
-  chip::Platform::CopyString(mName, szName);
-
-  if (changed) {
-    HandleDeviceChange(this, kChanged_Name);
+  if (itemChangedMask & kChanged_Reachable) {
+    ScheduleMatterReportingCallback(this->endpoint_id, BridgedDeviceBasicInformation::Id, BridgedDeviceBasicInformation::Attributes::Reachable::Id);
   }
-}
-
-void Device::SetLocation(std::string szLocation)
-{
-  bool changed = (mLocation.compare(szLocation) != 0);
-
-  mLocation = szLocation;
-
-  ChipLogProgress(DeviceLayer, "Device[%s]: Location=\"%s\"", mName, mLocation.c_str());
-
-  if (changed) {
-    HandleDeviceChange(this, kChanged_Location);
+  if (itemChangedMask & kChanged_Name) {
+    ScheduleMatterReportingCallback(this->endpoint_id, BridgedDeviceBasicInformation::Id, BridgedDeviceBasicInformation::Attributes::NodeLabel::Id);
+  }
+  if (itemChangedMask & kChanged_VendorName) {
+    ScheduleMatterReportingCallback(this->endpoint_id, BridgedDeviceBasicInformation::Id, BridgedDeviceBasicInformation::Attributes::VendorName::Id);
+  }
+  if (itemChangedMask & kChanged_ProductName) {
+    ScheduleMatterReportingCallback(this->endpoint_id, BridgedDeviceBasicInformation::Id, BridgedDeviceBasicInformation::Attributes::ProductName::Id);
+  }
+  if (itemChangedMask & kChanged_SerialNumber) {
+    ScheduleMatterReportingCallback(this->endpoint_id, BridgedDeviceBasicInformation::Id, BridgedDeviceBasicInformation::Attributes::SerialNumber::Id);
   }
 }
 
-DeviceOnOff::DeviceOnOff(const char * szDeviceName, std::string szLocation) : Device(szDeviceName, szLocation)
+EmberAfStatus Device::HandleReadIdentifyAttribute(ClusterId clusterId,
+                                                  chip::AttributeId attributeId,
+                                                  uint8_t* buffer,
+                                                  uint16_t maxReadLength)
 {
-  mOn = false;
-}
+  using namespace chip::app::Clusters;
 
-bool DeviceOnOff::IsOn()
-{
-  return mOn;
-}
-
-void DeviceOnOff::SetOnOff(bool aOn)
-{
-  bool changed;
-
-  changed = aOn ^ mOn;
-  mOn     = aOn;
-  ChipLogProgress(DeviceLayer, "Device[%s]: %s", mName, aOn ? "ON" : "OFF");
-
-  if ((changed) && (mChanged_CB)) {
-    mChanged_CB(this, kChanged_OnOff);
+  if (clusterId != Identify::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
   }
-}
 
-void DeviceOnOff::Toggle()
-{
-  bool aOn = !IsOn();
-  SetOnOff(aOn);
-}
-
-void DeviceOnOff::SetChangeCallback(DeviceCallback_fn aChanged_CB)
-{
-  mChanged_CB = aChanged_CB;
-}
-
-void DeviceOnOff::HandleDeviceChange(Device * device, Device::Changed_t changeMask)
-{
-  if (mChanged_CB) {
-    mChanged_CB(this, (DeviceOnOff::Changed_t) changeMask);
+  if ((attributeId == Identify::Attributes::IdentifyTime::Id) && (maxReadLength == 2)) {
+    *buffer = this->identify_time;
+  } else if ((attributeId == Identify::Attributes::IdentifyType::Id) && (maxReadLength == 1)) {
+    *buffer = this->identify_type;
+  } else if ((attributeId == Identify::Attributes::FeatureMap::Id) && (maxReadLength == 4)) {
+    uint32_t featureMap = this->identify_cluster_feature_map;
+    memcpy(buffer, &featureMap, sizeof(featureMap));
+  } else if ((attributeId == Identify::Attributes::ClusterRevision::Id) && (maxReadLength == 2)) {
+    uint16_t clusterRevision = this->identify_cluster_revision;
+    memcpy(buffer, &clusterRevision, sizeof(clusterRevision));
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
   }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
 }
 
-void ComposedDevice::HandleDeviceChange(Device * device, Device::Changed_t changeMask)
+EmberAfStatus Device::HandleWriteIdentifyAttribute(ClusterId clusterId,
+                                                   chip::AttributeId attributeId,
+                                                   uint8_t* buffer)
 {
-  if (mChanged_CB) {
-    mChanged_CB(this, (ComposedDevice::Changed_t) changeMask);
+  using namespace chip::app::Clusters;
+
+  if (clusterId != Identify::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
   }
+
+  if (attributeId == Identify::Attributes::IdentifyTime::Id && clusterId == Identify::Id) {
+    this->identify_time = *buffer;
+    app::ConcreteAttributePath attributePath(this->endpoint_id, Identify::Id, Identify::Attributes::IdentifyTime::Id);
+    MatterIdentifyClusterServerAttributeChangedCallback(attributePath);
+  } else if (attributeId == Identify::Attributes::IdentifyType::Id && clusterId == Identify::Id) {
+    this->identify_type = *buffer;
+    app::ConcreteAttributePath attributePath(this->endpoint_id, Identify::Id, Identify::Attributes::IdentifyType::Id);
+    MatterIdentifyClusterServerAttributeChangedCallback(attributePath);
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
 }
 
-EndpointListInfo::EndpointListInfo(uint16_t endpointListId, std::string name, EndpointListTypeEnum type)
+void Device::HandleIdentifyStart()
 {
-  mEndpointListId = endpointListId;
-  mName           = name;
-  mType           = type;
+  this->identify_in_progress = true;
 }
 
-EndpointListInfo::EndpointListInfo(uint16_t endpointListId, std::string name, EndpointListTypeEnum type,
-                                   chip::EndpointId endpointId)
+void Device::HandleIdentifyStop()
 {
-  mEndpointListId = endpointListId;
-  mName           = name;
-  mType           = type;
-  mEndpoints.push_back(endpointId);
+  this->identify_in_progress = false;
 }
 
-void EndpointListInfo::AddEndpointId(chip::EndpointId endpointId)
+bool Device::GetIdentifyInProgress()
 {
-  mEndpoints.push_back(endpointId);
-}
-
-Room::Room(std::string name, uint16_t endpointListId, EndpointListTypeEnum type, bool isVisible)
-{
-  mName           = name;
-  mEndpointListId = endpointListId;
-  mType           = type;
-  mIsVisible      = isVisible;
-}
-
-Action::Action(uint16_t actionId, std::string name, ActionTypeEnum type, uint16_t endpointListId, uint16_t supportedCommands,
-               ActionStateEnum status, bool isVisible)
-{
-  mActionId          = actionId;
-  mName              = name;
-  mType              = type;
-  mEndpointListId    = endpointListId;
-  mSupportedCommands = supportedCommands;
-  mStatus            = status;
-  mIsVisible         = isVisible;
+  return this->identify_in_progress;
 }

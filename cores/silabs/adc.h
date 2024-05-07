@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,10 @@
  * THE SOFTWARE.
  */
 
-#ifndef ADC_H
-#define ADC_H
+#include "Arduino.h"
+
+#ifndef __ARDUINO_ADC_H
+#define __ARDUINO_ADC_H
 
 #include <cmath>
 #include <inttypes.h>
@@ -42,6 +44,7 @@ enum analog_references {
   AR_MAX              // Maximum value
 };
 
+namespace arduino {
 class AdcClass {
 public:
   /***************************************************************************//**
@@ -56,7 +59,7 @@ public:
    *
    * @return the measured ADC sample
    ******************************************************************************/
-  uint16_t get_sample(uint8_t pin);
+  uint16_t get_sample(PinName pin);
 
   /***************************************************************************//**
    * Sets the ADC voltage reference
@@ -72,15 +75,18 @@ private:
    * @param[in] pin The pin number of the ADC input
    * @param[in] reference The selected voltage reference from 'analog_references'
    ******************************************************************************/
-  void init(uint8_t pin, uint8_t reference);
+  void init(PinName pin, uint8_t reference);
 
   bool initialized;
-  uint8_t current_adc_pin;
+  PinName current_adc_pin;
   uint8_t current_adc_reference;
   static const IADC_PosInput_t GPIO_to_ADC_pin_map[64];
 
   SemaphoreHandle_t adc_mutex;
   StaticSemaphore_t adc_mutex_buf;
 };
+} // namespace arduino
 
-#endif // ADC_H
+extern arduino::AdcClass ADC;
+
+#endif // __ARDUINO_ADC_H

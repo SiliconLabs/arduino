@@ -7,8 +7,10 @@
    The device has to be commissioned to a Matter hub first.
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
+   - xG24 Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */
@@ -34,9 +36,9 @@ void setup()
   matter_bulb_1.begin();
 
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   pinMode(LED_BUILTIN_1, OUTPUT);
-  digitalWrite(LED_BUILTIN_1, LOW);
+  digitalWrite(LED_BUILTIN_1, LED_BUILTIN_INACTIVE);
 
   Serial.println("Matter multiple lightbulbs");
 
@@ -50,13 +52,17 @@ void setup()
     delay(200);
   }
 
-  if (!Matter.isDeviceConnected()) {
-    Serial.println("Waiting for network connection...");
-  }
-  while (!Matter.isDeviceConnected()) {
+  Serial.println("Waiting for Thread network...");
+  while (!Matter.isDeviceThreadConnected()) {
     delay(200);
   }
-  Serial.println("Device connected");
+  Serial.println("Connected to Thread network");
+
+  Serial.println("Waiting for Matter device discovery...");
+  while (!matter_bulb_0.is_online() || !matter_bulb_1.is_online()) {
+    delay(200);
+  }
+  Serial.println("Matter devices are now online");
 }
 
 void loop()
@@ -73,14 +79,14 @@ void handle_bulb_0()
   // If the current state is ON and the previous was OFF - turn on the LED
   if (matter_lightbulb_current_state && !matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
     Serial.println("#0 - bulb ON");
   }
 
   // If the current state is OFF and the previous was ON - turn off the LED
   if (!matter_lightbulb_current_state && matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
     Serial.println("#0 - bulb OFF");
   }
 }
@@ -93,14 +99,14 @@ void handle_bulb_1()
   // If the current state is ON and the previous was OFF - turn on the LED
   if (matter_lightbulb_current_state && !matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    digitalWrite(LED_BUILTIN_1, HIGH);
+    digitalWrite(LED_BUILTIN_1, LED_BUILTIN_ACTIVE);
     Serial.println("#1 - bulb ON");
   }
 
   // If the current state is OFF and the previous was ON - turn off the LED
   if (!matter_lightbulb_current_state && matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    digitalWrite(LED_BUILTIN_1, LOW);
+    digitalWrite(LED_BUILTIN_1, LED_BUILTIN_INACTIVE);
     Serial.println("#1 - bulb OFF");
   }
 }

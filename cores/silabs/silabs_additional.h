@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@
 #ifndef SILABS_ADDITIONAL_H
 #define SILABS_ADDITIONAL_H
 
+#include "Arduino.h"
 #include "em_common.h"
-#include "WString.h"
 
 typedef enum {
   CPU_40MHZ,
@@ -45,7 +45,7 @@ typedef enum {
  *
  * @return the MCU die temperature in Celsius
  ******************************************************************************/
-float getCpuTemp();
+float getCPUTemp();
 
 /***************************************************************************//**
  * Issues a system reset
@@ -55,16 +55,16 @@ void systemReset();
 /***************************************************************************//**
  * Returns the unique system ID of the microcontroller
  *
- * @return the MCU's unique ID
+ * @return the device's unique ID
  ******************************************************************************/
-uint64_t getMcuUniqueId();
+uint64_t getDeviceUniqueId();
 
 /***************************************************************************//**
  * Returns the unique system ID of the microcontroller in hexadecimal as a string
  *
- * @return the MCU's unique ID in hex as a string
+ * @return the device's unique ID in hex as a string
  ******************************************************************************/
-String getMcuUniqueIdStr();
+String getDeviceUniqueIdStr();
 
 /***************************************************************************//**
  * Returns a string containing the current Silicon Labs Arduino Core version
@@ -86,5 +86,7 @@ void setCPUClock(cpu_clock_t clock);
  * @return the current CPU clock speed in hertz (Hz)
  ******************************************************************************/
 uint32_t getCPUClock();
+
+void I2C_Deinit(I2C_TypeDef* i2c_peripheral);
 
 #endif // SILABS_ADDITIONAL_H

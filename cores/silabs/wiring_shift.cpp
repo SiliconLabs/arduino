@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include "Arduino.h"
 
-#include "wiring.h"
+uint8_t shiftIn(pin_size_t dataPin, pin_size_t clockPin, BitOrder bitOrder)
+{
+  PinName pin_name_data = pinToPinName(dataPin);
+  PinName pin_name_clock = pinToPinName(clockPin);
+  if (pin_name_data == PIN_NAME_NC || pin_name_clock == PIN_NAME_NC) {
+    return 0;
+  }
+  return shiftIn(pin_name_data, pin_name_clock, bitOrder);
+}
 
-uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder)
+uint8_t shiftIn(PinName dataPin, PinName clockPin, BitOrder bitOrder)
 {
   uint8_t value = 0;
   uint8_t i;
@@ -43,7 +52,17 @@ uint8_t shiftIn(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder)
   return value;
 }
 
-void shiftOut(uint8_t dataPin, uint8_t clockPin, uint8_t bitOrder, uint8_t val)
+void shiftOut(pin_size_t dataPin, pin_size_t clockPin, BitOrder bitOrder, uint8_t val)
+{
+  PinName pin_name_data = pinToPinName(dataPin);
+  PinName pin_name_clock = pinToPinName(clockPin);
+  if (pin_name_data == PIN_NAME_NC || pin_name_clock == PIN_NAME_NC) {
+    return;
+  }
+  shiftOut(pin_name_data, pin_name_clock, bitOrder, val);
+}
+
+void shiftOut(PinName dataPin, PinName clockPin, BitOrder bitOrder, uint8_t val)
 {
   uint8_t i;
 

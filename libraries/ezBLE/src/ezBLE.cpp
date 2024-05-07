@@ -643,7 +643,7 @@ void ezBLEclass::handle_ble_event(sl_bt_msg_t* evt)
       break;
 
     case sl_bt_evt_gatt_characteristic_id:
-      this->ezble_log("GATT charactersitic discovered");
+      this->ezble_log("GATT characteristic discovered");
       this->handle_gatt_characteristic_discovery(evt);
       break;
 

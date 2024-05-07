@@ -16,9 +16,11 @@
     - https://apps.apple.com/us/app/efr-connect-ble-mobile-app/id1030932759
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG27 DevKit
    - xG24 Explorer Kit
+   - xG24 Dev Kit
    - BGM220 Explorer Kit
 
    Author: Tamas Jozsi (Silicon Labs)
@@ -29,17 +31,19 @@ bool btn_state_changed = false;
 uint8_t btn_state = LOW;
 static void btn_state_change_callback();
 static void send_button_state_notification();
+static void set_led_on(bool state);
 
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
+  set_led_on(false);
   Serial.begin(115200);
   Serial.println("Silicon Labs BLE blinky example");
 
   // If the board has a built-in button configure it for usage
   #ifdef BTN_BUILTIN
-  pinMode(BTN_BUILTIN, INPUT);
+  pinMode(BTN_BUILTIN, INPUT_PULLUP);
   attachInterrupt(BTN_BUILTIN, btn_state_change_callback, CHANGE);
   #else // BTN_BUILTIN
   // Avoid warning for unused function on boards without a button
@@ -121,11 +125,11 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
         uint8_t received_data = evt->data.evt_gatt_server_attribute_value.value.data[0];
         // Turn the LED on/off according to the received data
         if (received_data == 0x00) {
-          digitalWrite(LED_BUILTIN, LOW);
+          set_led_on(false);
           Serial.println("LED off");
         } else if (received_data == 0x01) {
+          set_led_on(true);
           Serial.println("LED on");
-          digitalWrite(LED_BUILTIN, HIGH);
         }
       }
       break;
@@ -163,7 +167,8 @@ static void btn_state_change_callback()
 {
   // If the board has a built-in button
   #ifdef BTN_BUILTIN
-  btn_state = digitalRead(BTN_BUILTIN);
+  // The real button state is inverted - most boards have an active low button configuration
+  btn_state = !digitalRead(BTN_BUILTIN);
   btn_state_changed = true;
   #endif // BTN_BUILTIN
 }
@@ -183,6 +188,19 @@ static void send_button_state_notification()
   if (sc == SL_STATUS_OK) {
     Serial.print("Notification sent, button state: ");
     Serial.println(btn_state);
+  }
+}
+
+/**************************************************************************//**
+ * Sets the built-in LED to the desired state accounting for the inverted LED
+ * logic on select boards.
+ *****************************************************************************/
+static void set_led_on(bool state)
+{
+  if (state) {
+    digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
+  } else {
+    digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   }
 }
 

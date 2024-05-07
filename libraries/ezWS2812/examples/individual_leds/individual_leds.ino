@@ -9,7 +9,7 @@
 
 #include <ezWS2812.h>
 
-#define NUMBER_OF_LEDS 8
+#define NUMBER_OF_LEDS 8u
 
 ezWS2812 my_leds(NUMBER_OF_LEDS);
 
@@ -20,10 +20,11 @@ void setup()
 
 void loop()
 {
-  static uint8_t current_led = 0;
+  static uint32_t current_led = 0;
 
   // Go through all the LEDs
-  for (uint8_t i = 0; i < NUMBER_OF_LEDS; i++) {
+  noInterrupts();
+  for (uint32_t i = 0; i < NUMBER_OF_LEDS; i++) {
     // If 'i' is at the current LED - we turn that LED to green
     if (i == current_led) {
       // Parameters are: number_of_leds_to_set, R, G, B, brightness, end_transfer
@@ -35,6 +36,7 @@ void loop()
   }
   // End the transfer
   my_leds.end_transfer();
+  interrupts();
 
   // Move the current LED up by one
   current_led++;

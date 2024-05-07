@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,8 @@
 
 #include "pwm.h"
 
+using namespace arduino;
+
 PwmClass::PwmClass() :
   pwm_mode(pwm_mode_t::DUTY_CYCLE),
   auto_deinit(true),
@@ -40,7 +42,7 @@ PwmClass::PwmClass() :
   };
 
   for (auto& pwm_pin : pwm_pins) {
-    pwm_pin.pin = UINT8_MAX;
+    pwm_pin.pin = PIN_NAME_MAX;
     pwm_pin.inst.timer = TIMER0;
     pwm_pin.inst.channel = 0;
     pwm_pin.inst.port = gpioPortA;
@@ -52,7 +54,7 @@ PwmClass::PwmClass() :
   configASSERT(this->pwm_mutex);
 }
 
-bool PwmClass::init(uint8_t pin, int frequency)
+bool PwmClass::init(PinName pin, int frequency)
 {
   uint8_t pwm_channel_idx = get_next_free_pwm_channel_idx();
   if (pwm_channel_idx == UINT8_MAX) {
@@ -78,9 +80,9 @@ bool PwmClass::init(uint8_t pin, int frequency)
   return true;
 }
 
-void PwmClass::duty_cycle_mode(int pin, int duty_cycle)
+void PwmClass::duty_cycle_mode(PinName pin, int duty_cycle)
 {
-  if (duty_cycle < 0 || duty_cycle > (int)this->duty_cycle_mode_max_value || pin >= PIN_MAX) {
+  if (duty_cycle < 0 || duty_cycle > (int)this->duty_cycle_mode_max_value || pin >= PIN_NAME_MAX) {
     return;
   }
 
@@ -131,10 +133,10 @@ void PwmClass::duty_cycle_mode(int pin, int duty_cycle)
   xSemaphoreGive(this->pwm_mutex);
 }
 
-void PwmClass::frequency_mode(int pin, int frequency)
+void PwmClass::frequency_mode(PinName pin, int frequency)
 {
   // Frequency mode handles only one channel
-  if (pin >= PIN_MAX) {
+  if (pin >= PIN_NAME_MAX) {
     return;
   }
   xSemaphoreTake(this->pwm_mutex, portMAX_DELAY);
@@ -163,7 +165,7 @@ void PwmClass::frequency_mode(int pin, int frequency)
   xSemaphoreGive(this->pwm_mutex);
 }
 
-void PwmClass::stop(uint8_t pin)
+void PwmClass::stop(PinName pin)
 {
   uint8_t pwm_channel_idx = this->get_pwm_channel_idx_for_pin(pin);
   if (pwm_channel_idx == UINT8_MAX) {
@@ -181,7 +183,7 @@ void PwmClass::stop(uint8_t pin)
     #endif // SL_CATALOG_POWER_MANAGER_PRESENT
   }
 
-  this->pwm_pins[pwm_channel_idx].pin = UINT8_MAX;
+  this->pwm_pins[pwm_channel_idx].pin = PIN_NAME_MAX;
 }
 
 void PwmClass::duty_cycle_mode_set_write_resolution(uint8_t resolution)
@@ -201,14 +203,14 @@ void PwmClass::set_auto_deinit(bool auto_deinit)
 uint8_t PwmClass::get_next_free_pwm_channel_idx()
 {
   for (uint8_t i = 0; i < this->max_pwm_channels; i++) {
-    if (this->pwm_pins[i].pin == UINT8_MAX) {
+    if (this->pwm_pins[i].pin == PIN_NAME_MAX) {
       return i;
     }
   }
   return UINT8_MAX;
 }
 
-uint8_t PwmClass::get_pwm_channel_idx_for_pin(uint8_t pin)
+uint8_t PwmClass::get_pwm_channel_idx_for_pin(PinName pin)
 {
   for (uint8_t i = 0; i < this->max_pwm_channels; i++) {
     if (this->pwm_pins[i].pin == pin) {
@@ -222,7 +224,7 @@ uint8_t PwmClass::get_num_of_pwm_channels_in_use()
 {
   uint8_t count = 0u;
   for (auto& pwm_pin : this->pwm_pins) {
-    if (pwm_pin.pin != UINT8_MAX) {
+    if (pwm_pin.pin != PIN_NAME_MAX) {
       count++;
     }
   }
@@ -232,10 +234,10 @@ uint8_t PwmClass::get_num_of_pwm_channels_in_use()
 void PwmClass::deinit_all_pwm_channels()
 {
   for (auto& pwm_pin : this->pwm_pins) {
-    if (pwm_pin.pin != UINT8_MAX) {
+    if (pwm_pin.pin != PIN_NAME_MAX) {
       this->stop(pwm_pin.pin);
     }
   }
 }
 
-PwmClass PWM;
+arduino::PwmClass PWM;

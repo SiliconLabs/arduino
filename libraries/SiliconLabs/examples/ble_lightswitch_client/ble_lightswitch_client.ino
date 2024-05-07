@@ -13,8 +13,11 @@
    Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
 
    Compatible boards:
+   - Arduino Nano Matter
+   - SparkFun Thing Plus MGM240P
    - xG27 DevKit
    - xG24 Explorer Kit
+   - xG24 Dev Kit
    - BGM220 Explorer Kit
 
    Author: Tamas Jozsi (Silicon Labs)
@@ -36,12 +39,17 @@ uint32_t blinky_service_handle = __UINT32_MAX__;
 uint16_t led_control_char_handle = __UINT16_MAX__;
 bool gatt_procedure_in_progress = false;
 
+// If there's no built-in button set a pin where a button is connected
+#ifndef BTN_BUILTIN
+  #define BTN_BUILTIN PA0
+#endif
+
 void setup()
 {
   // Set the built-in LED as output
   pinMode(LED_BUILTIN, OUTPUT);
   // Turn the built-in LED off
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   // Set the built-in button as input
   pinMode(BTN_BUILTIN, INPUT);
   // Start Serial
@@ -137,7 +145,7 @@ void sl_bt_on_event(sl_bt_msg_t * evt)
     // This event is received when a BLE connection has been opened
     case sl_bt_evt_connection_opened_id:
       Serial.println("Connection opened");
-      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
       connection_handle = evt->data.evt_connection_opened.connection;
       // Discover Health Thermometer service on the connected device
       sc = sl_bt_gatt_discover_primary_services_by_uuid(connection_handle,
@@ -151,7 +159,7 @@ void sl_bt_on_event(sl_bt_msg_t * evt)
     // This event is received when a BLE connection has been closed
     case sl_bt_evt_connection_closed_id:
       Serial.println("Connection closed");
-      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
       connection_handle = __UINT8_MAX__;
       // Restart scanning
       sc = sl_bt_scanner_start(sl_bt_scanner_scan_phy_1m,
@@ -239,8 +247,3 @@ static bool find_complete_local_name_in_advertisement(sl_bt_evt_scanner_legacy_a
   }
   return found;
 }
-
-// Refuse to build without a button
-#ifndef BTN_BUILTIN
-#error "This board doesn't have a built-in button, so this example won't work unless you add an external button"
-#endif

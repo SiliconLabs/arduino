@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,13 +24,18 @@
  * THE SOFTWARE.
  */
 
-#include "Arduino.h"
 #include "dac.h"
 
 #ifdef NUM_DAC_HW
 
-DacClass::DacClass(VDAC_TypeDef *vdac_peripheral) :
+#include "arduino_dac_config.h"
+
+using namespace arduino;
+
+DacClass::DacClass(VDAC_TypeDef *vdac_peripheral, PinName ch0_pin, PinName ch1_pin) :
   dac_initialized(false),
+  ch0_pin(ch0_pin),
+  ch1_pin(ch1_pin),
   ch0_initialized(false),
   ch1_initialized(false),
   ch0_value(0),
@@ -127,6 +132,14 @@ void DacClass::init_channel(uint8_t channel_num)
 {
   if (channel_num > 1) {
     return;
+  }
+
+  // Set the DAC output pin's mode to 'gpioModeWiredOr'
+  if (channel_num == 0) {
+    GPIO_PinModeSet(getSilabsPortFromArduinoPin(this->ch0_pin), getSilabsPinFromArduinoPin(this->ch0_pin), gpioModeWiredOr, 0);
+  }
+  if (channel_num == 1) {
+    GPIO_PinModeSet(getSilabsPortFromArduinoPin(this->ch1_pin), getSilabsPinFromArduinoPin(this->ch1_pin), gpioModeWiredOr, 0);
   }
 
   // Use default settings
@@ -227,11 +240,11 @@ void DacClass::set_voltage_reference(dac_voltage_ref_t reference)
 }
 
 #if (NUM_DAC_HW > 0)
-DacClass DAC_0(VDAC0);
+arduino::DacClass DAC_0(VDAC0, SL_DAC0_CH0_PIN, SL_DAC0_CH1_PIN);
 #endif
 
 #if (NUM_DAC_HW > 1)
-DacClass DAC_1(VDAC1);
+arduino::DacClass DAC_1(VDAC1, SL_DAC1_CH0_PIN, SL_DAC1_CH1_PIN);
 #endif
 
 #endif // NUM_DAC_HW

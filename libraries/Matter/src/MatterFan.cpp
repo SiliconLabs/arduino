@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,6 @@ using namespace ::chip::app::Clusters;
 
 const EmberAfDeviceType gFanDeviceTypes[] = { { DEVICE_TYPE_FAN, DEVICE_VERSION_DEFAULT } };
 
-// Descriptor cluster attributes
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrsFanControl)
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::DeviceTypeList::Id, ARRAY, kDescriptorAttributeArraySize, 0),   /* device list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ServerList::Id, ARRAY, kDescriptorAttributeArraySize, 0),       /* server list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ClientList::Id, ARRAY, kDescriptorAttributeArraySize, 0),       /* client list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::PartsList::Id, ARRAY, kDescriptorAttributeArraySize, 0),        /* parts list */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
-
 // Fan control cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(fanControlAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(FanControl::Attributes::FanMode::Id, INT8U, 1, ATTRIBUTE_MASK_WRITABLE),            /* FanMode */
@@ -54,7 +46,8 @@ DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 // Fan control endpoint cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(fanControlEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(FanControl::Id, fanControlAttrs, nullptr, nullptr),
-DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrsFanControl, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr)
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 /***************************************************************************//**
@@ -89,12 +82,15 @@ bool MatterFan::begin()
   }
 
   // Create new device
-  DeviceFan* fan_device = new (std::nothrow)DeviceFan("fan", "");
+  DeviceFan* fan_device = new (std::nothrow)DeviceFan("Fan");
   if (fan_device == nullptr) {
     return false;
   }
   fan_device->SetReachable(true);
-  fan_device->SetChangeCallback(&HandleDeviceFanStatusChanged);
+  fan_device->SetProductName("Fan");
+
+  // Set the device instance pointer in the base class
+  this->base_matter_device = fan_device;
 
   // Create new endpoint
   EmberAfEndpointType* new_endpoint = (EmberAfEndpointType*)malloc(sizeof(EmberAfEndpointType));

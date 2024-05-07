@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,15 +27,13 @@
 #include "DevicePressureSensor.h"
 
 DevicePressureSensor::DevicePressureSensor(const char* device_name,
-                                           std::string location,
                                            int16_t min,
                                            int16_t max,
                                            int16_t measured_value) :
-  Device(device_name, location),
+  Device(device_name),
   min_value(min),
   max_value(max),
-  measured_value(measured_value),
-  device_changed_callback(nullptr)
+  measured_value(measured_value)
 {
   ;
 }
@@ -54,23 +52,11 @@ void DevicePressureSensor::SetMeasuredValue(int16_t measurement)
   }
 
   bool changed = this->measured_value != measurement;
-  ChipLogProgress(DeviceLayer, "PressureSensorDevice[%s]: new measurement='%d'", mName, measurement);
+  ChipLogProgress(DeviceLayer, "PressureSensorDevice[%s]: new measurement='%d'", this->device_name, measurement);
   this->measured_value = measurement;
 
-  if (changed && this->device_changed_callback) {
-    this->device_changed_callback(this, kChanged_MeasurementValue);
-  }
-}
-
-void DevicePressureSensor::SetChangeCallback(DeviceCallback_fn device_changed_callback)
-{
-  this->device_changed_callback = device_changed_callback;
-}
-
-void DevicePressureSensor::HandleDeviceChange(Device* device, Device::Changed_t change_mask)
-{
-  if (this->device_changed_callback) {
-    this->device_changed_callback(this, (DevicePressureSensor::Changed_t) change_mask);
+  if (changed) {
+    this->HandlePressureSensorDeviceStatusChanged(kChanged_MeasurementValue);
   }
 }
 
@@ -82,4 +68,55 @@ uint32_t DevicePressureSensor::GetPressureSensorClusterFeatureMap()
 uint16_t DevicePressureSensor::GetPressureSensorClusterRevision()
 {
   return this->pressure_sensor_cluster_revision;
+}
+
+EmberAfStatus DevicePressureSensor::HandleReadEmberAfAttribute(ClusterId clusterId,
+                                                               chip::AttributeId attributeId,
+                                                               uint8_t* buffer,
+                                                               uint16_t maxReadLength)
+{
+  if (!this->reachable) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  using namespace ::chip::app::Clusters::PressureMeasurement::Attributes;
+  ChipLogProgress(DeviceLayer, "HandleReadPressureMeasurementAttribute: clusterId=%lu attrId=%ld", clusterId, attributeId);
+
+  if (clusterId == chip::app::Clusters::BridgedDeviceBasicInformation::Id) {
+    return this->HandleReadBridgedDeviceBasicAttribute(clusterId, attributeId, buffer, maxReadLength);
+  }
+
+  if (clusterId != chip::app::Clusters::PressureMeasurement::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if ((attributeId == MeasuredValue::Id) && (maxReadLength == 2)) {
+    int16_t measuredValue = this->GetMeasuredValue();
+    memcpy(buffer, &measuredValue, sizeof(measuredValue));
+  } else if ((attributeId == MinMeasuredValue::Id) && (maxReadLength == 2)) {
+    int16_t minValue = this->min_value;
+    memcpy(buffer, &minValue, sizeof(minValue));
+  } else if ((attributeId == MaxMeasuredValue::Id) && (maxReadLength == 2)) {
+    int16_t maxValue = this->max_value;
+    memcpy(buffer, &maxValue, sizeof(maxValue));
+  } else if ((attributeId == FeatureMap::Id) && (maxReadLength == 4)) {
+    uint32_t featureMap = this->GetPressureSensorClusterFeatureMap();
+    memcpy(buffer, &featureMap, sizeof(featureMap));
+  } else if ((attributeId == ClusterRevision::Id) && (maxReadLength == 2)) {
+    uint16_t clusterRevision = this->GetPressureSensorClusterRevision();
+    memcpy(buffer, &clusterRevision, sizeof(clusterRevision));
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
+}
+
+void DevicePressureSensor::HandlePressureSensorDeviceStatusChanged(Changed_t itemChangedMask)
+{
+  using namespace ::chip::app::Clusters;
+
+  if (itemChangedMask & kChanged_MeasurementValue) {
+    ScheduleMatterReportingCallback(this->endpoint_id, PressureMeasurement::Id, PressureMeasurement::Attributes::MeasuredValue::Id);
+  }
 }

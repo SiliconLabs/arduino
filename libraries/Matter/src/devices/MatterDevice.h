@@ -16,9 +16,12 @@
  *    limitations under the License.
  */
 
+/* This file is part of the Silicon Labs Arduino Core */
+
 #pragma once
 
 #include <app/util/attribute-storage.h>
+#include <lib/support/ZclString.h>
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -26,233 +29,138 @@
 #include <functional>
 #include <vector>
 
+using namespace ::chip;
+
+extern void CallMatterReportingCallback(intptr_t closure);
+extern void ScheduleMatterReportingCallback(EndpointId endpointId, ClusterId cluster, AttributeId attribute);
+
 class Device
 {
 public:
-  static const int kDeviceNameSize = 32;
+  static const int DeviceDescStrSize = 32;
 
   enum Changed_t{
-    kChanged_Reachable = 1u << 0,
-    kChanged_Location  = 1u << 1,
-    kChanged_Name      = 1u << 2,
-    kChanged_Last      = kChanged_Name,
+    kChanged_Reachable    = 1u << 0,
+    kChanged_Location     = 1u << 1,
+    kChanged_Name         = 1u << 2,
+    kChanged_VendorName   = 1u << 3,
+    kChanged_ProductName  = 1u << 4,
+    kChanged_SerialNumber = 1u << 5,
+    kChanged_Last         = kChanged_SerialNumber,
   } Changed;
 
-  Device(const char* szDeviceName, std::string szLocation);
+  Device(const char* device_name);
+
   virtual ~Device()
   {
+    ;
   }
 
   bool IsReachable();
-  void SetReachable(bool aReachable);
-  void SetName(const char* szDeviceName);
-  void SetLocation(std::string szLocation);
+  bool IsOnline();
+  void SetOnline(bool online);
+  void SetReachable(bool reachable);
+  void SetName(const char* name);
+  void SetVendorName(const char* vendorname);
+  void SetProductName(const char* productname);
+  void SetSerialNumber(const char* serialnumber);
+  void SetLocation(std::string location);
+
+  virtual EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
+                                                   chip::AttributeId attributeId,
+                                                   uint8_t* buffer,
+                                                   uint16_t maxReadLength);
+
+  virtual EmberAfStatus HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                                    chip::AttributeId attributeId,
+                                                    uint8_t* buffer);
+
+  EmberAfStatus HandleReadBridgedDeviceBasicAttribute(ClusterId clusterId,
+                                                      chip::AttributeId attributeId,
+                                                      uint8_t * buffer,
+                                                      uint16_t maxReadLength);
+
+  EmberAfStatus HandleReadIdentifyAttribute(ClusterId clusterId,
+                                            chip::AttributeId attributeId,
+                                            uint8_t* buffer,
+                                            uint16_t maxReadLength);
+
+  EmberAfStatus HandleWriteIdentifyAttribute(ClusterId clusterId,
+                                             chip::AttributeId attributeId,
+                                             uint8_t* buffer);
+
+  void HandleIdentifyStart();
+  void HandleIdentifyStop();
+  bool GetIdentifyInProgress();
+
+  uint32_t GetBridgedDeviceBasicInformationClusterFeatureMap();
+  uint16_t GetBridgedDeviceBasicInformationClusterRevision();
+
   inline void SetEndpointId(chip::EndpointId id)
   {
-    mEndpointId = id;
-  };
+    this->endpoint_id = id;
+  }
+
   inline chip::EndpointId GetEndpointId()
   {
-    return mEndpointId;
-  };
+    return this->endpoint_id;
+  }
+
   inline void SetParentEndpointId(chip::EndpointId id)
   {
-    mParentEndpointId = id;
-  };
+    this->parent_endpoint_id = id;
+  }
+
   inline chip::EndpointId GetParentEndpointId()
   {
-    return mParentEndpointId;
-  };
+    return this->parent_endpoint_id;
+  }
+
   inline char* GetName()
   {
-    return mName;
-  };
+    return this->device_name;
+  }
+
+  inline char* GetVendorName()
+  {
+    return this->vendor_name;
+  }
+
+  inline char* GetProductName()
+  {
+    return this->product_name;
+  }
+
+  inline char* GetSerialNumber()
+  {
+    return this->serial_number;
+  }
+
   inline std::string GetLocation()
   {
-    return mLocation;
-  };
-  inline std::string GetZone()
-  {
-    return mZone;
-  };
-  inline void SetZone(std::string zone)
-  {
-    mZone = zone;
-  };
-
-private:
-  virtual void HandleDeviceChange(Device* device, Device::Changed_t changeMask) = 0;
+    return this->location;
+  }
 
 protected:
-  bool mReachable;
-  char mName[kDeviceNameSize];
-  std::string mLocation;
-  chip::EndpointId mEndpointId;
-  chip::EndpointId mParentEndpointId;
-  std::string mZone;
-};
+  void HandleDeviceStatusChanged(Changed_t itemChangedMask);
+  bool reachable;
+  bool online;
 
-class DeviceOnOff : public Device
-{
-public:
-  enum Changed_t{
-    kChanged_OnOff = kChanged_Last << 1,
-  } Changed;
+  bool identify_in_progress;
+  uint16_t identify_time;
+  uint8_t identify_type;
 
-  DeviceOnOff(const char* szDeviceName, std::string szLocation);
+  char device_name[DeviceDescStrSize];
+  char vendor_name[DeviceDescStrSize];
+  char product_name[DeviceDescStrSize];
+  char serial_number[DeviceDescStrSize];
+  std::string location;
+  chip::EndpointId endpoint_id;
+  chip::EndpointId parent_endpoint_id;
 
-  bool IsOn();
-  void SetOnOff(bool aOn);
-  void Toggle();
+  static const uint32_t bridged_device_basic_information_cluster_feature_map = 0u;
+  static const uint16_t bridged_device_basic_information_cluster_revision = 2u;
 
-  using DeviceCallback_fn = std::function<void(DeviceOnOff *, DeviceOnOff::Changed_t)>;
-  void SetChangeCallback(DeviceCallback_fn aChanged_CB);
-
-private:
-  void HandleDeviceChange(Device* device, Device::Changed_t changeMask);
-
-private:
-  bool mOn;
-  DeviceCallback_fn mChanged_CB;
-};
-
-class ComposedDevice : public Device
-{
-public:
-  ComposedDevice(const char* szDeviceName, std::string szLocation) : Device(szDeviceName, szLocation)
-  {
-  };
-
-  using DeviceCallback_fn = std::function<void(ComposedDevice *, ComposedDevice::Changed_t)>;
-
-  void SetChangeCallback(DeviceCallback_fn aChanged_CB);
-
-private:
-  void HandleDeviceChange(Device * device, Device::Changed_t changeMask);
-
-private:
-  DeviceCallback_fn mChanged_CB;
-};
-
-class EndpointListInfo
-{
-public:
-  EndpointListInfo(uint16_t endpointListId, std::string name, chip::app::Clusters::Actions::EndpointListTypeEnum type);
-  EndpointListInfo(uint16_t endpointListId, std::string name, chip::app::Clusters::Actions::EndpointListTypeEnum type,
-                   chip::EndpointId endpointId);
-  void AddEndpointId(chip::EndpointId endpointId);
-  inline uint16_t GetEndpointListId()
-  {
-    return mEndpointListId;
-  };
-  std::string GetName()
-  {
-    return mName;
-  };
-  inline chip::app::Clusters::Actions::EndpointListTypeEnum GetType()
-  {
-    return mType;
-  };
-  inline chip::EndpointId * GetEndpointListData()
-  {
-    return mEndpoints.data();
-  };
-  inline size_t GetEndpointListSize()
-  {
-    return mEndpoints.size();
-  };
-
-private:
-  uint16_t mEndpointListId = static_cast<uint16_t>(0);
-  std::string mName;
-  chip::app::Clusters::Actions::EndpointListTypeEnum mType = static_cast<chip::app::Clusters::Actions::EndpointListTypeEnum>(0);
-  std::vector<chip::EndpointId> mEndpoints;
-};
-
-class Room
-{
-public:
-  Room(std::string name, uint16_t endpointListId, chip::app::Clusters::Actions::EndpointListTypeEnum type, bool isVisible);
-  inline void setIsVisible(bool isVisible)
-  {
-    mIsVisible = isVisible;
-  };
-  inline bool getIsVisible()
-  {
-    return mIsVisible;
-  };
-  inline void setName(std::string name)
-  {
-    mName = name;
-  };
-  inline std::string getName()
-  {
-    return mName;
-  };
-  inline chip::app::Clusters::Actions::EndpointListTypeEnum getType()
-  {
-    return mType;
-  };
-  inline uint16_t getEndpointListId()
-  {
-    return mEndpointListId;
-  };
-
-private:
-  bool mIsVisible;
-  std::string mName;
-  uint16_t mEndpointListId;
-  chip::app::Clusters::Actions::EndpointListTypeEnum mType;
-};
-
-class Action
-{
-public:
-  Action(uint16_t actionId, std::string name, chip::app::Clusters::Actions::ActionTypeEnum type, uint16_t endpointListId,
-         uint16_t supportedCommands, chip::app::Clusters::Actions::ActionStateEnum status, bool isVisible);
-  inline void setName(std::string name)
-  {
-    mName = name;
-  };
-  inline std::string getName()
-  {
-    return mName;
-  };
-  inline chip::app::Clusters::Actions::ActionTypeEnum getType()
-  {
-    return mType;
-  };
-  inline chip::app::Clusters::Actions::ActionStateEnum getStatus()
-  {
-    return mStatus;
-  };
-  inline uint16_t getActionId()
-  {
-    return mActionId;
-  };
-  inline uint16_t getEndpointListId()
-  {
-    return mEndpointListId;
-  };
-  inline uint16_t getSupportedCommands()
-  {
-    return mSupportedCommands;
-  };
-  inline void setIsVisible(bool isVisible)
-  {
-    mIsVisible = isVisible;
-  };
-  inline bool getIsVisible()
-  {
-    return mIsVisible;
-  };
-
-private:
-  std::string mName;
-  chip::app::Clusters::Actions::ActionTypeEnum mType;
-  chip::app::Clusters::Actions::ActionStateEnum mStatus;
-  uint16_t mActionId;
-  uint16_t mEndpointListId;
-  uint16_t mSupportedCommands;
-  bool mIsVisible;
+  static const uint32_t identify_cluster_feature_map = 0u;
+  static const uint16_t identify_cluster_revision = 4u;
 };

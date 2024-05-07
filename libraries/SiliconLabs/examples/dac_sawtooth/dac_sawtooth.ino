@@ -7,9 +7,10 @@
    The DAC outputs on the MG24 based boards are PB00 and PB01 for channel 0 and 1.
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
-   - Seeed Studio Wio MG24
+   - xG24 Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */

@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -30,9 +30,10 @@ extern "C" {
   #include "em_emu.h"
   #include "em_cmu.h"
   #include "em_system_generic.h"
+  #include "sl_i2cspm.h"
 }
 
-float getCpuTemp()
+float getCPUTemp()
 {
   return EMU_TemperatureGet();
 }
@@ -45,17 +46,17 @@ void systemReset()
   }
 }
 
-uint64_t getMcuUniqueId()
+uint64_t getDeviceUniqueId()
 {
   return SYSTEM_GetUnique();
 }
 
-String getMcuUniqueIdStr()
+String getDeviceUniqueIdStr()
 {
   char buf[20];
-  uint64_t mcu_unique_id = getMcuUniqueId();
-  uint32_t unique_h = (uint32_t)(mcu_unique_id >> 32);
-  uint32_t unique_l = (uint32_t)(mcu_unique_id);
+  uint64_t unique_id = getDeviceUniqueId();
+  uint32_t unique_h = (uint32_t)(unique_id >> 32);
+  uint32_t unique_l = (uint32_t)(unique_id);
   snprintf(buf, sizeof(buf), "0x%08lx%08lx", unique_h, unique_l);
   return String(buf);
 }
@@ -92,4 +93,47 @@ void setCPUClock(cpu_clock_t clock)
 uint32_t getCPUClock()
 {
   return SystemCoreClockGet();
+}
+
+void I2C_Deinit(I2C_TypeDef* i2c_peripheral) {
+  I2C_Reset(i2c_peripheral);
+
+  // Reset the I2C to GPIO peripheral routing to enable the pins to function as GPIO
+  #if defined(I2C0)
+  if (i2c_peripheral == I2C0) {
+    GPIO->I2CROUTE[0].ROUTEEN = 0;
+    GPIO->I2CROUTE[0].SCLROUTE = 0;
+    GPIO->I2CROUTE[0].SDAROUTE = 0;
+  }
+  #endif
+  #if defined(I2C1)
+  if (i2c_peripheral == I2C1) {
+    GPIO->I2CROUTE[1].ROUTEEN = 0;
+    GPIO->I2CROUTE[1].SCLROUTE = 0;
+    GPIO->I2CROUTE[1].SDAROUTE = 0;
+  }
+  #endif
+  #if defined(I2C2)
+  if (i2c_peripheral == I2C2) {
+    GPIO->I2CROUTE[2].ROUTEEN = 0;
+    GPIO->I2CROUTE[2].SCLROUTE = 0;
+    GPIO->I2CROUTE[2].SDAROUTE = 0;
+  }
+  #endif
+
+  #if defined(I2C0)
+  if (i2c_peripheral == I2C0) {
+    NVIC_DisableIRQ(I2C0_IRQn);
+  }
+  #endif
+  #if defined(I2C1)
+  if (i2c_peripheral == I2C1) {
+    NVIC_DisableIRQ(I2C1_IRQn);
+  }
+  #endif
+  #if defined(I2C2)
+  if (i2c_peripheral == I2C2) {
+    NVIC_DisableIRQ(I2C2_IRQn);
+  }
+  #endif
 }

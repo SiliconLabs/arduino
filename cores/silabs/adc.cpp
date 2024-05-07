@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,8 +24,9 @@
  * THE SOFTWARE.
  */
 
-#include "Arduino.h"
 #include "adc.h"
+
+using namespace arduino;
 
 AdcClass::AdcClass() :
   initialized(false),
@@ -37,7 +38,7 @@ AdcClass::AdcClass() :
   configASSERT(this->adc_mutex);
 }
 
-void AdcClass::init(uint8_t pin, uint8_t reference)
+void AdcClass::init(PinName pin, uint8_t reference)
 {
   // Create ADC init structs with default values
   IADC_Init_t init = IADC_INIT_DEFAULT;
@@ -90,7 +91,8 @@ void AdcClass::init(uint8_t pin, uint8_t reference)
   }
 
   // Assign the input pin
-  input.posInput = GPIO_to_ADC_pin_map[pin];
+  uint32_t pin_index = pin - PIN_NAME_MIN;
+  input.posInput = GPIO_to_ADC_pin_map[pin_index];
 
   // Initialize the ADC
   IADC_initSingle(IADC0, &init_single, &input);
@@ -123,7 +125,7 @@ void AdcClass::init(uint8_t pin, uint8_t reference)
   this->initialized = true;
 }
 
-uint16_t AdcClass::get_sample(uint8_t pin)
+uint16_t AdcClass::get_sample(PinName pin)
 {
   xSemaphoreTake(this->adc_mutex, portMAX_DELAY);
 
@@ -227,4 +229,4 @@ const IADC_PosInput_t AdcClass::GPIO_to_ADC_pin_map[64] = {
   iadcPosInputPortDPin15
 };
 
-AdcClass ADC;
+arduino::AdcClass ADC;

@@ -21,15 +21,23 @@ void setup()
 void loop()
 {
   // Red
+  noInterrupts();
   my_leds.set_all(255, 0, 0);
+  interrupts();
   delay(500);
   // Green
+  noInterrupts();
   my_leds.set_all(0, 255, 0);
+  interrupts();
   delay(500);
   // Blue
+  noInterrupts();
   my_leds.set_all(0, 0, 255);
+  interrupts();
   delay(500);
   // Off
+  noInterrupts();
   my_leds.set_all(0, 0, 0);
+  interrupts();
   delay(500);
 }

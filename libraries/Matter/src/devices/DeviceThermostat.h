@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ public:
     kChanged_SystemModeValue = kChanged_Last << 3,
   } Changed;
 
-  DeviceThermostat(const char* device_name, std::string location, int16_t local_temperature, int16_t heating_setpoint);
-  using DeviceCallback_fn = std::function<void(DeviceThermostat*, DeviceThermostat::Changed_t)>;
+  DeviceThermostat(const char* device_name, int16_t local_temperature, int16_t heating_setpoint);
 
   int16_t GetLocalTemperatureValue();
   void SetLocalTemperatureValue(int16_t local_temp);
@@ -57,13 +56,21 @@ public:
   void SetMaxHeatingSetpoint(int16_t max_heating_setpoint);
   int16_t GetMaxHeatingSetpoint();
 
-  void SetChangeCallback(DeviceCallback_fn device_changed_callback);
   uint8_t GetControlSequenceOfOperation();
   uint32_t GetThermostatClusterFeatureMap();
   uint16_t GetThermostatClusterRevision();
 
+  EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
+                                           chip::AttributeId attributeId,
+                                           uint8_t* buffer,
+                                           uint16_t maxReadLength) override;
+
+  EmberAfStatus HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                            chip::AttributeId attributeId,
+                                            uint8_t* buffer) override;
+
 private:
-  void HandleDeviceChange(Device* device, Device::Changed_t change_mask);
+  void HandleThermostatDeviceStatusChanged(Changed_t itemChangedMask);
 
   int16_t local_temperature;
   int16_t heating_setpoint;
@@ -72,7 +79,6 @@ private:
   int16_t min_heating_setpoint;
   int16_t abs_max_heating_setpoint;
   int16_t max_heating_setpoint;
-  DeviceCallback_fn device_changed_callback;
 
   static const uint8_t thermostat_control_sequence_of_operation = 2u; // Heating only
   static const uint32_t thermostat_cluster_feature_map          = 1u; // Heating capability enabled

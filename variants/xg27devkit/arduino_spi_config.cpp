@@ -50,8 +50,6 @@ SPIDRV_Init_t sl_spidrv_config = {
   .slaveStartMode = SL_SPIDRV_EUSART_EXP_SLAVE_START_MODE,
 };
 
-SPIDRV_Handle_t sl_spidrv_handle = sl_spidrv_eusart_exp_handle;
-
 uint8_t sl_spi_direct_transfer(void* spi_peripheral, uint8_t data)
 {
   return EUSART_Spi_TxRx((EUSART_TypeDef*)spi_peripheral, (uint16_t)data);

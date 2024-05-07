@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,20 +35,22 @@ public:
     kChanged_OccupancyValue = kChanged_Last << 1,
   } Changed;
 
-  DeviceOccupancySensor(const char* device_name, std::string location);
-  using DeviceCallback_fn = std::function<void(DeviceOccupancySensor*, DeviceOccupancySensor::Changed_t)>;
+  DeviceOccupancySensor(const char* device_name);
 
   bool GetOccupancy();
   void SetOccupancy(bool occupied);
-  void SetChangeCallback(DeviceCallback_fn device_changed_callback);
   uint32_t GetOccupancySensorClusterFeatureMap();
   uint16_t GetOccupancySensorClusterRevision();
 
+  EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
+                                           chip::AttributeId attributeId,
+                                           uint8_t* buffer,
+                                           uint16_t maxReadLength) override;
+
 private:
-  void HandleDeviceChange(Device* device, Device::Changed_t change_mask);
+  void HandleOccupancySensorDeviceStatusChanged(Changed_t itemChangedMask);
 
   bool occupancy;
-  DeviceCallback_fn device_changed_callback;
 
   static const uint32_t occupancy_sensor_cluster_feature_map = 0u;   // No additional features enabled
   static const uint16_t occupancy_sensor_cluster_revision    = 3u;

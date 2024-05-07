@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,27 +24,23 @@
  * THE SOFTWARE.
  */
 
-#include "WMath.h"
+#include "Arduino.h"
 
-uint32_t random(uint32_t max)
+void randomSeed(unsigned long seed)
 {
-  uint32_t rand = 0;
+  (void)seed;
+}
+
+long random(long max)
+{
+  long rand = 0;
   (void)psa_generate_random((uint8_t*)&rand, sizeof(rand));
   return rand % max;
 }
 
-uint32_t random(uint32_t min, uint32_t max)
+long random(long min, long max)
 {
   uint32_t rand = 0;
   (void)psa_generate_random((uint8_t*)&rand, sizeof(rand));
   return (rand % (max - min)) + min;
-}
-
-long map(long x, long in_min, long in_max, long out_min, long out_max)
-{
-  const long dividend = out_max - out_min;
-  const long divisor = in_max - in_min;
-  const long delta = x - in_min;
-
-  return (delta * dividend + (divisor / 2)) / divisor + out_min;
 }

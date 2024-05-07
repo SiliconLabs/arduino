@@ -35,8 +35,8 @@ void setup()
 void loop()
 {
   if (ezBLE.connected()) {
-    ezBLE.printf("Hello! CPU ID: %s\n", getMcuUniqueIdStr().c_str());
-    ezBLE.printf("CPU temp: %.02f C\n", getCpuTemp());
+    ezBLE.printf("Hello! CPU ID: %s\n", getDeviceUniqueIdStr().c_str());
+    ezBLE.printf("CPU temp: %.02f C\n", getCPUTemp());
     Serial.println("Sending data");
   } else {
     Serial.println("Couldn't send data, ezBLE not connected");

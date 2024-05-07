@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,19 +28,22 @@
 #define MATTER_H
 
 #ifndef ARDUINO_MATTER
-  #error "Selected board is not Matter compatible - please select a board with Matter compatibility!"
+  #error "Selected board/variant is not Matter compatible - please select the Matter protocol stack if your board supports it!"
 #endif
 
 #include "Arduino.h"
 #include "MatterEndpointHandler.h"
 #include "MatterEndpoint.h"
-#include "WString.h"
 #include <platform/CHIPDeviceLayer.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app/server/OnboardingCodesUtil.h>
 #include <setup_payload/QRCodeSetupPayloadGenerator.h>
+#include <app/clusters/identify-server/identify-server.h>
 
-#define matter_log SILABS_LOG
+extern EmberAfAttributeMetadata bridgedDeviceBasicAttrs[8];
+extern EmberAfAttributeMetadata descriptorAttrs[5];
+extern EmberAfAttributeMetadata identifyAttrs[5];
+extern CommandId identifyIncomingCommands[2];
 
 class ArduinoMatterAppliance {
 public:
@@ -48,6 +51,15 @@ public:
   ~ArduinoMatterAppliance();
   virtual bool begin() = 0;
   virtual void end() = 0;
+  bool get_identify_in_progress();
+  void set_device_name(const char* device_name);
+  void set_vendor_name(const char* vendor_name);
+  void set_product_name(const char* product_name);
+  void set_serial_number(const char* serial_number);
+  bool is_online();
+
+protected:
+  Device* base_matter_device;
 };
 
 class MatterClass {
@@ -56,9 +68,16 @@ public:
   static String getManualPairingCode();
   static String getOnboardingQRCodeUrl();
   static bool isDeviceCommissioned();
-  static bool isDeviceConnected();
+  static bool isDeviceThreadConnected();
 };
 
 extern MatterClass Matter;
+
+void IdentifyStartHandler(::Identify* identify);
+void IdentifyStopHandler(::Identify* identify);
+void TriggerIdentifyEffectHandler(::Identify* identify);
+
+void CallMatterReportingCallback(intptr_t closure);
+void ScheduleMatterReportingCallback(EndpointId endpointId, ClusterId cluster, AttributeId attribute);
 
 #endif // MATTER_H

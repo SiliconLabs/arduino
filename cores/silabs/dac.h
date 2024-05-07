@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@
 
 #include "Arduino.h"
 
-#ifndef DAC_H
-#define DAC_H
+#ifndef __ARDUINO_DAC_H
+#define __ARDUINO_DAC_H
 
 #ifdef NUM_DAC_HW
 
@@ -41,6 +41,7 @@ enum dac_voltage_ref_t {
   DAC_VREF_EXTERNAL_PIN       // External VREF pin (PA00 if available)
 };
 
+namespace arduino {
 class DacClass {
 public:
   /***************************************************************************//**
@@ -49,8 +50,10 @@ public:
    * Note, that each DAC peripheral has 2 independent channels.
    *
    * @param[in] vdac_peripheral The DAC peripheral to be used
+   * @param[in] ch0_pin The output pin for channel 0
+   * @param[in] ch1_pin The output pin for channel 1
    ******************************************************************************/
-  DacClass(VDAC_TypeDef* vdac_peripheral);
+  DacClass(VDAC_TypeDef* vdac_peripheral, PinName ch0_pin, PinName ch1_pin);
 
   /***************************************************************************//**
    * Sets the specified DAC channel's output to the desired value
@@ -116,6 +119,8 @@ private:
   void init_channel(uint8_t channel_num);
 
   bool dac_initialized;
+  PinName ch0_pin;
+  PinName ch1_pin;
   bool ch0_initialized;
   bool ch1_initialized;
   uint32_t ch0_value;
@@ -132,6 +137,15 @@ private:
   static const uint8_t dac_true_bit_resolution = 12u;
   static const uint32_t dac_true_max_value = 4095u;
 };
+} // namespace arduino
+
+#if (NUM_DAC_HW > 0)
+extern arduino::DacClass DAC_0;
+#endif // (NUM_DAC_HW > 0)
+
+#if (NUM_DAC_HW > 1)
+extern arduino::DacClass DAC_1;
+#endif // (NUM_DAC_HW > 1)
 
 #endif // NUM_DAC_HW
-#endif // DAC_H
+#endif // __ARDUINO_DAC_H

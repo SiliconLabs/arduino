@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,10 +27,8 @@
 #ifndef MATTER_SWITCH_H
 #define MATTER_SWITCH_H
 
-// As of now Switch is not yet supported by Google Home (https://developers.home.google.com/matter/supported-devices)
-#warning "The Switch endpoint is not yet supported by all Matter ecosystems, so it's highly experimental and not tested yet. Use at your own risk!"
-
 #include "Matter.h"
+#include "devices/DeviceSwitch.h"
 #include <platform/CHIPDeviceLayer.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/callback.h>

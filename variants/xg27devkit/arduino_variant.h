@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,6 +26,12 @@
 
 #ifndef ARDUINO_VARIANT_H
 #define ARDUINO_VARIANT_H
+
+#include "pinDefinitions.h"
+
+extern PinName gPinNames[];
+
+unsigned int getPinCount();
 
 // Variant specific initialization
 void init_arduino_variant();

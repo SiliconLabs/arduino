@@ -29,12 +29,12 @@ char* ulltoa(unsigned long long val, char* str, int slen, unsigned int radix)
 {
   str += --slen;
   *str = 0;
-  do{
+  do {
     auto mod = val % radix;
     val /= radix;
     *--str = mod + ((mod > 9) ? ('a' - 10) : '0');
   } while (--slen && val);
-  return val? nullptr: str;
+  return val ? nullptr : str;
 }
 
 // lltoa fills str backwards and can return a pointer different from str

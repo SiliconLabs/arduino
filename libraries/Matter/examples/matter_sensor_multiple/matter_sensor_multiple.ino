@@ -3,12 +3,14 @@
 
    The example shows how to create multiple sensor instances with the Arduino Matter API.
 
-   The example creates a Matter temparature and humidity sensor device and publishes data through them.
+   The example creates a Matter temperature and humidity sensor device and publishes data through them.
    The device has to be commissioned to a Matter hub first.
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
+   - xG24 Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */
@@ -38,13 +40,17 @@ void setup()
     delay(200);
   }
 
-  if (!Matter.isDeviceConnected()) {
-    Serial.println("Waiting for network connection...");
-  }
-  while (!Matter.isDeviceConnected()) {
+  Serial.println("Waiting for Thread network...");
+  while (!Matter.isDeviceThreadConnected()) {
     delay(200);
   }
-  Serial.println("Device connected");
+  Serial.println("Connected to Thread network");
+
+  Serial.println("Waiting for Matter device discovery...");
+  while (!matter_temp_sensor.is_online() || !matter_humidity_sensor.is_online()) {
+    delay(200);
+  }
+  Serial.println("Matter devices are now online");
 }
 
 void loop()
@@ -54,7 +60,7 @@ void loop()
   // Wait 10 seconds
   if ((last_action_temp + 10000) < millis()) {
     last_action_temp = millis();
-    float current_cpu_temp = getCpuTemp();
+    float current_cpu_temp = getCPUTemp();
     // Publish the temperature value - you can also use 'matter_temp_sensor = current_cpu_temp'
     matter_temp_sensor.set_measured_value_celsius(current_cpu_temp);
     Serial.printf("Current CPU temperature: %.02f C\n", current_cpu_temp);

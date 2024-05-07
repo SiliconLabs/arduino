@@ -27,6 +27,12 @@
 #ifndef ARDUINO_VARIANT_H
 #define ARDUINO_VARIANT_H
 
+#include "pinDefinitions.h"
+
+extern PinName gPinNames[];
+
+unsigned int getPinCount();
+
 // Variant specific initialization
 void init_arduino_variant();
 

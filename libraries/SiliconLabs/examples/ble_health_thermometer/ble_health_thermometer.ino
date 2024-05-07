@@ -5,10 +5,10 @@
 
    On startup the sketch will start a BLE advertisement with the configured name, then
    it will accept any incoming connection. When a device is connected and enables indications for the
-   health thermometer characheristic, then the device will send it's CPU temperature readings as thermometer data.
+   health thermometer characteristic, then the device will send it's CPU temperature readings as thermometer data.
    With the EFR Connect app you can test this functionality by going to the "Demo" tab and selecting "Health Thermometer".
    Alternatively, you can test this example by flashing an other BLE board with the 'ble_health_thermometer_client' demo
-   and have the two boards exchange the tempearture measurements over BLE.
+   and have the two boards exchange the temperature measurements over BLE.
 
    Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
 
@@ -17,9 +17,11 @@
     - https://apps.apple.com/us/app/efr-connect-ble-mobile-app/id1030932759
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG27 DevKit
    - xG24 Explorer Kit
+   - xG24 Dev Kit
    - BGM220 Explorer Kit
 
    Author: Tamas Jozsi (Silicon Labs)
@@ -37,7 +39,7 @@ bool indication_enabled = false;
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   Serial.begin(115200);
 }
 
@@ -58,7 +60,7 @@ static void handle_temperature_indication()
   }
 
   // Get the current CPU temperature
-  float temperature = getCpuTemp();
+  float temperature = getCPUTemp();
 
   // Convert the temperature to an IEEE 11073 float value
   int32_t millicelsius = (int32_t)(temperature * 1000);
@@ -111,7 +113,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       // Store the connection handle which will be needed for sending indications
       connection_handle = evt->data.evt_connection_opened.connection;
       Serial.println("Connection opened");
-      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
       break;
 
     // This event is received when a BLE connection has been closed
@@ -120,7 +122,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       connection_handle = 0u;
       indication_enabled = false;
       Serial.println("Connection closed");
-      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
       // Restart the advertisement
       ble_start_advertising();
       break;

@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,10 @@
 #ifndef ARDUINO_H
 #define ARDUINO_H
 
+#include "api/ArduinoAPI.h"
+
+using namespace arduino;
+
 #include <cmath>
 #include <algorithm>
 #include "FreeRTOS.h"
@@ -46,37 +50,28 @@ extern "C" {
     #include "sl_system_process_action.h"
   #endif // SL_CATALOG_KERNEL_PRESENT
 
+  #if defined(SL_CATALOG_BLUETOOTH_PRESENT)
+    #include "sl_bluetooth.h"
+  #endif // SL_CATALOG_BLUETOOTH_PRESENT
+
   #include "em_common.h"
   #include "app_assert.h"
-  #include "sl_bluetooth.h"
   #include "em_gpio.h"
   #include "app_log.h"
   #include "psa_crypto_core.h"
   #include "sl_udelay.h"
 }
 
-#ifdef ARDUINO_MATTER
-#include "efr32_utils.h"
-#endif // ARDUINO_MATTER
-
-typedef uint16_t word;
-typedef uint8_t byte;
-typedef bool boolean;
-
-#include "wiring.h"
+#include "pinDefinitions.h"
 #include "wiring_private.h"
 #include "pins_arduino.h"
-#include "binary.h"
-#include "WCharacter.h"
-#include "WMath.h"
 #include "stdlib_noniso.h"
-#include "WString.h"
-#include "HardwareSerial.h"
-#include "Wire.h"
-#include "SPI.h"
+#include "Serial.h"
 #include "adc.h"
 #include "pwm.h"
 #include "silabs_additional.h"
+
+#include "overloads.h"
 
 #ifdef NUM_DAC_HW
 #include "dac.h"
@@ -89,45 +84,23 @@ using std::min;
 using std::max;
 using std::abs;
 
-#define constrain(amt, low, high) ((amt) < (low) ? (low) : ((amt) > (high) ? (high) : (amt)))
-#define radians(deg) ((deg) * DEG_TO_RAD)
-#define degrees(rad) ((rad) * RAD_TO_DEG)
-#define sq(x) ((x) * (x))
-
-#define bit(b) (1UL << (b))
-#define lowByte(w) ((uint8_t) ((w) & 0xff))
-#define highByte(w) ((uint8_t) ((w) >> 8))
-#define bitRead(value, bit) (((value) >> (bit)) & 0x01)
-#define bitSet(value, bit) ((value) |= (1UL << (bit)))
-#define bitClear(value, bit) ((value) &= ~(1UL << (bit)))
-#define bitWrite(value, bit, bitvalue) (bitvalue ? bitSet(value, bit) : bitClear(value, bit))
-
 #define interrupts() __enable_irq()
 #define noInterrupts() __disable_irq()
 
-extern HardwareSerial Serial;
-extern TwoWire Wire;
-extern SPIClass SPI;
-extern AdcClass ADC;
-extern PwmClass PWM;
+/***************************************************************************//**
+ * Sets the DAC voltage reference
+ * Possible values:
+ *  - DAC_VREF_1V25
+ *  - DAC_VREF_2V5,
+ *  - DAC_VREF_AVDD,
+ *  - DAC_VREF_EXTERNAL_PIN
+ *
+ * @param[in] reference The selected reference from 'dac_voltage_references'
+ ******************************************************************************/
+void analogReferenceDAC(uint8_t reference);
 
-#if (NUM_HW_SERIAL > 1)
-extern HardwareSerial Serial1;
-#endif // (NUM_HW_SERIAL > 1)
-
-#if (NUM_HW_SPI > 1)
-extern SPIClass SPI1;
-#endif // (NUM_HW_SPI > 1)
-
-#if (NUM_DAC_HW > 0)
-extern DacClass DAC_0;
-#endif // (NUM_DAC_HW > 0)
-
-#if (NUM_DAC_HW > 1)
-extern DacClass DAC_1;
-#endif // (NUM_DAC_HW > 1)
-
-void setup();
-void loop();
+typedef enum _dac_channel_t dac_channel_t;
+void analogWrite(dac_channel_t dac_channel, int value);
+void analogWriteResolution(int resolution);
 
 #endif // ARDUINO_H

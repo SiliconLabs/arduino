@@ -24,23 +24,64 @@
  * THE SOFTWARE.
  */
 
+#include "Arduino.h"
+
 #include "arduino_variant.h"
+#include "arduino_i2c_config.h"
+#include "arduino_spi_config.h"
+
 extern "C" {
   #include "sl_system_init.h"
+  #include "sl_component_catalog.h"
+  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
+    #include "rail.h"
+  #endif
 }
-#include "HardwareSerial.h"
-#include "Wire.h"
-#include "SPI.h"
-
-extern HardwareSerial Serial;
-extern TwoWire Wire;
-extern SPIClass SPI;
 
 void init_arduino_variant()
 {
   sl_system_init();
+
+  // Disable SWO by default and allow PA3 to be used as a GPIO pin
+  GPIO_DbgSWOEnable(false);
+
+  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
+  // Disable RAIL PTI by default and allow PC4 and PC5 to be used as a GPIO pin
+  RAIL_PtiConfig_t railPtiConfig = {};
+  railPtiConfig.mode = RAIL_PTI_MODE_DISABLED;
+  RAIL_ConfigPti(RAIL_EFR32_HANDLE, &railPtiConfig);
+  RAIL_EnablePti(RAIL_EFR32_HANDLE, false);
+  #endif
+
   // Deinit Serial, Wire and SPI by default - sl_system_init() initializes it
   Serial.end();
-  Wire.end();
-  SPI.end();
+  I2C_Deinit(SL_I2C_PERIPHERAL); // Wire.end()
+  SPIDRV_DeInit(SL_SPIDRV_PERIPHERAL_HANDLE); //SPI.end();
+}
+
+// Variant pin mapping - maps Arduino pin numbers to Silabs ports/pins
+// D0 -> Dmax -> A0 -> Amax -> Other peripherals
+PinName gPinNames[] = {
+  PA0, // D0
+  PC0, // D1 - SPI SDO
+  PC1, // D2 - SPI SDI
+  PC2, // D3 - SPI SCK
+  PC3, // D4 - SPI CS
+  PC6, // D5
+  PB0, // D6
+  PC7, // A0
+  PA4, // A1
+  PD3, // A2 - SDA
+  PD2, // A3 - SCL
+  PB1, // A4 - Tx - 11
+  PB2, // A5 - Rx - 12
+  PB3, // A6
+  PB4, // A7
+  PA4, // LED - 15
+  PC7, // Button - 16
+};
+
+unsigned int getPinCount()
+{
+  return sizeof(gPinNames) / sizeof(gPinNames[0]);
 }

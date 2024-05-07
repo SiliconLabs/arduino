@@ -1,6 +1,9 @@
-{
-    "servertype": "jlink",
-    "device": "MGM240PB32VNA",
-    "interface": "SWD",
-    "serverpath": "JLinkGDBServer"
-}
+[
+    {
+        "configId": "SiliconLabs:silabs:thingplusmatter_ble:programmer=commander",
+        "servertype": "jlink",
+        "device": "MGM240PB32VNA",
+        "interface": "swd",
+        "serverpath": "JLinkGDBServer"
+    }
+]

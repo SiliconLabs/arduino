@@ -7,8 +7,10 @@
    The device has to be commissioned to a Matter hub first.
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
+   - xG24 Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */
@@ -24,7 +26,7 @@ void setup()
   matter_bulb.begin();
 
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
 
   Serial.println("Matter lightbulb");
 
@@ -38,13 +40,17 @@ void setup()
     delay(200);
   }
 
-  if (!Matter.isDeviceConnected()) {
-    Serial.println("Waiting for network connection...");
-  }
-  while (!Matter.isDeviceConnected()) {
+  Serial.println("Waiting for Thread network...");
+  while (!Matter.isDeviceThreadConnected()) {
     delay(200);
   }
-  Serial.println("Device connected");
+  Serial.println("Connected to Thread network");
+
+  Serial.println("Waiting for Matter device discovery...");
+  while (!matter_bulb.is_online()) {
+    delay(200);
+  }
+  Serial.println("Matter device is now online");
 }
 
 void loop()
@@ -55,14 +61,14 @@ void loop()
   // If the current state is ON and the previous was OFF - turn on the LED
   if (matter_lightbulb_current_state && !matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    digitalWrite(LED_BUILTIN, HIGH);
+    digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
     Serial.println("Bulb ON");
   }
 
   // If the current state is OFF and the previous was ON - turn off the LED
   if (!matter_lightbulb_current_state && matter_lightbulb_last_state) {
     matter_lightbulb_last_state = matter_lightbulb_current_state;
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
     Serial.println("Bulb OFF");
   }
 }

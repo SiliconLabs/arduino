@@ -12,13 +12,22 @@ It creates a brand new core zip and hosts it on the local network, so it can be 
 You need to provide the compiler and other tools by hand as of now (just copy them to the host_dir)
 """
 
-core_version = "1.0.0"
+core_version = "2.0.0"
 host_dir = "install_host/"
-core_zip_name = "silabs_arduino_core-"+ core_version + ".zip"
+core_zip_name = "silabs_arduino_core-"+ core_version + ".zst"
 package_json_name = "package_arduinosilabs_index.json"
 
 
 def main():
+    # Package the core
+    package_process = subprocess.Popen(["sh", "package_core.sh", "--skip-zip"])
+    package_process.communicate(timeout=180)
+
+    # Check if we're in the 'package' directory
+    if package_process.returncode == 127:
+        print("Make sure you're running this script directly from the 'package' directory!")
+        quit(-1)
+
     # Create the host directory if it doesn't already exist
     if not (os.path.exists(host_dir) and os.path.isdir(host_dir)):
         os.mkdir(host_dir)
@@ -26,10 +35,6 @@ def main():
     # Remove any old packaged cores
     if os.path.exists(host_dir + core_zip_name):
         os.remove(host_dir + core_zip_name)
-
-    # Package the core
-    package_process = subprocess.Popen(["sh", "package_core.sh"])
-    package_process.communicate(timeout=180)
 
     # Copy the packaged file to the host_dir
     shutil.move("../" + core_zip_name, host_dir)
@@ -56,8 +61,8 @@ def main():
     with open(host_dir + package_json_name, "r") as jsonFile:
         data = json.load(jsonFile)
 
-    data["packages"][0]["platforms"][0]["size"] = core_size
-    data["packages"][0]["platforms"][0]["checksum"] = "SHA-256:" + core_sha256
+    data["packages"][-1]["platforms"][-1]["size"] = core_size
+    data["packages"][-1]["platforms"][-1]["checksum"] = "SHA-256:" + core_sha256
 
     with open(host_dir + package_json_name, "w") as jsonFile:
         json.dump(data, jsonFile)
@@ -76,7 +81,7 @@ def main():
 
     with open(host_dir + package_json_name, 'r') as file:
         data = file.read()
-        data = data.replace("https://github.com/SiliconLabs/arduino/releases/tag/1.0.0", "http://" + ip_str)
+        data = data.replace("!!local-install-url", "http://" + ip_str)
 
     with open(host_dir + package_json_name, 'w') as file:
         file.write(data)

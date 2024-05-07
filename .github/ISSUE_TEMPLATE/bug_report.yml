@@ -1,0 +1,103 @@
+name: Bug report
+description: File a bug report.
+title: "[bug] <title>"
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Make sure you are running the latest version of the *Silabs Arduino Core* and the *Arduino IDE*.
+
+        If you have a feature or enhancement request, please file a *feature request* instead of a bug report.
+  - type: input
+    id: hardware
+    attributes:
+      label: Hardware
+      description:
+      placeholder: eg. Arduino Nano Matter
+    validations:
+      required: true
+  - type: input
+    id: core_version
+    attributes:
+      label: Core version
+      description:
+      placeholder: eg. 2.0.0
+    validations:
+      required: true
+  - type: input
+    id: arduino_ide_version
+    attributes:
+      label: Arduino IDE version
+      description:
+      placeholder: eg. 2.3.0
+    validations:
+      required: true
+  - type: input
+    id: operating_system
+    attributes:
+      label: Operating system
+      description:
+      placeholder: eg. macOS 14.4, Windows 11, Arch Linux
+    validations:
+      required: true
+  - type: dropdown
+    id: radio_stack_variant
+    attributes:
+      label: Radio stack variant
+      description:
+      options:
+        - Matter
+        - BLE
+        - No radio
+      default: 0
+    validations:
+      required: true
+  - type: input
+    id: otbr_type
+    attributes:
+      label: OpenThread Border Router device (if using Matter)
+      description:
+      placeholder: eg. Google Nest Hub Gen 2, Apple HomePod Mini, ...
+    validations:
+      required: false
+  - type: textarea
+    id: issue_description
+    attributes:
+      label: Issue description
+      description:
+      placeholder: Tell us what you see!
+      value: "Detailed description of the issue"
+    validations:
+      required: true
+  - type: textarea
+    id: serial_output
+    attributes:
+      label: Serial output
+      description:
+      placeholder:
+      value:
+    validations:
+      required: false
+  - type: textarea
+    id: rtt_output
+    attributes:
+      label: RTT output (if using Matter)
+      description:
+      placeholder:
+      value:
+    validations:
+      required: false
+  - type: textarea
+    id: minimal_reproducer_code
+    attributes:
+      label: Minimal reproducer code
+      description:
+      placeholder:
+      value:
+    validations:
+      required: false
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!

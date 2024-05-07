@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -81,17 +81,13 @@ constexpr CommandId colorControlIncomingCommands[] = {
   kInvalidCommandId,
 };
 
-// Descriptor cluster attributes
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::DeviceTypeList::Id, ARRAY, kDescriptorAttributeArraySize, 0), /* device list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ServerList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* server list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ClientList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* client list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::PartsList::Id, ARRAY, kDescriptorAttributeArraySize, 0),      /* parts list */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
-
 // On/Off cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),              /* on/off */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),              /* OnOff */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::GlobalSceneControl::Id, BOOLEAN, 1, 0), /* GlobalSceneControl */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnTime::Id, INT16U, 2, 0),              /* OnTime */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OffWaitTime::Id, INT16U, 2, 0),         /* OffWaitTime */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::StartUpOnOff::Id, INT8U, 1, 0),         /* StartUpOnOff */
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),        /* FeatureMap */
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::ClusterRevision::Id, INT16U, 2, 0),     /* ClusterRevision */
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
@@ -125,6 +121,8 @@ DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(SimpleLightbulbEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(OnOff::Id, onOffAttrs, onOffIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr)
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 // Dimmable Lightbulb endpoint cluster list
@@ -132,6 +130,8 @@ DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(DimmableLightbulbEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(OnOff::Id, onOffAttrs, onOffIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(LevelControl::Id, levelControlAttrs, levelControlIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr)
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 // Color Lightbulb endpoint cluster list
@@ -140,6 +140,8 @@ DECLARE_DYNAMIC_CLUSTER(OnOff::Id, onOffAttrs, onOffIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(LevelControl::Id, levelControlAttrs, levelControlIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(ColorControl::Id, colorControlAttrs, colorControlIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr)
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 //##################################################################################################
@@ -153,6 +155,7 @@ MatterLightbulb::MatterLightbulb() :
   lightbulb_device(nullptr),
   device_endpoint(nullptr),
   endpoint_dataversion_storage(nullptr),
+  identify_server(nullptr),
   initialized(false)
 {
   ;
@@ -190,12 +193,28 @@ bool MatterLightbulb::begin_internal(bulb_types_e bulb_type, EmberAfCluster* end
   }
 
   // Create new device
-  DeviceLightbulb* new_lightbulb_device = new (std::nothrow)DeviceLightbulb("lightbulb", "");
+  DeviceLightbulb* new_lightbulb_device = new (std::nothrow)DeviceLightbulb("Matter bulb");
   if (new_lightbulb_device == nullptr) {
     return false;
   }
   new_lightbulb_device->SetReachable(true);
-  new_lightbulb_device->SetChangeCallback(&HandleDeviceLightbulbStatusChanged);
+
+  // Set the device instance pointer in the base class
+  this->base_matter_device = new_lightbulb_device;
+
+  switch (bulb_type) {
+    case lightbulb_simple:
+      new_lightbulb_device->SetProductName("On/off lightbulb");
+      break;
+
+    case lightbulb_dimmable:
+      new_lightbulb_device->SetProductName("Dimmable lightbulb");
+      break;
+
+    case lightbulb_color:
+      new_lightbulb_device->SetProductName("Color lightbulb");
+      break;
+  }
 
   // Create new endpoint
   EmberAfEndpointType* new_endpoint = (EmberAfEndpointType*)malloc(sizeof(EmberAfEndpointType));
@@ -237,16 +256,36 @@ bool MatterLightbulb::begin_internal(bulb_types_e bulb_type, EmberAfCluster* end
     return false;
   }
 
+  // Create a new Identify cluster server
+  ::Identify* identify_server = new (std::nothrow)::Identify(new_lightbulb_device->GetEndpointId(),
+                                                             IdentifyStartHandler,
+                                                             IdentifyStopHandler,
+                                                             Identify::IdentifyTypeEnum::kLightOutput,
+                                                             TriggerIdentifyEffectHandler);
+  if (identify_server == nullptr) {
+    (void)RemoveDeviceEndpoint(new_lightbulb_device);
+    delete(new_lightbulb_device);
+    free(new_endpoint);
+    free(new_bulb_data_version);
+    return false;
+  }
+
+  // Start the Identify cluster server
+  emberAfIdentifyClusterServerInitCallback(new_lightbulb_device->GetEndpointId());
+
   if (bulb_type == lightbulb_dimmable || bulb_type == lightbulb_color) {
     // Call the LevelControl init callback one more time to have the min/max values set.
     // It's called first when adding the cluster/endpoint, but the min/max is not initialized at that point.
     // Without this the min/max is at 0 and every level change results in the bulb being turned off.
     emberAfLevelControlClusterServerInitCallback(new_lightbulb_device->GetEndpointId());
+    // Set the device back to offline as the LevelControlClusterServer init inadvertently sets it to online
+    new_lightbulb_device->SetOnline(false);
   }
 
   this->lightbulb_device = new_lightbulb_device;
   this->device_endpoint = new_endpoint;
   this->endpoint_dataversion_storage = new_bulb_data_version;
+  this->identify_server = identify_server;
   this->initialized = true;
   return true;
 }
@@ -263,6 +302,7 @@ void MatterLightbulb::end()
   free(this->device_endpoint);
   free(this->endpoint_dataversion_storage);
   delete(this->lightbulb_device);
+  delete(this->identify_server);
   this->initialized = false;
 }
 
@@ -292,6 +332,19 @@ bool MatterLightbulb::get_onoff()
     return false;
   }
   return this->lightbulb_device->IsOn();
+}
+
+/***************************************************************************//**
+ * Toggle the lightbulb's current on/off state
+ ******************************************************************************/
+void MatterLightbulb::toggle()
+{
+  if (!this->initialized) {
+    return;
+  }
+  PlatformMgr().LockChipStack();
+  this->lightbulb_device->Toggle();
+  PlatformMgr().UnlockChipStack();
 }
 
 /***************************************************************************//**
@@ -348,7 +401,7 @@ bool MatterDimmableLightbulb::begin()
 
 /***************************************************************************//**
  * Provides the lightbulb's current brightness value
- * The provided brightness value is in the range of 0-255.
+ * The provided brightness value is in the range of 0-254.
  *
  * @return the lightbulb's current brightness value
  ******************************************************************************/
@@ -363,7 +416,7 @@ uint8_t MatterDimmableLightbulb::get_brightness()
 /***************************************************************************//**
  * Sets the lightbulb's brightness value
  *
- * @param[in] brightness the requested brightness in the range of 0-255
+ * @param[in] brightness the requested brightness in the range of 0-254
  ******************************************************************************/
 void MatterDimmableLightbulb::set_brightness(uint8_t brightness)
 {
@@ -374,14 +427,19 @@ void MatterDimmableLightbulb::set_brightness(uint8_t brightness)
 }
 
 /***************************************************************************//**
- * Provides the lighbulb's current brightness in percents
+ * Provides the lightbulb's current brightness in percents
  * The provided value's range is 0-100.
  *
  * @return the lightbulb's current brightness percentage
  ******************************************************************************/
 uint8_t MatterDimmableLightbulb::get_brightness_percent()
 {
-  return map(this->get_brightness(), 0, 255, 0, 100);
+  if (!this->initialized) {
+    return 0;
+  }
+  uint8_t dev_max_brightness = this->lightbulb_device->GetLevelControlMaxLevel();
+  float brightness_percent = (float)this->get_brightness() * 100.0f / (float)dev_max_brightness;
+  return (uint8_t)(std::round(brightness_percent - 0.1f));
 }
 
 /***************************************************************************//**
@@ -392,11 +450,12 @@ uint8_t MatterDimmableLightbulb::get_brightness_percent()
  ******************************************************************************/
 void MatterDimmableLightbulb::set_brightness_percent(uint8_t brightness)
 {
-  if (brightness > 100) {
+  if (!this->initialized || brightness > 100) {
     return;
   }
-  uint8_t brightness_full_scale = map(brightness, 0, 100, 0, 255);
-  this->set_brightness(brightness_full_scale);
+  uint8_t dev_max_brightness = this->lightbulb_device->GetLevelControlMaxLevel();
+  float brightness_full_scale = (float)brightness * (float)dev_max_brightness / 100.0f;
+  this->set_brightness((uint8_t)(ceil(brightness_full_scale)));
 }
 
 /***************************************************************************//**

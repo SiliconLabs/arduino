@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,12 +25,76 @@
  */
 
 #include "Matter.h"
+#include <SilabsDeviceDataProvider.h>
 
 using namespace chip;
+using namespace chip::app;
 using namespace ::chip::DeviceLayer;
 using namespace ::chip::app::Clusters;
+using namespace ::chip::DeviceLayer::Silabs;
 
-ArduinoMatterAppliance::ArduinoMatterAppliance()
+// Current ZCL implementation of struct uses a max size array of 254 bytes
+const uint16_t kDescriptorAttributeArraySize = 254u;
+
+// Descriptor cluster attributes
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrs)
+DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::DeviceTypeList::Id, ARRAY, kDescriptorAttributeArraySize, 0), /* DeviceTypeList */
+DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ServerList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* ServerList */
+DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ClientList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* ClientList */
+DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::PartsList::Id, ARRAY, kDescriptorAttributeArraySize, 0),      /* PartsList */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+
+// BridgedDeviceBasicInformation cluster attributes
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(bridgedDeviceBasicAttrs)
+DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::NodeLabel::Id, CHAR_STRING, Device::DeviceDescStrSize, 0),    /* NodeLabel */
+DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::VendorName::Id, CHAR_STRING, Device::DeviceDescStrSize, 0),   /* VendorName */
+DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::ProductName::Id, CHAR_STRING, Device::DeviceDescStrSize, 0),  /* ProductName */
+DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::SerialNumber::Id, CHAR_STRING, Device::DeviceDescStrSize, 0), /* SerialNumber */
+DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::Reachable::Id, BOOLEAN, 1, 0),                                /* Reachable */
+DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                              /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::ClusterRevision::Id, INT16U, 2, 0),                           /* ClusterRevision */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+
+// Identify cluster attributes
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(identifyAttrs)
+DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::IdentifyTime::Id, INT16U, 2, 0),      /* IdentifyTime */
+DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::IdentifyType::Id, INT8U, 1, 0),       /* IdentifyType */
+DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::FeatureMap::Id, BITMAP32, 4, 0),      /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::ClusterRevision::Id, INT16U, 2, 0),   /* ClusterRevision */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+
+CommandId identifyIncomingCommands[] = {
+  app::Clusters::Identify::Commands::Identify::Id,
+  kInvalidCommandId,
+};
+
+void IdentifyStartHandler(::Identify* identify)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(identify->mEndpoint);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev) {
+    return;
+  }
+  dev->HandleIdentifyStart();
+}
+
+void IdentifyStopHandler(::Identify* identify)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(identify->mEndpoint);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev) {
+    return;
+  }
+  dev->HandleIdentifyStop();
+}
+
+void TriggerIdentifyEffectHandler(::Identify* identify)
+{
+  ;
+}
+
+ArduinoMatterAppliance::ArduinoMatterAppliance() :
+  base_matter_device(nullptr)
 {
   ;
 }
@@ -40,6 +104,50 @@ ArduinoMatterAppliance::~ArduinoMatterAppliance()
   ;
 }
 
+bool ArduinoMatterAppliance::get_identify_in_progress()
+{
+  if (this->base_matter_device) {
+    return this->base_matter_device->GetIdentifyInProgress();
+  }
+  return false;
+}
+
+void ArduinoMatterAppliance::set_device_name(const char* device_name)
+{
+  if (this->base_matter_device && device_name) {
+    base_matter_device->SetName(device_name);
+  }
+}
+
+void ArduinoMatterAppliance::set_vendor_name(const char* vendor_name)
+{
+  if (this->base_matter_device && vendor_name) {
+    base_matter_device->SetVendorName(vendor_name);
+  }
+}
+
+void ArduinoMatterAppliance::set_product_name(const char* product_name)
+{
+  if (this->base_matter_device && product_name) {
+    base_matter_device->SetProductName(product_name);
+  }
+}
+
+void ArduinoMatterAppliance::set_serial_number(const char* serial_number)
+{
+  if (this->base_matter_device && serial_number) {
+    base_matter_device->SetSerialNumber(serial_number);
+  }
+}
+
+bool ArduinoMatterAppliance::is_online()
+{
+  if (this->base_matter_device) {
+    return base_matter_device->IsOnline();
+  }
+  return false;
+}
+
 void MatterClass::begin()
 {
   InitDynamicEndpointHandler();
@@ -47,7 +155,7 @@ void MatterClass::begin()
 
 String MatterClass::getManualPairingCode()
 {
-  // Create buffer for manual pairing code that can fit max size + check digit + null terminator.
+  // Create buffer for manual pairing code that can fit max size + check digit + null terminator
   char manualPairingCodeBuffer[chip::kManualSetupLongCodeCharLength + 1];
   chip::MutableCharSpan manualPairingCode(manualPairingCodeBuffer);
   GetManualPairingCode(manualPairingCode, chip::RendezvousInformationFlag::kBLE);
@@ -56,13 +164,24 @@ String MatterClass::getManualPairingCode()
 
 String MatterClass::getOnboardingQRCodeUrl()
 {
-  // Create buffer for QR code that can fit max size and null terminator.
-  char qrCodeBuffer[chip::QRCodeBasicSetupPayloadGenerator::kMaxQRCodeBase38RepresentationLength + 1];
-  chip::MutableCharSpan QRCode(qrCodeBuffer);
-  GetQRCode(QRCode, chip::RendezvousInformationFlag::kBLE);
-  char qrCodeUrlBuffer[200];
-  GetQRCodeUrl(qrCodeUrlBuffer, sizeof(qrCodeUrlBuffer), QRCode);
-  return qrCodeUrlBuffer;
+  constexpr char kQrCodeBaseUrl[] = "https://project-chip.github.io/connectedhomeip/qrcode.html";
+  constexpr char kUrlDataAssignmentPhrase[] = "?data=";
+
+  char setupPayloadBuffer[chip::QRCodeBasicSetupPayloadGenerator::kMaxQRCodeBase38RepresentationLength + 1];
+  chip::MutableCharSpan setupPayload(setupPayloadBuffer);
+
+  CHIP_ERROR err = Silabs::SilabsDeviceDataProvider::GetDeviceDataProvider().GetSetupPayload(setupPayload);
+  if (CHIP_NO_ERROR == err) {
+    chip::Platform::ScopedMemoryBuffer<char> qrCodeBuffer;
+    const size_t qrCodeBufferMaxSize = strlen(kQrCodeBaseUrl) + strlen(kUrlDataAssignmentPhrase) + 3 * setupPayload.size() + 1;
+    qrCodeBuffer.Alloc(qrCodeBufferMaxSize);
+
+    if (GetQRCodeUrl(qrCodeBuffer.Get(), qrCodeBufferMaxSize, setupPayload) == CHIP_NO_ERROR) {
+      return qrCodeBuffer.Get();
+    }
+  }
+
+  return "N/A";
 }
 
 bool MatterClass::isDeviceCommissioned()
@@ -70,9 +189,22 @@ bool MatterClass::isDeviceCommissioned()
   return ConnectivityMgr().IsThreadProvisioned();
 }
 
-bool MatterClass::isDeviceConnected()
+bool MatterClass::isDeviceThreadConnected()
 {
   return ConnectivityMgr().IsThreadAttached();
 }
 
 MatterClass Matter;
+
+void CallMatterReportingCallback(intptr_t closure)
+{
+  auto path = reinterpret_cast<app::ConcreteAttributePath*>(closure);
+  MatterReportingAttributeChangeCallback(*path);
+  Platform::Delete(path);
+}
+
+void ScheduleMatterReportingCallback(EndpointId endpointId, ClusterId cluster, AttributeId attribute)
+{
+  auto* path = Platform::New<app::ConcreteAttributePath>(endpointId, cluster, attribute);
+  chip::DeviceLayer::PlatformMgr().ScheduleWork(CallMatterReportingCallback, reinterpret_cast<intptr_t>(path));
+}

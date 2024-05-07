@@ -4,15 +4,17 @@
 
 This library makes using Matter easy and accessible on the Arduino ecosystem.
 
-The supported boards use Matter over Thread. To connect your device you'll need a smart home device which can act as an Open Thread Boarder Router (OTBR) and provide a gateway between the Thread network and your WiFi.
+The supported boards use Matter over Thread. To connect your device you'll need a smart home device which can act as an Open Thread Border Router (OTBR) and provide a gateway between the Thread network and your WiFi.
 
 ## Supported devices, ecosystems and OTBRs
 
 Supported Arduino boards:
- - Sparkfun ThingPlus Matter
+ - Arduino Nano Matter
+ - SparkFun Thing Plus Matter
  - Silicon Labs xG24 Explorer Kit
+ - Silicon Labs xG24 Dev Kit
 
-Supported Thread Boarder Routers:
+Supported Thread Border Routers:
 
 | Manufacturer / Ecosystem              | Device                        |
 | -------------                         |:-------------:|
@@ -25,6 +27,8 @@ Read more on setting up your Raspberry Pi as an OTBR [here](https://docs.silabs.
 
 ## Supported Matter devices
 
+ - Air quality sensor
+ - Contact sensor
  - Fan
  - Flow measurement
  - Humidity measurement
@@ -33,17 +37,24 @@ Read more on setting up your Raspberry Pi as an OTBR [here](https://docs.silabs.
  - Dimmable lightbulb
  - Color lightbulb
  - Occupancy sensor
+ - On/Off Plug-in Unit / Outlet
  - Pressure measurement
  - Switch
  - Temperature measurement
  - Thermostat
+ - Window covering
 
 ## Setting up your Arduino device
 
- - Flash you Arduino board with a Matter application/example/sketch
- - **Flash the bootloader (Matter variants require a different bootloader than the BLE variants!)**
+ - Flash the bootloader to your Arduino board if this is your first time using it
+ - Flash your Arduino board with a Matter application/example/sketch
  - Open the Serial Monitor for you board
  - If you device is not commissioned to any Matter network it'll print the link for the QR code and manual code required for pairing
+ - If you're using Google's ecosystem you'll need to complete additional setup steps in the *Google Home Developer Console*.
+
+   This [video](https://www.youtube.com/watch?v=R_kpSO7PtUo) will guide through the setup process. You can use the same **Vendor ID (0xfff1)** and **Product ID (0x8005)** as shown in the video.
+
+   You only need to do this once.
  - Open the smart-home app of your choice on your smartphone (Google Home, Apple Home, Amazon Alexa)
  - Add a new Matter device in the app (if the app asks whether the device you're adding has a Matter logo - say yes)
  - Scan the QR code or enter the manual pin provided by your Arduino
@@ -51,7 +62,47 @@ Read more on setting up your Raspberry Pi as an OTBR [here](https://docs.silabs.
  - Congratulations - you successfully paired your Arduino as a Matter device
  - You only need to do this once - pairing persists even after you restart/reflash your device
 
+Note, that an additional *Matter Hub* device will be added alongside your Matter devices to your smart home environment. This is required to ensure correct operation on Apple and Amazon ecosystems and can be ignored/hidden after the onboarding completes.
+
+## Additional info
+
+### Unpairing
+
+Matter variants save the network keys and credentials in permanent memory, so you don't have to re-pair them when they're restarted.
+
+If you need to make your device forget the network credentials but you're unable to unpair them from the network - you can erase the chip with it's permanent storage.
+
+You can do this by re-burning the bootloader in the Arduino IDE (*Tools > Burn Bootloader*). The IDE will perform a full chip erase before re-flashing your bootloader.
+After this you'll need to upload your sketch again. Your sketch will start with a blank slate prompting you to pair it.
+
+## Arduino Nano Matter - Matter setup guide
+
+You can also refer to Arduino's [Matter setup guide](https://docs.arduino.cc/tutorials/nano-matter/user-manual/#matter) for the *Nano Matter* to get started with your Matter setup. The guide is for the *Nano Matter* - but most of the contents are applicable to all boards supporting Matter.
+
 # API documentation
+
+## class Matter
+
+This class manages the global state of Matter, responsible for starting up the endpoint management and for providing the current status and onboarding codes.
+
+The class has the following methods available:
+
+```void begin();```
+Starts Matter and the dynamic endpoint handler on the device. Must be called before calling ```begin()``` on any appliance class.
+
+```String getManualPairingCode();```
+Returns the manual pairing code required for onboarding the device on a Matter network.
+
+```String getOnboardingQRCodeUrl();```
+Returns a link to the QR code required for onboarding the device on a Matter network.
+
+```bool isDeviceCommissioned();```
+Returns whether the device has been commissioned to a Matter network.
+
+```bool isDeviceThreadConnected();```
+Returns whether the device is connected to the Thread network.
+
+## Appliance classes
 
 Each Matter appliance class has a ```begin()``` and an ```end()``` function.
 
@@ -63,13 +114,44 @@ Instances of the Matter classes automatically update themselves with the values 
 
 Users can publish measurement/control data through the Matter classes which will be automatically transmitted through the Matter network.
 
+```is_online()``` can be called on all Matter appliances to check whether they have been discovered on the network by the appropriate client - which is most likely your Matter hub.
+When this function returns *true* it means that your appliance is able to communicate with your Matter hub - and therefore it's online.
+
+All appliance classes have the following methods for setting it's custom properties:
+
+```void set_device_name(const char* device_name);```
+Sets the name of the device.
+
+```void set_vendor_name(const char* vendor_name);```
+Sets the manufacturer/vendor name of the device.
+
+```void set_product_name(const char* product_name);```
+Sets the model/product name of the device.
+
+```void set_serial_number(const char* serial_number);```
+Sets the serial number of the device.
+
+## class MatterAirQuality
+
+```void set_air_quality(MatterAirQuality::AirQuality_t value);```
+
+```MatterAirQuality::AirQuality_t get_air_quality();```
+
+## class MatterContact
+
+Class for creating and controlling a Matter Contact Sensor appliance.
+
+```void set_state(bool value);```
+
+```bool get_state();```
+
 ## class MatterFan
 
 Class for creating and controlling a Matter Fan appliance.
 
-```void set_onoff(bool value)```
+```void set_onoff(bool value);```
 
-```bool get_onoff()```
+```bool get_onoff();```
 
 ```void set_percent(uint8_t percent);```
 
@@ -166,6 +248,14 @@ Has all the methods of ```MatterDimmableLightbulb``` and adds the following:
 
 ```bool get_occupancy();```
 
+## class MatterOnOffPluginUnit
+
+```void set_onoff(bool value);```
+
+```bool get_onoff();```
+
+```void toggle();```
+
 ## class MatterPressure
 
 ```void set_measured_value(int16_t value);```
@@ -231,3 +321,19 @@ Has all the methods of ```MatterDimmableLightbulb``` and adds the following:
 ```thermostat_mode_t get_system_mode();```
 
 ```void set_system_mode(thermostat_mode_t system_mode);```
+
+## class MatterWindowCovering
+
+```void set_current_operation(window_covering_current_operation_t current_operation);```
+
+```void set_actual_lift_position_raw(uint16_t lift_position);```
+
+```void set_actual_lift_position_percent(uint8_t lift_position_percent);```
+
+```uint16_t get_actual_lift_position_raw();```
+
+```uint8_t get_actual_lift_position_percent();```
+
+```uint16_t get_requested_lift_position_raw();```
+
+```uint8_t get_requested_lift_position_percent();```

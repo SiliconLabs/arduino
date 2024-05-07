@@ -27,3 +27,4 @@
 #include "arduino_i2c_config.h"
 
 I2CSPM_Init_TypeDef* arduino_i2c_config = &init_mikroe;
+I2CSPM_Init_TypeDef* arduino_i2c1_config = &init_qwiic;

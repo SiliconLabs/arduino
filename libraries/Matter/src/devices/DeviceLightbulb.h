@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ public:
     kChanged_Color = kChanged_Last << 3,
   } Changed;
 
-  DeviceLightbulb(const char* deviceName, std::string location);
-  using DeviceCallback_fn = std::function<void(DeviceLightbulb*, DeviceLightbulb::Changed_t)>;
+  DeviceLightbulb(const char* device_name);
 
   bool IsOn();
   void SetOnOff(bool onoff);
@@ -49,7 +48,6 @@ public:
   uint8_t GetHue();
   void SetSaturation(uint8_t saturation);
   uint8_t GetSaturation();
-  void SetChangeCallback(DeviceCallback_fn device_changed_callback);
 
   uint32_t GetOnoffClusterFeatureMap();
   uint32_t GetLevelControlClusterFeatureMap();
@@ -70,14 +68,27 @@ public:
   uint8_t GetColorControlEnhancedColorMode();
   uint8_t GetColorControlColorCapabilities();
 
+  EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
+                                           chip::AttributeId attributeId,
+                                           uint8_t* buffer,
+                                           uint16_t maxReadLength) override;
+
+  EmberAfStatus HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                            chip::AttributeId attributeId,
+                                            uint8_t* buffer) override;
+
 private:
-  void HandleDeviceChange(Device* device, Device::Changed_t change_mask);
+  void HandleLightbulbDeviceStatusChanged(Changed_t itemChangedMask);
 
   bool onoff;
+  bool global_scene_control;
+  uint16_t on_time;
+  uint16_t off_wait_time;
+  uint8_t startup_on_off;
+
   uint8_t hue;
   uint8_t saturation;
   uint8_t level;
-  DeviceCallback_fn device_changed_callback;
 
   static const uint32_t onoff_cluster_feature_map         = 1u;   // Level control for lighting (bit 0) enabled
   static const uint32_t level_control_cluster_feature_map = 3u;   // On/Off (bit 0) and Lighting support (bit 1) enabled
@@ -85,13 +96,13 @@ private:
 
   static const uint16_t onoff_cluster_revision = 4u;
   static const uint16_t level_control_cluster_revision = 5u;
-  static const uint16_t color_control_cluster_revision = 5u;
+  static const uint16_t color_control_cluster_revision = 6u;
 
   static const uint8_t level_control_min_level = 1u;
   static const uint8_t level_control_max_level = 254u;
   static const uint8_t level_control_options = 0u;                // No extra options enabled
-  static const uint8_t level_control_on_level = 255u;
-  static const uint8_t level_control_startup_current_level = 255;
+  static const uint8_t level_control_on_level = 254u;
+  static const uint8_t level_control_startup_current_level = 254u;
   static const uint16_t level_control_remaining_time = 0u;
 
   static const uint8_t color_control_options = 0u;                // No extra options enabled

@@ -16,9 +16,11 @@
     - https://apps.apple.com/us/app/efr-connect-ble-mobile-app/id1030932759
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG27 DevKit
    - xG24 Explorer Kit
+   - xG24 Dev Kit
    - BGM220 Explorer Kit
 
    Author: Tamas Jozsi (Silicon Labs)
@@ -26,7 +28,7 @@
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   Serial.begin(115200);
 }
 
@@ -99,11 +101,11 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
         // If we receive a '0' - turn the LED off
         // If we receive a '1' - turn the LED on
         if (received_data == 0x00) {
-          digitalWrite(LED_BUILTIN, LOW);
+          digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
           Serial.println("LED off");
         } else if (received_data == 0x01) {
           Serial.println("LED on");
-          digitalWrite(LED_BUILTIN, HIGH);
+          digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
         }
       }
       break;

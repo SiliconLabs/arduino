@@ -1,0 +1,3 @@
+[submodule "extra/core-api"]
+	path = extra/core-api
+	url = https://github.com/arduino/ArduinoCore-API

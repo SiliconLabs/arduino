@@ -25,21 +25,27 @@ void loop()
   uint8_t blue = 255;
 
   while (blue > 0) {
+    noInterrupts();
     my_leds.set_all(red, green, blue);
+    interrupts();
     green++;
     blue--;
     delay(delay_time_ms);
   }
 
   while (green > 0) {
+    noInterrupts();
     my_leds.set_all(red, green, blue);
+    interrupts();
     green--;
     red++;
     delay(delay_time_ms);
   }
 
   while (red > 0) {
+    noInterrupts();
     my_leds.set_all(red, green, blue);
+    interrupts();
     red--;
     blue++;
     delay(delay_time_ms);

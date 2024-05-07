@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,14 +33,6 @@ using namespace ::chip::app::Clusters;
 
 const EmberAfDeviceType gFlowSensorDeviceTypes[] = { { DEVICE_TYPE_FLOW_SENSOR, DEVICE_VERSION_DEFAULT } };
 
-// Descriptor cluster attributes
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(descriptorAttrsFlow)
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::DeviceTypeList::Id, ARRAY, kDescriptorAttributeArraySize, 0),   /* device list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ServerList::Id, ARRAY, kDescriptorAttributeArraySize, 0),       /* server list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ClientList::Id, ARRAY, kDescriptorAttributeArraySize, 0),       /* client list */
-DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::PartsList::Id, ARRAY, kDescriptorAttributeArraySize, 0),        /* parts list */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
-
 // Flow measurement cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(flowSensorAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(FlowMeasurement::Attributes::MeasuredValue::Id, INT16U, 2, 0),        /* Measured Value */
@@ -53,7 +45,8 @@ DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
 // Flow sensor endpoint cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(flowMeasurementEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(FlowMeasurement::Id, flowSensorAttrs, nullptr, nullptr),
-DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrsFlow, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr)
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 /***************************************************************************//**
@@ -88,12 +81,15 @@ bool MatterFlow::begin()
   }
 
   // Create new device
-  DeviceFlowSensor* sensor = new (std::nothrow)DeviceFlowSensor("sensor", "", 0, UINT16_MAX, 0);
+  DeviceFlowSensor* sensor = new (std::nothrow)DeviceFlowSensor("Flow sensor", 0, UINT16_MAX, 0);
   if (sensor == nullptr) {
     return false;
   }
   sensor->SetReachable(true);
-  sensor->SetChangeCallback(&HandleDeviceFlowSensorStatusChanged);
+  sensor->SetProductName("Flow sensor");
+
+  // Set the device instance pointer in the base class
+  this->base_matter_device = sensor;
 
   // Create new endpoint
   EmberAfEndpointType* new_endpoint = (EmberAfEndpointType*)malloc(sizeof(EmberAfEndpointType));

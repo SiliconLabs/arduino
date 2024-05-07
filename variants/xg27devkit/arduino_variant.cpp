@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,67 @@
  * THE SOFTWARE.
  */
 
+#include "Arduino.h"
+
 #include "arduino_variant.h"
+#include "arduino_i2c_config.h"
+#include "arduino_spi_config.h"
+
 extern "C" {
   #include "sl_system_init.h"
+  #include "sl_component_catalog.h"
+  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
+    #include "rail.h"
+  #endif
 }
-#include "HardwareSerial.h"
-#include "Wire.h"
-#include "SPI.h"
-
-extern HardwareSerial Serial;
-extern HardwareSerial Serial1;
-extern TwoWire Wire;
-extern SPIClass SPI;
 
 void init_arduino_variant()
 {
   sl_system_init();
+
+  // Disable SWO by default and allow PA3 to be used as a GPIO pin
+  GPIO_DbgSWOEnable(false);
+
+  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
+  // Disable RAIL PTI by default and allow PC4 and PC5 to be used as a GPIO pin
+  RAIL_PtiConfig_t railPtiConfig = {};
+  railPtiConfig.mode = RAIL_PTI_MODE_DISABLED;
+  RAIL_ConfigPti(RAIL_EFR32_HANDLE, &railPtiConfig);
+  RAIL_EnablePti(RAIL_EFR32_HANDLE, false);
+  #endif
+
   // Deinit Serial, Wire and SPI by default - sl_system_init() initializes it
   Serial.end();
   Serial1.end();
-  Wire.end();
-  SPI.end();
+  I2C_Deinit(SL_I2C_PERIPHERAL); // Wire.end()
+  SPIDRV_DeInit(SL_SPIDRV_PERIPHERAL_HANDLE); //SPI.end();
+}
+
+// Variant pin mapping - maps Arduino pin numbers to Silabs ports/pins
+// D0 -> Dmax -> A0 -> Amax -> Other peripherals
+PinName gPinNames[] = {
+  PC0, // D0 - SPI SDO
+  PC1, // D1 - SPI SDI
+  PC2, // D2 - SPI SCK
+  PB2, // D3 - SPI CS
+  PA5, // D4 - Tx
+  PA6, // D5 - Rx
+  PD2, // D6 - SDA
+  PA8, // A0 - Tx1
+  PA7, // A1 - Rx1
+  PB0, // A2
+  PB1, // A3
+  PA4, // A4 - LED
+  PB3, // A5 - Button
+  PD3, // A6 - SCL
+  PA4, // LED - 14
+  PB3, // Button - 15
+  PC6, // Sensor array power - 16
+  PC7, // Microphone power - 17
+  PB4, // IMU power - 18
+};
+
+unsigned int getPinCount()
+{
+  return sizeof(gPinNames) / sizeof(gPinNames[0]);
 }

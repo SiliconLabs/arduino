@@ -4,7 +4,7 @@
    The example connects to another board running the 'BLE Health Thermometer' example and reads the temperature through BLE
 
    On startup the sketch will start a scanning for the other board running the 'ble_health_thermometer' example and
-   advertising as "Themometer Example". Once the other board is found, it establishes a connection,
+   advertising as "Thermometer Example". Once the other board is found, it establishes a connection,
    discovers it's services and characteristics, then subscribes to the temperature measurements.
    After the subscription the example starts receiving the temperature data from the other board periodically,
    and prints it to Serial.
@@ -12,9 +12,11 @@
    Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
 
    Compatible boards:
+   - Arduino Nano Matter
    - SparkFun Thing Plus MGM240P
    - xG27 DevKit
    - xG24 Explorer Kit
+   - xG24 Dev Kit
    - BGM220 Explorer Kit
 
    Author: Tamas Jozsi (Silicon Labs)
@@ -22,7 +24,7 @@
 void setup()
 {
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, LOW);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   Serial.begin(115200);
 }
 
@@ -109,7 +111,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event is received when a BLE connection has been opened
     case sl_bt_evt_connection_opened_id:
       Serial.println("Connection opened");
-      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_ACTIVE);
       // Discover Health Thermometer service on the connected device
       sc = sl_bt_gatt_discover_primary_services_by_uuid(evt->data.evt_connection_opened.connection,
                                                         sizeof(thermometer_service_uuid),
@@ -121,7 +123,7 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
     // This event is received when a BLE connection has been closed
     case sl_bt_evt_connection_closed_id:
       Serial.println("Connection closed");
-      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
       // Restart scanning
       sc = sl_bt_scanner_start(sl_bt_scanner_scan_phy_1m,
                                sl_bt_scanner_discover_generic);

@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,8 @@
  * THE SOFTWARE.
  */
 
-#include "wiring.h"
+#include "pinDefinitions.h"
+#include "pins_arduino.h"
 
 // The sleeptimer is running on a 32.768 kHz oscillator with a tick resolution of 30.52 us
 static const double sleeptimer_tick_period_us = 30.52f;
@@ -32,15 +33,14 @@ static const uint64_t sleeptimer_tick_period_us_x100 = 3052;
 
 uint32_t millis()
 {
-  // Divide by 1000 to get milliseconds
-  uint64_t millis = sl_sleeptimer_get_tick_count64() / 1000;
-  millis = millis * sleeptimer_tick_period_us_x100 / 100;
+  uint64_t millis = 0u;
+  (void)sl_sleeptimer_tick64_to_ms(sl_sleeptimer_get_tick_count64(), &millis);
   return static_cast<uint32_t>(millis);
 }
 
 uint32_t micros()
 {
-  uint64_t micros = static_cast<uint64_t>(sl_sleeptimer_get_tick_count()) * sleeptimer_tick_period_us_x100 / 100;
+  uint64_t micros = static_cast<uint64_t>(sl_sleeptimer_get_tick_count()) * sleeptimer_tick_period_us_x100 / 100u;
   return static_cast<uint32_t>(micros);
 }
 
@@ -54,7 +54,7 @@ void delay(uint32_t ms)
   vTaskDelay(xDelay);
 }
 
-void delayMicroseconds(uint32_t us)
+void delayMicroseconds(unsigned int us)
 {
   sl_udelay_wait(us);
 }

@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,20 +37,27 @@ public:
     kChanged_ModeSetting = kChanged_Last << 3,
   } Changed;
 
-  DeviceFan(const char* device_name, std::string location);
-  using DeviceCallback_fn = std::function<void(DeviceFan*, DeviceFan::Changed_t)>;
+  DeviceFan(const char* device_name);
 
   uint8_t GetPercentSetting();
   void SetPercentSetting(uint8_t percent);
   uint8_t GetPercentCurrent();
   void SetPercentCurrent(uint8_t percent);
 
-  void SetChangeCallback(DeviceCallback_fn device_changed_callback);
   void SetFanMode(uint8_t fan_mode);
   uint8_t GetFanMode();
   uint8_t GetFanModeSequence();
   uint32_t GetFanClusterFeatureMap();
   uint16_t GetFanClusterRevision();
+
+  EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
+                                           chip::AttributeId attributeId,
+                                           uint8_t* buffer,
+                                           uint16_t maxReadLength) override;
+
+  EmberAfStatus HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                            chip::AttributeId attributeId,
+                                            uint8_t* buffer) override;
 
   enum fan_mode_t {
     Off,
@@ -63,11 +70,10 @@ public:
   };
 
 private:
-  void HandleDeviceChange(Device* device, Device::Changed_t change_mask);
+  void HandleFanDeviceStatusChanged(Changed_t itemChangedMask);
 
   uint8_t current_percent;
   fan_mode_t current_fan_mode;
-  DeviceCallback_fn device_changed_callback;
 
   static const uint8_t fan_mode_sequence        = 2u;   // Off/Low/Med/High/Auto
   static const uint32_t fan_cluster_feature_map = 1u;   // 1-100 speeds supported

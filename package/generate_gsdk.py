@@ -4,250 +4,19 @@ import subprocess
 import sys
 
 """
-Little helper script to generate and optionally build platform support GSDK files/archives for Arduino
-Not pretty, but saves a lot of time :)
+Little helper script to generate and optionally build platform support GSDK files/archives for Arduino with SLC
+Saves a lot of time :)
 """
 
-# Configurations
-
-all_platform_config = {
-    "name": "all"
-}
-
-thingplusmatter_ble_platform_config = {
-    "name": "thingplusmatter_ble",
-    "board_opn": "brd2704a",
-    "prebuild": False,
-    "matter": False,
-    "slcp_file": "slcp/thingplusmatter_ble/thingplusmatter_ble.slcp",
-    "additional_files": ["slcp/thingplusmatter_ble/sl_spidrv_eusart_thingplus1_config.h",
-                         "slcp/thingplusmatter_ble/sl_iostream_eusart_thingplus1_config.h"]
-}
-
-thingplusmatter_ble_prebuilt_platform_config = {
-    "name": "thingplusmatter_ble_precomp",
-    "board_opn": "brd2704a",
-    "prebuild": True,
-    "matter": False,
-    "slcp_file": "slcp/thingplusmatter_ble/thingplusmatter_ble.slcp",
-    "additional_files": ["slcp/thingplusmatter_ble/sl_spidrv_eusart_thingplus1_config.h",
-                         "slcp/thingplusmatter_ble/sl_iostream_eusart_thingplus1_config.h"]
-}
-
-thingplusmatter_matter_platform_config = {
-    "name": "thingplusmatter_matter",
-    "board_opn": "brd2704a",
-    "prebuild": False,
-    "matter": True,
-    "slcp_file": "slcp/thingplusmatter_matter/thingplusmatter_matter.slcp",
-    "additional_files": ["slcp/thingplusmatter_ble/sl_spidrv_eusart_thingplus1_config.h",
-                         "slcp/thingplusmatter_ble/sl_iostream_eusart_thingplus1_config.h"],
-    "matter_zap_file": "slcp/common/arduino_matter.zap"
-}
-
-thingplusmatter_matter_prebuilt_platform_config = {
-    "name": "thingplusmatter_matter_precomp",
-    "board_opn": "brd2704a",
-    "prebuild": True,
-    "matter": True,
-    "slcp_file": "slcp/thingplusmatter_matter/thingplusmatter_matter.slcp",
-    "additional_files": ["slcp/thingplusmatter_ble/sl_spidrv_eusart_thingplus1_config.h",
-                         "slcp/thingplusmatter_ble/sl_iostream_eusart_thingplus1_config.h"],
-    "matter_zap_file": "slcp/common/arduino_matter.zap"
-}
-
-xg27devkit_platform_config = {
-    "name": "xg27devkit",
-    "board_opn": "brd2602a",
-    "prebuild": False,
-    "matter": False,
-    "slcp_file": "slcp/xg27devkit/xg27devkit.slcp",
-    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
-}
-
-xg27devkit_prebuilt_platform_config = {
-    "name": "xg27devkit_precomp",
-    "board_opn": "brd2602a",
-    "prebuild": True,
-    "matter": False,
-    "slcp_file": "slcp/xg27devkit/xg27devkit.slcp",
-    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
-}
-
-xg24explorerkit_platform_config = {
-    "name": "xg24explorerkit",
-    "board_opn": "brd2703a",
-    "prebuild": False,
-    "matter": False,
-    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit.slcp",
-    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
-                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
-}
-
-xg24explorerkit_prebuilt_platform_config = {
-    "name": "xg24explorerkit_precomp",
-    "board_opn": "brd2703a",
-    "prebuild": True,
-    "matter": False,
-    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit.slcp",
-    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
-                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
-}
-
-xg24explorerkit_matter_platform_config = {
-    "name": "xg24explorerkit_matter",
-    "board_opn": "brd2703a",
-    "prebuild": False,
-    "matter": True,
-    "slcp_file": "slcp/xg24explorerkit_matter/xg24explorerkit_matter.slcp",
-    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
-                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"],
-    "matter_zap_file": "slcp/common/arduino_matter.zap"
-}
-
-xg24explorerkit_matter_prebuilt_platform_config = {
-    "name": "xg24explorerkit_matter_precomp",
-    "board_opn": "brd2703a",
-    "prebuild": True,
-    "matter": True,
-    "slcp_file": "slcp/xg24explorerkit_matter/xg24explorerkit_matter.slcp",
-    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
-                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"],
-    "matter_zap_file": "slcp/common/arduino_matter.zap"
-}
-
-wio_mg24_platform_config = {
-    "name": "wio_mg24_ble",
-    "board_opn": "brd2907a",
-    "prebuild": False,
-    "matter": False,
-    "slcp_file": "slcp/wio_mg24/wio_mg24.slcp",
-    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
-                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
-                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
-                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
-}
-
-wio_mg24_prebuilt_platform_config = {
-    "name": "wio_mg24_ble_precomp",
-    "board_opn": "brd2907a",
-    "prebuild": True,
-    "matter": False,
-    "slcp_file": "slcp/wio_mg24/wio_mg24.slcp",
-    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
-                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
-                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
-                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
-}
-
-bgm220explorerkit_platform_config = {
-    "name": "bgm220explorerkit",
-    "board_opn": "brd4314a",
-    "prebuild": False,
-    "matter": False,
-    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit.slcp",
-    "additional_files": []
-}
-
-bgm220explorerkit_prebuilt_platform_config = {
-    "name": "bgm220explorerkit_precomp",
-    "board_opn": "brd4314a",
-    "prebuild": True,
-    "matter": False,
-    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit.slcp",
-    "additional_files": []
-}
-
-nanomatter_ble_platform_config = {
-    "name": "nanomatter_ble",
-    "board_opn": "brd9050a",
-    "prebuild": False,
-    "matter": False,
-    "slcp_file": "slcp/nanomatter_ble/nanomatter_ble.slcp",
-    "additional_files": ["slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_usart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_i2cspm_nanomatter_config.h",
-                         ["slcp/nanomatter_ble/brd9050a.slcc", "hardware/board/component/"],
-                         ["slcp/nanomatter_ble/brd9050a_config.slcc", "hardware/board/config/component/"]]
-}
-
-nanomatter_ble_prebuilt_platform_config = {
-    "name": "nanomatter_ble_precomp",
-    "board_opn": "brd9050a",
-    "prebuild": True,
-    "matter": False,
-    "slcp_file": "slcp/nanomatter_ble/nanomatter_ble.slcp",
-    "additional_files": ["slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_usart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_i2cspm_nanomatter_config.h",
-                         ["slcp/nanomatter_ble/brd9050a.slcc", "hardware/board/component/"],
-                         ["slcp/nanomatter_ble/brd9050a_config.slcc", "hardware/board/config/component/"]]
-}
-
-nanomatter_matter_platform_config = {
-    "name": "nanomatter_matter",
-    "board_opn": "brd9050a",
-    "prebuild": False,
-    "matter": True,
-    "slcp_file": "slcp/nanomatter_matter/nanomatter_matter.slcp",
-    "additional_files": ["slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_usart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_i2cspm_nanomatter_config.h",
-                         ["slcp/nanomatter_ble/brd9050a.slcc", "hardware/board/component/"],
-                         ["slcp/nanomatter_ble/brd9050a_config.slcc", "hardware/board/config/component/"]],
-    "matter_zap_file": "slcp/common/arduino_matter.zap"
-}
-
-nanomatter_matter_prebuilt_platform_config = {
-    "name": "nanomatter_matter_precomp",
-    "board_opn": "brd9050a",
-    "prebuild": True,
-    "matter": True,
-    "slcp_file": "slcp/nanomatter_matter/nanomatter_matter.slcp",
-    "additional_files": ["slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_spidrv_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_usart_nanomatter_config.h",
-                         "slcp/nanomatter_ble/sl_iostream_eusart_nanomatter1_config.h",
-                         "slcp/nanomatter_ble/sl_i2cspm_nanomatter_config.h",
-                         ["slcp/nanomatter_ble/brd9050a.slcc", "hardware/board/component/"],
-                         ["slcp/nanomatter_ble/brd9050a_config.slcc", "hardware/board/config/component/"]],
-    "matter_zap_file": "slcp/common/arduino_matter.zap"
-}
-
-platform_configurations = [all_platform_config,
-                           thingplusmatter_ble_platform_config,
-                           thingplusmatter_ble_prebuilt_platform_config,
-                           thingplusmatter_matter_platform_config,
-                           thingplusmatter_matter_prebuilt_platform_config,
-                           xg27devkit_platform_config,
-                           xg27devkit_prebuilt_platform_config,
-                           xg24explorerkit_platform_config,
-                           xg24explorerkit_prebuilt_platform_config,
-                           xg24explorerkit_matter_platform_config,
-                           xg24explorerkit_matter_prebuilt_platform_config,
-                           wio_mg24_platform_config,
-                           wio_mg24_prebuilt_platform_config,
-                           bgm220explorerkit_platform_config,
-                           bgm220explorerkit_prebuilt_platform_config,
-                           nanomatter_ble_platform_config,
-                           nanomatter_ble_prebuilt_platform_config,
-                           nanomatter_matter_platform_config,
-                           nanomatter_matter_prebuilt_platform_config]
-
-gsdk_dir = "/Users/tajozsi/siliconlabs/gsdk_4.3.2_matter_2.1.1/"
+gsdk_dir = "/Users/tajozsi/siliconlabs/gsdk_4.4.0_matter_2.2.0/"
 slc_output_dir = "gen/"
-gsdk_version="4.3.2"
-matter_extension_version = "2.1.1"
+gsdk_version="4.4.0"
+matter_extension_version = "2.2.0"
 
-gsdk_soc_empty_folder = "app/bluetooth/example/bt_soc_empty/"
+gsdk_cpp_empty_folder = "app/common/example/empty/"
+gsdk_bt_soc_empty_folder = "app/bluetooth/example/bt_soc_empty/"
 matter_lighting_app_folder = "extension/matter_extension/slc/sample-app/lighting-app/efr32/"
-matter_zap_folder = "extension/matter_extension/examples/lighting-app/silabs/efr32/data_model/"
+matter_zap_folder = "extension/matter_extension/examples/lighting-app/silabs/data_model/"
 gsdk_license_file = "gsdk_license"
 
 
@@ -270,10 +39,10 @@ def generate_gsdk(current_platform_config):
     config_name = current_platform_config["name"]
     prebuild = current_platform_config["prebuild"]
     additional_files = current_platform_config["additional_files"]
-    is_matter = current_platform_config["matter"]
+    protocol_stack = current_platform_config["protocol_stack"]
     project_slcp_file = current_platform_config["slcp_file"]
     board_opn = current_platform_config["board_opn"]
-    if is_matter:
+    if protocol_stack == 'matter':
         matter_project_zap_file = current_platform_config["matter_zap_file"]
 
     output_dir = "gen_gsdk_" + config_name + "/"
@@ -286,20 +55,26 @@ def generate_gsdk(current_platform_config):
     print(f"Board: {board_opn}")
     print(f"Project file: {slcp_file_name}")
     print(f"Prebuild: {prebuild}")
-    print(f"Matter: {is_matter}")
-    if is_matter:
+    print(f"Protocol stack: {protocol_stack}")
+    if protocol_stack == 'matter':
         print(f"Matter ZAP file: {matter_project_zap_file}")
     print(f"GSDK dir: {gsdk_dir}")
     print(f"Output dir: {output_dir}")
     print("-" * 10)
+
+    is_noradio = (protocol_stack == 'none')
+    is_ble = (protocol_stack == 'ble')
+    is_matter = (protocol_stack == 'matter')
 
     # If we're generating a GSDK with Matter then the example is at a different path
     if is_matter:
         slcp_folder = matter_lighting_app_folder
         print("Copying ZAP file...")
         shutil.copy(matter_project_zap_file, gsdk_dir + matter_zap_folder + "lighting-app.zap")
-    else:
-        slcp_folder = gsdk_soc_empty_folder
+    elif is_ble:
+        slcp_folder = gsdk_bt_soc_empty_folder
+    elif is_noradio:
+        slcp_folder = gsdk_cpp_empty_folder
 
     copy_slcp_file(slcp_folder, project_slcp_file, additional_files)
     generate_project_with_slc(slcp_folder, slcp_file_name, board_opn)
@@ -307,8 +82,7 @@ def generate_gsdk(current_platform_config):
         patch_makefiles()
     if is_matter:
         patch_matter_max_dynamic_endpoint_count()
-        patch_matter_color_control_endpoint_count()
-        patch_matter_device_descriptors()
+        patch_matter_device_descriptors(current_platform_config["matter_vendor_name"], current_platform_config["matter_vendor_id"])
     build_project()
     apply_license_to_unlicensed_files(slc_output_dir + "autogen")
     apply_license_to_unlicensed_files(slc_output_dir + "config")
@@ -449,26 +223,7 @@ def patch_matter_max_dynamic_endpoint_count():
     print("Patched max number of dynamic Matter endpoints")
 
 
-def patch_matter_color_control_endpoint_count():
-    """
-    Patches Matter to have more light endpoints (same as the max dynamic clusters)
-    Needed to workaround an issue in color-control-server where the endpoint count is treated as an index
-    """
-    zap_gen_config_file_path = "autogen/zap-generated/gen_config.h"
-    dynamic_endpoints_num = 16
-
-    with open(slc_output_dir + zap_gen_config_file_path, "r") as in_file:
-        buf = in_file.readlines()
-
-    with open(slc_output_dir + zap_gen_config_file_path, "w") as out_file:
-        for line in buf:
-            if "#define EMBER_AF_COLOR_CONTROL_CLUSTER_SERVER_ENDPOINT_COUNT" in line:
-                 line = "#define EMBER_AF_COLOR_CONTROL_CLUSTER_SERVER_ENDPOINT_COUNT (" + str(dynamic_endpoints_num) + ")\n"
-            out_file.write(line)
-    print("Patched number of Matter Color control endpoints")
-
-
-def patch_matter_device_descriptors():
+def patch_matter_device_descriptors(vendor_name, vendor_id):
     """
     Patches device descriptors (like name and manufacturer) in the Matter config file
     """
@@ -480,8 +235,12 @@ def patch_matter_device_descriptors():
 
     with open(slc_output_dir + chip_device_config_file_path, "w") as out_file:
         for line in buf:
+            #if "#define CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS 1" in line:
+            #    line = "#define CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS 0\n"
             if "#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME" in line:
-                 line = "#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME \"Bozont Labs\"\n"
+                 line = "#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME \"" + vendor_name + "\"\n"
+            if "#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_ID" in line:
+                line = "#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_ID " + vendor_id + "\n"
             if "#define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_NAME" in line:
                  line = "#define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_NAME \"Matter device\"\n"
             if "#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION_STRING" in line:
@@ -489,6 +248,21 @@ def patch_matter_device_descriptors():
             if "#define CHIP_DEVICE_CONFIG_TEST_SERIAL_NUMBER" in line:
                  line = "#define CHIP_DEVICE_CONFIG_TEST_SERIAL_NUMBER \"42069\"\n"
             out_file.write(line)
+
+    platform_config_header_path = "matter_" + matter_extension_version + "/src/platform/silabs/CHIPDevicePlatformConfig.h"
+    with open(slc_output_dir + platform_config_header_path, "r") as in_file:
+        buf = in_file.readlines()
+
+    with open(slc_output_dir + platform_config_header_path, "w") as out_file:
+        for line in buf:
+            #if "#define CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS 1" in line:
+            #    line = "#define CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS 0\n"
+            if "#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME" in line:
+                 line = "#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME \"Matter device\"\n"
+            if "#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME" in line:
+                line = "#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME \"" + vendor_name + "\"\n"
+            out_file.write(line)
+
     print("Patched Matter device descriptors")
 
 
@@ -514,7 +288,7 @@ def apply_license_to_unlicensed_files(folder):
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -718,6 +492,465 @@ def get_platform_config_from_arguments():
         print(f"Platform configuration with the name '{input_config_name}' not found!")
         print_available_configs()
         exit(-1)
+
+
+# Configurations
+all_platform_config = {
+    "name": "all"
+}
+
+thingplusmatter_noradio_platform_config = {
+    "name": "thingplusmatter_noradio",
+    "board_opn": "brd2704a",
+    "prebuild": False,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_noradio.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
+}
+
+thingplusmatter_noradio_prebuilt_platform_config = {
+    "name": "thingplusmatter_noradio_precomp",
+    "board_opn": "brd2704a",
+    "prebuild": True,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_noradio.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
+}
+
+thingplusmatter_ble_platform_config = {
+    "name": "thingplusmatter_ble",
+    "board_opn": "brd2704a",
+    "prebuild": False,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
+}
+
+thingplusmatter_ble_prebuilt_platform_config = {
+    "name": "thingplusmatter_ble_precomp",
+    "board_opn": "brd2704a",
+    "prebuild": True,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
+}
+
+thingplusmatter_matter_platform_config = {
+    "name": "thingplusmatter_matter",
+    "board_opn": "brd2704a",
+    "prebuild": False,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_matter.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
+thingplusmatter_matter_prebuilt_platform_config = {
+    "name": "thingplusmatter_matter_precomp",
+    "board_opn": "brd2704a",
+    "prebuild": True,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_matter.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
+xg27devkit_noradio_platform_config = {
+    "name": "xg27devkit_noradio",
+    "board_opn": "brd2602a",
+    "prebuild": False,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_noradio.slcp",
+    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
+}
+
+xg27devkit_noradio_prebuilt_platform_config = {
+    "name": "xg27devkit_noradio_precomp",
+    "board_opn": "brd2602a",
+    "prebuild": True,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_noradio.slcp",
+    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
+}
+
+xg27devkit_ble_platform_config = {
+    "name": "xg27devkit_ble",
+    "board_opn": "brd2602a",
+    "prebuild": False,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_ble.slcp",
+    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
+}
+
+xg27devkit_ble_prebuilt_platform_config = {
+    "name": "xg27devkit_ble_precomp",
+    "board_opn": "brd2602a",
+    "prebuild": True,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_ble.slcp",
+    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
+}
+
+xg24explorerkit_noradio_platform_config = {
+    "name": "xg24explorerkit_noradio",
+    "board_opn": "brd2703a",
+    "prebuild": False,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_noradio.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
+}
+
+xg24explorerkit_noradio_prebuilt_platform_config = {
+    "name": "xg24explorerkit_noradio_precomp",
+    "board_opn": "brd2703a",
+    "prebuild": True,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_noradio.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
+}
+
+xg24explorerkit_ble_platform_config = {
+    "name": "xg24explorerkit_ble",
+    "board_opn": "brd2703a",
+    "prebuild": False,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
+}
+
+xg24explorerkit_ble_prebuilt_platform_config = {
+    "name": "xg24explorerkit_ble_precomp",
+    "board_opn": "brd2703a",
+    "prebuild": True,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
+}
+
+xg24explorerkit_matter_platform_config = {
+    "name": "xg24explorerkit_matter",
+    "board_opn": "brd2703a",
+    "prebuild": False,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_matter.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
+xg24explorerkit_matter_prebuilt_platform_config = {
+    "name": "xg24explorerkit_matter_precomp",
+    "board_opn": "brd2703a",
+    "prebuild": True,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_matter.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
+xg24devkit_noradio_platform_config = {
+    "name": "xg24devkit_noradio",
+    "board_opn": "brd2601b",
+    "prebuild": False,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_noradio.slcp",
+    "additional_files": []
+}
+
+xg24devkit_noradio_prebuilt_platform_config = {
+    "name": "xg24devkit_noradio_precomp",
+    "board_opn": "brd2601b",
+    "prebuild": True,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_noradio.slcp",
+    "additional_files": []
+}
+
+xg24devkit_ble_platform_config = {
+    "name": "xg24devkit_ble",
+    "board_opn": "brd2601b",
+    "prebuild": False,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_ble.slcp",
+    "additional_files": []
+}
+
+xg24devkit_ble_prebuilt_platform_config = {
+    "name": "xg24devkit_ble_precomp",
+    "board_opn": "brd2601b",
+    "prebuild": True,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_ble.slcp",
+    "additional_files": []
+}
+
+xg24devkit_matter_platform_config = {
+    "name": "xg24devkit_matter",
+    "board_opn": "brd2601b",
+    "prebuild": False,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_matter.slcp",
+    "additional_files": [],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
+xg24devkit_matter_prebuilt_platform_config = {
+    "name": "xg24devkit_matter_precomp",
+    "board_opn": "brd2601b",
+    "prebuild": True,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_matter.slcp",
+    "additional_files": [],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
+wio_mg24_noradio_platform_config = {
+    "name": "wio_mg24_noradio",
+    "board_opn": "brd2907a",
+    "prebuild": False,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_noradio.slcp",
+    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
+                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
+                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
+                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
+}
+
+wio_mg24_noradio_prebuilt_platform_config = {
+    "name": "wio_mg24_noradio_precomp",
+    "board_opn": "brd2907a",
+    "prebuild": True,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_noradio.slcp",
+    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
+                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
+                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
+                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
+}
+
+wio_mg24_ble_platform_config = {
+    "name": "wio_mg24_ble",
+    "board_opn": "brd2907a",
+    "prebuild": False,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_ble.slcp",
+    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
+                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
+                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
+                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
+}
+
+wio_mg24_ble_prebuilt_platform_config = {
+    "name": "wio_mg24_ble_precomp",
+    "board_opn": "brd2907a",
+    "prebuild": True,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_ble.slcp",
+    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
+                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
+                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
+                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
+}
+
+bgm220explorerkit_noradio_platform_config = {
+    "name": "bgm220explorerkit_noradio",
+    "board_opn": "brd4314a",
+    "prebuild": False,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_noradio.slcp",
+    "additional_files": []
+}
+
+bgm220explorerkit_noradio_prebuilt_platform_config = {
+    "name": "bgm220explorerkit_noradio_precomp",
+    "board_opn": "brd4314a",
+    "prebuild": True,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_noradio.slcp",
+    "additional_files": []
+}
+
+bgm220explorerkit_ble_platform_config = {
+    "name": "bgm220explorerkit_ble",
+    "board_opn": "brd4314a",
+    "prebuild": False,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble.slcp",
+    "additional_files": []
+}
+
+bgm220explorerkit_ble_prebuilt_platform_config = {
+    "name": "bgm220explorerkit_ble_precomp",
+    "board_opn": "brd4314a",
+    "prebuild": True,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble.slcp",
+    "additional_files": []
+}
+
+nanomatter_noradio_platform_config = {
+    "name": "nano_matter_noradio",
+    "board_opn": "brd2707a",
+    "prebuild": False,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/nano_matter/nano_matter_noradio.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
+}
+
+nanomatter_noradio_prebuilt_platform_config = {
+    "name": "nano_matter_noradio_precomp",
+    "board_opn": "brd2707a",
+    "prebuild": True,
+    "protocol_stack": 'none',
+    "slcp_file": "slcp/nano_matter/nano_matter_noradio.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
+}
+
+nanomatter_ble_platform_config = {
+    "name": "nano_matter_ble",
+    "board_opn": "brd2707a",
+    "prebuild": False,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/nano_matter/nano_matter_ble.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
+}
+
+nanomatter_ble_prebuilt_platform_config = {
+    "name": "nano_matter_ble_precomp",
+    "board_opn": "brd2707a",
+    "prebuild": True,
+    "protocol_stack": 'ble',
+    "slcp_file": "slcp/nano_matter/nano_matter_ble.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
+}
+
+nanomatter_matter_platform_config = {
+    "name": "nano_matter_matter",
+    "board_opn": "brd2707a",
+    "prebuild": False,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/nano_matter/nano_matter_matter.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Arduino",
+    "matter_vendor_id": "0x1515"
+}
+
+nanomatter_matter_prebuilt_platform_config = {
+    "name": "nano_matter_matter_precomp",
+    "board_opn": "brd2707a",
+    "prebuild": True,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/nano_matter/nano_matter_matter.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Arduino",
+    "matter_vendor_id": "0x1515"
+}
+
+platform_configurations = [all_platform_config,
+                           thingplusmatter_noradio_platform_config,
+                           thingplusmatter_noradio_prebuilt_platform_config,
+                           thingplusmatter_ble_platform_config,
+                           thingplusmatter_ble_prebuilt_platform_config,
+                           thingplusmatter_matter_platform_config,
+                           thingplusmatter_matter_prebuilt_platform_config,
+                           xg27devkit_noradio_platform_config,
+                           xg27devkit_noradio_prebuilt_platform_config,
+                           xg27devkit_ble_platform_config,
+                           xg27devkit_ble_prebuilt_platform_config,
+                           xg24explorerkit_noradio_platform_config,
+                           xg24explorerkit_noradio_prebuilt_platform_config,
+                           xg24explorerkit_ble_platform_config,
+                           xg24explorerkit_ble_prebuilt_platform_config,
+                           xg24explorerkit_matter_platform_config,
+                           xg24explorerkit_matter_prebuilt_platform_config,
+                           xg24devkit_noradio_platform_config,
+                           xg24devkit_noradio_prebuilt_platform_config,
+                           xg24devkit_ble_platform_config,
+                           xg24devkit_ble_prebuilt_platform_config,
+                           xg24devkit_matter_platform_config,
+                           xg24devkit_matter_prebuilt_platform_config,
+                           wio_mg24_noradio_platform_config,
+                           wio_mg24_noradio_prebuilt_platform_config,
+                           wio_mg24_ble_platform_config,
+                           wio_mg24_ble_prebuilt_platform_config,
+                           bgm220explorerkit_noradio_platform_config,
+                           bgm220explorerkit_noradio_prebuilt_platform_config,
+                           bgm220explorerkit_ble_platform_config,
+                           bgm220explorerkit_ble_prebuilt_platform_config,
+                           nanomatter_noradio_platform_config,
+                           nanomatter_noradio_prebuilt_platform_config,
+                           nanomatter_ble_platform_config,
+                           nanomatter_ble_prebuilt_platform_config,
+                           nanomatter_matter_platform_config,
+                           nanomatter_matter_prebuilt_platform_config]
+
 
 if __name__ == "__main__":
     main()

@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -28,6 +28,7 @@
 #define MATTER_LIGHTBULB_H
 
 #include "Matter.h"
+#include "devices/DeviceLightbulb.h"
 #include <platform/CHIPDeviceLayer.h>
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <app-common/zap-generated/callback.h>
@@ -44,6 +45,7 @@ public:
 
   void set_onoff(bool value);
   bool get_onoff();
+  void toggle();
 
   operator bool();
   void operator=(bool state);
@@ -59,6 +61,7 @@ protected:
   DeviceLightbulb* lightbulb_device;
   EmberAfEndpointType* device_endpoint;
   DataVersion* endpoint_dataversion_storage;
+  ::Identify* identify_server;
   bool initialized;
 };
 

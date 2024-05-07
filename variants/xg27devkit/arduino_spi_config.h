@@ -36,7 +36,7 @@ extern "C" {
 #define SL_SPIDRV_PERIPHERAL SL_SPIDRV_EUSART_EXP_PERIPHERAL
 
 extern SPIDRV_Init_t sl_spidrv_config;
-extern SPIDRV_Handle_t sl_spidrv_handle;
+#define SL_SPIDRV_PERIPHERAL_HANDLE sl_spidrv_eusart_exp_handle
 
 uint8_t sl_spi_direct_transfer(void* spi_peripheral, uint8_t data);
 

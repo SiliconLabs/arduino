@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,12 +24,14 @@
  * THE SOFTWARE.
  */
 
-#ifndef PWM_H
-#define PWM_H
+#include "Arduino.h"
+
+#ifndef __ARDUINO_PWM_H
+#define __ARDUINO_PWM_H
 
 #include <cmath>
 #include <inttypes.h>
-#include "wiring.h"
+#include "pinDefinitions.h"
 #include "wiring_private.h"
 #include "sl_pwm.h"
 #include "em_gpio.h"
@@ -40,6 +42,7 @@ extern "C" {
   #include "sl_power_manager.h"
 }
 
+namespace arduino {
 class PwmClass {
 public:
   /**************************************************************************//**
@@ -56,7 +59,7 @@ public:
    * @param[in] pin output pin for the PWM signal
    * @param[in] duty_cycle duty cycle for the PWM signal (0-255)
    *****************************************************************************/
-  void duty_cycle_mode(int pin, int duty_cycle);
+  void duty_cycle_mode(PinName pin, int duty_cycle);
 
   /**************************************************************************//**
    * PWM signal generation in frequency mode
@@ -67,14 +70,14 @@ public:
    * @param[in] pin output pin for the PWM signal
    * @param[in] frequency the desired frequency of the PWM signal
    *****************************************************************************/
-  void frequency_mode(int pin, int frequency);
+  void frequency_mode(PinName pin, int frequency);
 
   /**************************************************************************//**
    * Stops any ongoing PWM signal generation and output
    *
    * @param[in] pin PWM pin number to deinitialize
    *****************************************************************************/
-  void stop(uint8_t pin);
+  void stop(PinName pin);
 
   /***************************************************************************//**
    * Sets the write resolution in bits.
@@ -105,7 +108,7 @@ private:
    *
    * @return true if the initialization was successful, false otherwise
    *****************************************************************************/
-  bool init(uint8_t pin, int frequency);
+  bool init(PinName pin, int frequency);
 
   enum pwm_mode_t {
     DUTY_CYCLE,
@@ -131,7 +134,7 @@ private:
   static const uint8_t duty_cycle_mode_write_resolution_max = 12u;
 
   typedef struct {
-    uint8_t pin;
+    PinName pin;
     uint8_t duty_cycle_percent;
     sl_pwm_instance_t inst;
   } pwm_pin_t;
@@ -153,7 +156,7 @@ private:
    * @return the index in 'pwm_pins' corresponding to the provided pin,
    *         UINT8_MAX if not found
    *****************************************************************************/
-  uint8_t get_pwm_channel_idx_for_pin(uint8_t pin);
+  uint8_t get_pwm_channel_idx_for_pin(PinName pin);
 
   /**************************************************************************//**
    * Provides the number of PWM channels in use
@@ -167,5 +170,8 @@ private:
    *****************************************************************************/
   void deinit_all_pwm_channels();
 };
+} // namespace arduino
 
-#endif // PWM_H
+extern arduino::PwmClass PWM;
+
+#endif // __ARDUINO_PWM_H

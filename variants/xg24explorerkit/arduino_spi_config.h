@@ -37,14 +37,14 @@ extern "C" {
 #define SL_SPIDRV_PERIPHERAL SL_SPIDRV_EUSART_MIKROE_PERIPHERAL
 
 extern SPIDRV_Init_t sl_spidrv_config;
-extern SPIDRV_Handle_t sl_spidrv_handle;
+#define SL_SPIDRV_PERIPHERAL_HANDLE sl_spidrv_eusart_mikroe_handle
 
 // Not used - just here to silence the compiler warnings
 #define SL_SPIDRV_EUSART_XG24EXPLORERKIT1_CS_PORT       gpioPortB
 #define SL_SPIDRV_EUSART_XG24EXPLORERKIT1_CS_PIN        2
 
 extern SPIDRV_Init_t sl_spidrv_config_spi1;
-extern SPIDRV_Handle_t sl_spidrv_handle_spi1;
+#define SL_SPIDRV1_PERIPHERAL_HANDLE sl_spidrv_eusart_xg24explorerkit1_handle
 
 uint8_t sl_spi_direct_transfer(void* spi_peripheral, uint8_t data);
 

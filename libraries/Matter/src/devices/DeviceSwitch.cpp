@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,14 +25,14 @@
  */
 
 #include "DeviceSwitch.h"
+#include <platform/CHIPDeviceLayer.h>
+#include <app/clusters/switch-server/switch-server.h>
 
-DeviceSwitch::DeviceSwitch(const char* device_name,
-                           std::string location) :
-  Device(device_name, location),
+DeviceSwitch::DeviceSwitch(const char* device_name) :
+  Device(device_name),
   number_of_positions(2),
   current_position(0),
-  multi_press_max(2),
-  device_changed_callback(nullptr)
+  multi_press_max(2)
 {
   ;
 }
@@ -41,8 +41,8 @@ void DeviceSwitch::SetNumberOfPositions(uint8_t number_of_positions)
 {
   bool changed = this->number_of_positions != number_of_positions;
   this->number_of_positions = number_of_positions;
-  if ((changed) && (this->device_changed_callback)) {
-    this->device_changed_callback(this, kChanged_NumberOfPositions);
+  if (changed) {
+    this->HandleSwitchDeviceStatusChanged(kChanged_NumberOfPositions);
   }
 }
 
@@ -50,8 +50,8 @@ void DeviceSwitch::SetCurrentPosition(uint8_t current_position)
 {
   bool changed = this->current_position != current_position;
   this->current_position = current_position;
-  if ((changed) && (this->device_changed_callback)) {
-    this->device_changed_callback(this, kChanged_CurrentPosition);
+  if (changed) {
+    this->HandleSwitchDeviceStatusChanged(kChanged_CurrentPosition);
   }
 }
 
@@ -59,8 +59,8 @@ void DeviceSwitch::SetMultiPressMax(uint8_t multi_press_max)
 {
   bool changed = this->multi_press_max != multi_press_max;
   this->multi_press_max = multi_press_max;
-  if ((changed) && (this->device_changed_callback)) {
-    this->device_changed_callback(this, kChanged_MultiPressMax);
+  if (changed) {
+    this->HandleSwitchDeviceStatusChanged(kChanged_MultiPressMax);
   }
 }
 
@@ -89,14 +89,97 @@ uint16_t DeviceSwitch::GetSwitchClusterRevision()
   return this->switch_cluster_revision;
 }
 
-void DeviceSwitch::SetChangeCallback(DeviceCallback_fn device_changed_callback)
+EmberAfStatus DeviceSwitch::HandleReadEmberAfAttribute(ClusterId clusterId,
+                                                       chip::AttributeId attributeId,
+                                                       uint8_t* buffer,
+                                                       uint16_t maxReadLength)
 {
-  this->device_changed_callback = device_changed_callback;
+  if (!this->reachable) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  using namespace ::chip::app::Clusters::Switch::Attributes;
+  ChipLogProgress(DeviceLayer, "HandleReadSwitchAttribute: clusterId=%lu attrId=%ld", clusterId, attributeId);
+
+  if (clusterId == chip::app::Clusters::BridgedDeviceBasicInformation::Id) {
+    return this->HandleReadBridgedDeviceBasicAttribute(clusterId, attributeId, buffer, maxReadLength);
+  }
+
+  if (clusterId != chip::app::Clusters::Switch::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if ((attributeId == CurrentPosition::Id) && (maxReadLength == 1)) {
+    uint8_t current_pos = this->GetCurrentPosition();
+    memcpy(buffer, &current_pos, sizeof(current_pos));
+  } else if ((attributeId == NumberOfPositions::Id) && (maxReadLength == 1)) {
+    uint8_t max_positions = this->GetNumberOfPositions();
+    memcpy(buffer, &max_positions, sizeof(max_positions));
+  } else if ((attributeId == MultiPressMax::Id) && (maxReadLength == 1)) {
+    uint8_t multipress_max = this->GetMultiPressMax();
+    memcpy(buffer, &multipress_max, sizeof(multipress_max));
+  } else if ((attributeId == FeatureMap::Id) && (maxReadLength == 4)) {
+    uint32_t featureMap = this->GetFeatureMap();
+    memcpy(buffer, &featureMap, sizeof(featureMap));
+  } else if ((attributeId == ClusterRevision::Id) && (maxReadLength == 2)) {
+    uint16_t clusterRevision = this->GetSwitchClusterRevision();
+    memcpy(buffer, &clusterRevision, sizeof(clusterRevision));
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
 }
 
-void DeviceSwitch::HandleDeviceChange(Device* device, Device::Changed_t change_mask)
+EmberAfStatus DeviceSwitch::HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                                        chip::AttributeId attributeId,
+                                                        uint8_t* buffer)
 {
-  if (this->device_changed_callback) {
-    this->device_changed_callback(this, (DeviceSwitch::Changed_t) change_mask);
+  if (!this->reachable) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  using namespace ::chip::app::Clusters::Switch::Attributes;
+  ChipLogProgress(DeviceLayer, "HandleWriteSwitchAttribute: clusterId=%lu attrId=%ld", clusterId, attributeId);
+
+  if (clusterId != chip::app::Clusters::Switch::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if (attributeId == CurrentPosition::Id) {
+    this->SetCurrentPosition(*buffer);
+  } else if (attributeId == NumberOfPositions::Id) {
+    this->SetNumberOfPositions(*buffer);
+  } else if (attributeId == MultiPressMax::Id) {
+    this->SetMultiPressMax(*buffer);
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
+}
+
+void DeviceSwitch::HandleSwitchDeviceStatusChanged(Changed_t itemChangedMask)
+{
+  using namespace ::chip::app::Clusters;
+  using namespace ::chip::DeviceLayer;
+
+  if (itemChangedMask & kChanged_CurrentPosition) {
+    ScheduleMatterReportingCallback(this->endpoint_id, Switch::Id, Switch::Attributes::CurrentPosition::Id);
+
+    // Send the corresponding event for press or release
+    PlatformMgr().LockChipStack();
+    if (this->current_position) {
+      SwitchServer::Instance().OnInitialPress(this->endpoint_id, this->current_position);
+    } else {
+      SwitchServer::Instance().OnShortRelease(this->endpoint_id, this->current_position);
+    }
+    PlatformMgr().UnlockChipStack();
+  }
+  if (itemChangedMask & kChanged_NumberOfPositions) {
+    ScheduleMatterReportingCallback(this->endpoint_id, Switch::Id, Switch::Attributes::NumberOfPositions::Id);
+  }
+  if (itemChangedMask & kChanged_MultiPressMax) {
+    ScheduleMatterReportingCallback(this->endpoint_id, Switch::Id, Switch::Attributes::MultiPressMax::Id);
   }
 }

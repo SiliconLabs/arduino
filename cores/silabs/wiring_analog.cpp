@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,17 +24,22 @@
  * THE SOFTWARE.
  */
 
-#include "wiring.h"
-#include "adc.h"
-#include "dac.h"
-#include "pwm.h"
+#include "Arduino.h"
+#include "pins_arduino.h"
+#include "pinDefinitions.h"
 
-extern AdcClass ADC;
-extern PwmClass PWM;
-
-uint16_t analogRead(uint8_t pin)
+int analogRead(pin_size_t pin)
 {
-  return ADC.get_sample(pin);
+  PinName pin_name = pinToPinName(pin);
+  if (pin_name == PIN_NAME_NC) {
+    return 0;
+  }
+  return analogRead(pin_name);
+}
+
+int analogRead(PinName pin)
+{
+  return (int) ADC.get_sample(pin);
 }
 
 void analogReference(uint8_t reference)
@@ -57,9 +62,18 @@ void analogReferenceDAC(uint8_t reference)
   #endif // NUM_DAC_HW
 }
 
-void analogWrite(uint8_t pin, int value)
+void analogWrite(pin_size_t pin, int value)
 {
-  PWM.duty_cycle_mode(pin, value);
+  PinName pin_name = pinToPinName(pin);
+  if (pin_name == PIN_NAME_NC) {
+    return;
+  }
+  analogWrite(pin_name, value);
+}
+
+void analogWrite(PinName pin_name, int value)
+{
+  PWM.duty_cycle_mode(pin_name, value);
 }
 
 void analogWrite(dac_channel_t dac_channel, int value)
@@ -115,22 +129,4 @@ void analogWriteResolution(int resolution)
   #if (NUM_DAC_HW > 1)
   DAC_1.set_write_resolution((uint8_t)resolution);
   #endif // (NUM_DAC_HW > 1)
-}
-
-void tone(uint8_t pin, unsigned int frequency, unsigned long duration)
-{
-  PWM.frequency_mode(pin, frequency);
-  if (duration == 0) {
-    return;
-  }
-  uint32_t tone_end_time = millis() + duration;
-  while (millis() < tone_end_time) {
-    yield();
-  }
-  noTone(pin);
-}
-
-void noTone(uint8_t pin)
-{
-  PWM.frequency_mode(pin, 0);
 }

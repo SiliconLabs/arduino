@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,23 +35,25 @@ public:
     kChanged_MeasurementValue = kChanged_Last << 1,
   } Changed;
 
-  DevicePressureSensor(const char* device_name, std::string location, int16_t min, int16_t max, int16_t measured_value);
-  using DeviceCallback_fn = std::function<void(DevicePressureSensor*, DevicePressureSensor::Changed_t)>;
+  DevicePressureSensor(const char* device_name, int16_t min, int16_t max, int16_t measured_value);
 
   int16_t GetMeasuredValue();
   void SetMeasuredValue(int16_t measurement);
-  void SetChangeCallback(DeviceCallback_fn device_changed_callback);
   uint32_t GetPressureSensorClusterFeatureMap();
   uint16_t GetPressureSensorClusterRevision();
+
+  EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
+                                           chip::AttributeId attributeId,
+                                           uint8_t* buffer,
+                                           uint16_t maxReadLength) override;
 
   const int16_t min_value;
   const int16_t max_value;
 
 private:
-  void HandleDeviceChange(Device* device, Device::Changed_t change_mask);
+  void HandlePressureSensorDeviceStatusChanged(Changed_t itemChangedMask);
 
   int16_t measured_value;
-  DeviceCallback_fn device_changed_callback;
 
   static const uint32_t pressure_sensor_cluster_feature_map = 0u;   // No additional features enabled
   static const uint16_t pressure_sensor_cluster_revision    = 3u;

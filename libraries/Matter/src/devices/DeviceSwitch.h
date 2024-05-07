@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,8 +37,7 @@ public:
     kChanged_MultiPressMax     = kChanged_Last << 3,
   } Changed;
 
-  DeviceSwitch(const char* device_name, std::string location);
-  using DeviceCallback_fn = std::function<void(DeviceSwitch*, DeviceSwitch::Changed_t)>;
+  DeviceSwitch(const char* device_name);
 
   void SetNumberOfPositions(uint8_t number_of_positions);
   void SetCurrentPosition(uint8_t current_position);
@@ -48,16 +47,23 @@ public:
   uint8_t GetMultiPressMax();
   uint32_t GetFeatureMap();
   uint16_t GetSwitchClusterRevision();
-  void SetChangeCallback(DeviceCallback_fn device_changed_callback);
+
+  EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
+                                           chip::AttributeId attributeId,
+                                           uint8_t* buffer,
+                                           uint16_t maxReadLength) override;
+
+  EmberAfStatus HandleWriteEmberAfAttribute(ClusterId clusterId,
+                                            chip::AttributeId attributeId,
+                                            uint8_t* buffer) override;
 
 private:
-  void HandleDeviceChange(Device * device, Device::Changed_t change_mask);
+  void HandleSwitchDeviceStatusChanged(Changed_t itemChangedMask);
 
   uint8_t number_of_positions;
   uint8_t current_position;
   uint8_t multi_press_max;
-  DeviceCallback_fn device_changed_callback;
 
-  static const uint32_t switch_cluster_feature_map = 0u;   // No additional features enabled
+  static const uint32_t switch_cluster_feature_map = 6u;   // Momentary switch and release support enabled
   static const uint16_t switch_cluster_revision    = 1u;
 };

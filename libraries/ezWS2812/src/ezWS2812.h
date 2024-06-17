@@ -63,9 +63,9 @@ public:
         colors[c] = (uint8_t)color_adj;
       }
     } else if (brightness == 0) {
-      red = 0;
-      green = 0;
-      blue = 0;
+      colors[0] = 0;
+      colors[1] = 0;
+      colors[2] = 0;
     }
 
     // Go through the output array

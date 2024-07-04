@@ -75,6 +75,7 @@ private:
 
   uint8_t current_percent;
   fan_mode_t current_fan_mode;
+  uint8_t speedmax;
 
   static const uint8_t fan_mode_sequence        = 2u;   // Off/Low/Med/High/Auto
   static const uint32_t fan_cluster_feature_map = 1u;   // 1-100 speeds supported

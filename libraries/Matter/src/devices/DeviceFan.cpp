@@ -29,7 +29,8 @@
 DeviceFan::DeviceFan(const char* device_name) :
   Device(device_name),
   current_percent(0),
-  current_fan_mode(fan_mode_t::Off)
+  current_fan_mode(fan_mode_t::Off),
+  speedmax(100)
 {
   ;
 }
@@ -63,6 +64,11 @@ uint8_t DeviceFan::GetPercentCurrent()
 void DeviceFan::SetPercentCurrent(uint8_t percent)
 {
   (void)percent;
+}
+
+uint8_t DeviceFan::GetSpeedMax()
+{
+  return this->speedmax;
 }
 
 void DeviceFan::SetFanMode(uint8_t fan_mode)
@@ -150,6 +156,8 @@ EmberAfStatus DeviceFan::HandleReadEmberAfAttribute(ClusterId clusterId,
   } else if ((attributeId == PercentCurrent::Id) && (maxReadLength == 1)) {
     uint8_t percent_current = this->GetPercentCurrent();
     memcpy(buffer, &percent_current, sizeof(percent_current));
+    uint8_t speedmax = this->GetSpeedMax();
+    memcpy(buffer, &speedmax, sizeof(speedmax));
   } else if ((attributeId == FeatureMap::Id) && (maxReadLength == 4)) {
     uint32_t featureMap = this->GetFanClusterFeatureMap();
     memcpy(buffer, &featureMap, sizeof(featureMap));

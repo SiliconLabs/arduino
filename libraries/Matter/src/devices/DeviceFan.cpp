@@ -156,6 +156,7 @@ EmberAfStatus DeviceFan::HandleReadEmberAfAttribute(ClusterId clusterId,
   } else if ((attributeId == PercentCurrent::Id) && (maxReadLength == 1)) {
     uint8_t percent_current = this->GetPercentCurrent();
     memcpy(buffer, &percent_current, sizeof(percent_current));
+  } else if ((attributeId == SpeedMax::Id) && (maxReadLength == 1)) {    
     uint8_t speedmax = this->GetSpeedMax();
     memcpy(buffer, &speedmax, sizeof(speedmax));
   } else if ((attributeId == FeatureMap::Id) && (maxReadLength == 4)) {

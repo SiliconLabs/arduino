@@ -43,6 +43,7 @@ public:
   void SetPercentSetting(uint8_t percent);
   uint8_t GetPercentCurrent();
   void SetPercentCurrent(uint8_t percent);
+  uint8_t GetSpeedMax();
 
   void SetFanMode(uint8_t fan_mode);
   uint8_t GetFanMode();

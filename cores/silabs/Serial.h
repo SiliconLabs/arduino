@@ -63,6 +63,8 @@ public:
   void task();
   void handleSerialEvent();
   void printf(const char* fmt, ...);
+  void suspend();
+  void resume();
 private:
   static const uint8_t printf_buffer_size = 128u;
 
@@ -80,6 +82,8 @@ private:
   sl_iostream_uart_t* instance_handle;
 
   bool initialized;
+  unsigned long baudrate;
+  bool suspended;
 };
 } // namespace arduino
 

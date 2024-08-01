@@ -11,7 +11,9 @@
    battery state of the device can be read.
    On disconnection the LED turns off and the BLE advertisement restarts.
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    You can scan for the device and initiate connections with the EFR Connect app:
     - https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo

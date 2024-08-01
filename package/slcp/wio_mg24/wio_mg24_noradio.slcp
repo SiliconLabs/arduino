@@ -47,6 +47,11 @@ component:
     - led0
   - id: emlib_vdac
   - id: gpiointerrupt
+  - id: nvm3_default
+  - id: nvm3_default_config
+  - id: nvm3_default_flash_backend
+  - id: nvm3_lib
+  - id: emlib_rmu
 
 source:
   - path: main.c

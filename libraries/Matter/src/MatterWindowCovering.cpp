@@ -51,8 +51,7 @@ DECLARE_DYNAMIC_ATTRIBUTE(WindowCovering::Attributes::OperationalStatus::Id, INT
 DECLARE_DYNAMIC_ATTRIBUTE(WindowCovering::Attributes::EndProductType::Id, INT8U, 1, 0),                     // EndProductType
 DECLARE_DYNAMIC_ATTRIBUTE(WindowCovering::Attributes::Mode::Id, INT8U, 1, 0),                               // Mode
 DECLARE_DYNAMIC_ATTRIBUTE(WindowCovering::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                      // FeatureMap
-DECLARE_DYNAMIC_ATTRIBUTE(WindowCovering::Attributes::ClusterRevision::Id, INT16U, 2, 0),                   // ClusterRevision
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                       // ClusterRevision auto added by LIST_END
 
 // Window Covering endpoint cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(windowCoveringEndpointClusters)

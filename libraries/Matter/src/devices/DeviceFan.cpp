@@ -52,6 +52,7 @@ void DeviceFan::SetPercentSetting(uint8_t percent)
   if (changed) {
     this->HandleFanDeviceStatusChanged(kChanged_PercentSetting);
     this->HandleFanDeviceStatusChanged(kChanged_PercentCurrent);
+    CallDeviceChangeCallback();
   }
 }
 
@@ -73,6 +74,7 @@ void DeviceFan::SetFanMode(uint8_t fan_mode)
 
   if (changed) {
     this->HandleFanDeviceStatusChanged(kChanged_ModeSetting);
+    CallDeviceChangeCallback();
   }
 
   if (!changed) {
@@ -106,6 +108,11 @@ uint8_t DeviceFan::GetFanMode()
 uint8_t DeviceFan::GetFanModeSequence()
 {
   return this->fan_mode_sequence;
+}
+
+uint8_t DeviceFan::GetFanSpeedMax()
+{
+  return this->fan_speed_max;
 }
 
 uint32_t DeviceFan::GetFanClusterFeatureMap()
@@ -150,6 +157,15 @@ EmberAfStatus DeviceFan::HandleReadEmberAfAttribute(ClusterId clusterId,
   } else if ((attributeId == PercentCurrent::Id) && (maxReadLength == 1)) {
     uint8_t percent_current = this->GetPercentCurrent();
     memcpy(buffer, &percent_current, sizeof(percent_current));
+  } else if ((attributeId == SpeedMax::Id) && (maxReadLength == 1)) {
+    uint8_t speed_max = this->GetFanSpeedMax();
+    memcpy(buffer, &speed_max, sizeof(speed_max));
+  } else if ((attributeId == SpeedSetting::Id) && (maxReadLength == 1)) {
+    uint8_t speed_setting = this->GetPercentSetting();
+    memcpy(buffer, &speed_setting, sizeof(speed_setting));
+  } else if ((attributeId == SpeedCurrent::Id) && (maxReadLength == 1)) {
+    uint8_t speed_current = this->GetPercentCurrent();
+    memcpy(buffer, &speed_current, sizeof(speed_current));
   } else if ((attributeId == FeatureMap::Id) && (maxReadLength == 4)) {
     uint32_t featureMap = this->GetFanClusterFeatureMap();
     memcpy(buffer, &featureMap, sizeof(featureMap));
@@ -179,6 +195,8 @@ EmberAfStatus DeviceFan::HandleWriteEmberAfAttribute(ClusterId clusterId,
   }
 
   if (attributeId == PercentSetting::Id) {
+    this->SetPercentSetting(*buffer);
+  } else if (attributeId == SpeedSetting::Id) {
     this->SetPercentSetting(*buffer);
   } else if (attributeId == FanMode::Id) {
     this->SetFanMode(*buffer);

@@ -9,7 +9,9 @@
    After the subscription the example starts receiving the temperature data from the other board periodically,
    and prints it to Serial.
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    Compatible boards:
    - Arduino Nano Matter
@@ -18,6 +20,7 @@
    - xG24 Explorer Kit
    - xG24 Dev Kit
    - BGM220 Explorer Kit
+   - Ezurio Lyra 24P 20dBm Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */

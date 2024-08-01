@@ -4,7 +4,7 @@
    Starts an ezBLE server which will accept client connections.
    Once a client is connected the device will periodically send it's uptime in milliseconds.
 
-   Compatible with all Silicon Labs BLE hardware.
+   Compatible with all Silicon Labs BLE hardware with the 'BLE (Silabs)' protocol stack variant selected.
 
    Author: Tamas Jozsi (Silicon Labs)
  */

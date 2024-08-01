@@ -124,23 +124,25 @@ PinName gPinNames[] = {
   PC3, // D1 - SPI SDO
   PC2, // D2 - SPI SDI
   PC1, // D3 - SPI SCK
-  PC0, // D4 - SPI CS
+  PC0, // D4 - SPI CS - WU
   PC8, // D5 - SPI1 SS
   PB0, // D6 - SPI1 SCK - DAC0
-  PD2, // A0
+  PD2, // A0 - WU
   PD3, // A1
   PB5, // A2 - SDA
   PB4, // A3 - SCL
-  PD4, // A4 - Tx - 11
-  PD5, // A5 - Rx - 12
-  PB1, // A6 - SPI1 SDO - Tx1 - DAC1
+  PD4, // A4 - 11
+  PD5, // A5 - 12 - WU
+  PB1, // A6 - SPI1 SDO - Tx1 - DAC1 - WU
   PA0, // A7 - SPI1 SDI - Rx1
   PA4, // LED - 15
   PA7, // LED - 16
   PB2, // Button - DAC2 - 17
-  PB3, // Button - DAC3 - 18
+  PB3, // Button - DAC3 - WU - 18
   PC4, // SCL1 - 19
-  PC5, // SDA1 - 20
+  PC5, // SDA1 - WU - 20
+  PA6, // Rx - 21
+  PA5, // Tx - WU - 22
 };
 
 unsigned int getPinCount()

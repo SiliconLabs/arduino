@@ -33,7 +33,7 @@
 #include "em_common.h"
 
 typedef enum {
-  CPU_40MHZ,
+  CPU_39MHZ,
   CPU_76MHZ,
   CPU_80MHZ
 } cpu_clock_t;

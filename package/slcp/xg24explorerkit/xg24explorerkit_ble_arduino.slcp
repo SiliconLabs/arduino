@@ -1,0 +1,99 @@
+project_name: bt_arduino_gsdk_config_xg24explorerkit
+package: Bluetooth
+label: Bluetooth - Arduino GSDK config for the xG24 Explorer Kit (brd2703a) (Based on SoC Empty)
+description: >
+  This slcp can be used in place of SoC Empty to generate the
+  SDK files needed for the Arduino Core.
+category: Bluetooth Examples
+quality: production
+
+filter:
+  - name: "Wireless Technology"
+    value: ["Bluetooth"]
+  - name: "Device Type"
+    value: ["SoC"]
+  - name: "Project Difficulty"
+    value: ["Beginner"]
+
+component:
+  - id: sl_system
+  - id: device_init
+  - id: device_init_nvic
+  - id: psa_crypto
+  - id: power_manager
+  - id: bootloader_interface
+  - id: app_assert
+  - id: component_catalog
+  - id: mpu
+  - id: udelay
+  - id: app_log
+  - id: iostream_usart
+    instance:
+     - vcom
+  - id: iostream_eusart
+    instance:
+    - xg24explorerkit1
+  - id: i2cspm
+    instance:
+     - mikroe
+     - qwiic
+  - id: spidrv_eusart
+    instance:
+     - mikroe
+     - xg24explorerkit1
+  - id: emlib_iadc
+  - id: freertos
+  - id: pwm
+    instance:
+    - led0
+  - id: emlib_vdac
+  - id: gpiointerrupt
+  - id: emlib_rmu
+  - id: nvm3_default
+  - id: nvm3_default_config
+  - id: nvm3_default_flash_backend
+  - id: nvm3_lib
+  - id: bluetooth_controller
+  - id: bluetooth_feature_connection
+  - id: bluetooth_feature_connection_phy_update
+  - id: bluetooth_feature_extended_advertiser
+  - id: bluetooth_feature_extended_scanner
+  - id: bluetooth_feature_legacy_advertiser
+  - id: bluetooth_feature_legacy_scanner
+  - id: bluetooth_feature_periodic_advertiser
+
+source:
+  - path: main.c
+  - path: app.c
+
+include:
+  - path: .
+    file_list:
+      - path: app.h
+
+config_file:
+  - path: sl_spidrv_eusart_xg24explorerkit1_config.h
+    override:
+      component: spidrv_eusart
+      instance: xg24explorerkit1
+      file_id: spidrv_eusart_config
+  - path: sl_iostream_eusart_xg24explorerkit1_config.h
+    override:
+      component: iostream_eusart
+      instance: xg24explorerkit1
+      file_id: iostream_eusart_config
+
+configuration:
+  - name: SL_PSA_KEY_USER_SLOT_COUNT
+    value: "0"
+    condition:
+      - psa_crypto
+  - name: SL_BOARD_ENABLE_VCOM
+    value: "1"
+  - name: SL_SPIDRV_EUSART_MIKROE_CS_CONTROL
+    value: "spidrvCsControlApplication"
+  - name: SL_SPIDRV_EUSART_XG24EXPLORERKIT1_CS_CONTROL
+    value: "spidrvCsControlApplication"
+
+tag:
+  - hardware:rf:band:2400

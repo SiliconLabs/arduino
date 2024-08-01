@@ -25,10 +25,21 @@ Supported Thread Border Routers:
 
 Read more on setting up your Raspberry Pi as an OTBR [here](https://docs.silabs.com/matter/2.2.0/matter-thread/raspi-img).
 
+### Nano Matter OpenThread RCP
+
+The *Arduino Nano Matter* can also be used as an USB-OpenThread bridge (RCP - Radio Co-Processor) with a Raspberry Pi OTBR.
+
+To set up your Nano Matter as an OpenThread RCP do the following:
+ - Flash the bootloader on your device
+ - Flash *'extra/openthread_rcp_nano_matter.hex'* on your device
+ - Plug in your Nano Matter into your Raspberry Pi via USB
+ - Follow the steps in the Raspberry Pi OTBR guide
+
 ## Supported Matter devices
 
  - Air quality sensor
  - Contact sensor
+ - Door lock
  - Fan
  - Flow measurement
  - Humidity measurement
@@ -66,7 +77,7 @@ Note, that an additional *Matter Hub* device will be added alongside your Matter
 
 ## Additional info
 
-### Unpairing
+### Unpairing / decommissioning
 
 Matter variants save the network keys and credentials in permanent memory, so you don't have to re-pair them when they're restarted.
 
@@ -74,6 +85,16 @@ If you need to make your device forget the network credentials but you're unable
 
 You can do this by re-burning the bootloader in the Arduino IDE (*Tools > Burn Bootloader*). The IDE will perform a full chip erase before re-flashing your bootloader.
 After this you'll need to upload your sketch again. Your sketch will start with a blank slate prompting you to pair it.
+
+You can use the Matter library as well to unpair your devices from code. See the **matter_decommission** example for details.
+
+### Changing Matter device identities and provisioning data
+
+Some ecosystems (as of now Google) requires each Matter device to have unique identities in order to pair.
+
+We provide a python script for changing the Matter device identities and provisioning data easily.
+
+See the [Arduino Matter Provision Tool](../../extra/arduino_matter_provision/readme.md) under *'extra/arduino_matter_provision'*.
 
 ## Arduino Nano Matter - Matter setup guide
 
@@ -96,6 +117,9 @@ Returns the manual pairing code required for onboarding the device on a Matter n
 ```String getOnboardingQRCodeUrl();```
 Returns a link to the QR code required for onboarding the device on a Matter network.
 
+```String getOnboardingQRCodePayload();```
+Returns the QR code payload for onboarding the device on a Matter network. Ideal when generating your own QR codes.
+
 ```bool isDeviceCommissioned();```
 Returns whether the device has been commissioned to a Matter network.
 
@@ -116,6 +140,8 @@ Users can publish measurement/control data through the Matter classes which will
 
 ```is_online()``` can be called on all Matter appliances to check whether they have been discovered on the network by the appropriate client - which is most likely your Matter hub.
 When this function returns *true* it means that your appliance is able to communicate with your Matter hub - and therefore it's online.
+
+```set_device_change_callback(void (*matter_device_changed_cb)(void))``` can be called to set a callback function which will be called when any of the device's properties are changed by the Matter controller.
 
 All appliance classes have the following methods for setting it's custom properties:
 
@@ -144,6 +170,14 @@ Class for creating and controlling a Matter Contact Sensor appliance.
 ```void set_state(bool value);```
 
 ```bool get_state();```
+
+## class MatterDoorLock
+
+```bool is_locked();```
+
+```void set_locked(bool locked);```
+
+```void toggle();```
 
 ## class MatterFan
 

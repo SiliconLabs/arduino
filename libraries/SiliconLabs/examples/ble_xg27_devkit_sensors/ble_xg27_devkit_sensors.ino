@@ -30,7 +30,9 @@
      Service, Hall Effect Service, IMU Service, and Environmental Sensing Service. Try to read, re-read the characteristics
      and enable notification on this service to get the value from sensors.
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    Get the EFR Connect app:
     - https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo

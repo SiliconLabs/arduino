@@ -8,7 +8,9 @@
    will be illuminated and the advertisement stops.
    On disconnection the LED turns off and the BLE advertisement restarts.
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    You can scan for the device and initiate connections with the EFR Connect app:
     - https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo
@@ -21,6 +23,7 @@
    - xG24 Explorer Kit
    - xG24 Dev Kit
    - BGM220 Explorer Kit
+   - Ezurio Lyra 24P 20dBm Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */

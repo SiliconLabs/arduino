@@ -9,53 +9,91 @@ import time
 
 all_variants = [
     ["nano_matter", "none"],
-    ["nano_matter", "ble"],
+    ["nano_matter", "ble_arduino"],
+    ["nano_matter", "ble_silabs"],
     ["nano_matter", "matter"],
     ["thingplusmatter", "none"],
-    ["thingplusmatter", "ble"],
+    ["thingplusmatter", "ble_arduino"],
+    ["thingplusmatter", "ble_silabs"],
     ["thingplusmatter", "matter"],
     ["xg24explorerkit", "none"],
-    ["xg24explorerkit", "ble"],
+    ["xg24explorerkit", "ble_arduino"],
+    ["xg24explorerkit", "ble_silabs"],
     ["xg24explorerkit", "matter"],
     ["xg24devkit", "none"],
-    ["xg24devkit", "ble"],
+    ["xg24devkit", "ble_arduino"],
+    ["xg24devkit", "ble_silabs"],
     ["xg24devkit", "matter"],
     ["xg27devkit", "none"],
-    ["xg27devkit", "ble"],
+    ["xg27devkit", "ble_arduino"],
+    ["xg27devkit", "ble_silabs"],
     ["bgm220explorerkit", "none"],
-    ["bgm220explorerkit", "ble"],
+    ["bgm220explorerkit", "ble_silabs"],
+    ["lyra24p20", "none"],
+    ["lyra24p20", "ble_arduino"],
+    ["lyra24p20", "ble_silabs"],
 ]
 
 all_ble = [
-    ["nano_matter", "ble"],
-    ["thingplusmatter", "ble"],
-    ["xg24explorerkit", "ble"],
-    ["xg24devkit", "ble"],
-    ["xg27devkit", "ble"],
-    ["bgm220explorerkit", "ble"],
+    ["nano_matter", "ble_arduino"],
+    ["nano_matter", "ble_silabs"],
+    ["thingplusmatter", "ble_arduino"],
+    ["thingplusmatter", "ble_silabs"],
+    ["xg24explorerkit", "ble_arduino"],
+    ["xg24explorerkit", "ble_silabs"],
+    ["xg24devkit", "ble_arduino"],
+    ["xg24devkit", "ble_silabs"],
+    ["xg27devkit", "ble_arduino"],
+    ["xg27devkit", "ble_silabs"],
+    ["bgm220explorerkit", "ble_silabs"],
+    ["lyra24p20", "ble_arduino"],
+    ["lyra24p20", "ble_silabs"],
 ]
 
-thingplusmatter_ble = [
-    ["thingplusmatter", "ble"],
+all_ble_silabs = [
+    ["nano_matter", "ble_silabs"],
+    ["thingplusmatter", "ble_silabs"],
+    ["xg24explorerkit", "ble_silabs"],
+    ["xg24devkit", "ble_silabs"],
+    ["xg27devkit", "ble_silabs"],
+    ["bgm220explorerkit", "ble_silabs"],
+    ["lyra24p20", "ble_silabs"],
 ]
 
-xg27devkit_ble = [
-    ["xg27devkit", "ble"],
+thingplusmatter_ble_silabs = [
+    ["thingplusmatter", "ble_silabs"],
+]
+
+xg27devkit_ble_silabs = [
+    ["xg27devkit", "ble_silabs"],
 ]
 
 boards_with_pdm = [
-    ["xg27devkit", "ble"],
+    ["xg27devkit", "ble_arduino"],
+    ["xg27devkit", "ble_silabs"],
+    ["xg27devkit", "none"],
 ]
 
 boards_with_dac = [
-    ["nano_matter", "ble"],
+    ["nano_matter", "none"],
+    ["nano_matter", "ble_arduino"],
+    ["nano_matter", "ble_silabs"],
     ["nano_matter", "matter"],
-    ["thingplusmatter", "ble"],
+    ["thingplusmatter", "none"],
+    ["thingplusmatter", "ble_arduino"],
+    ["thingplusmatter", "ble_silabs"],
     ["thingplusmatter", "matter"],
-    ["xg24explorerkit", "ble"],
+    ["xg24explorerkit", "none"],
+    ["xg24explorerkit", "ble_arduino"],
+    ["xg24explorerkit", "ble_silabs"],
     ["xg24explorerkit", "matter"],
-    ["xg24devkit", "ble"],
+    ["xg24devkit", "none"],
+    ["xg24devkit", "ble_arduino"],
+    ["xg24devkit", "ble_silabs"],
     ["xg24devkit", "matter"],
+    ["lyra24p20", "none"],
+    ["lyra24p20", "ble_arduino"],
+    ["lyra24p20", "ble_silabs"],
 ]
 
 all_matter = [
@@ -75,25 +113,25 @@ testlist_quick = {
 
 testlist_ble = {
     # Silicon Labs example library
-    "../libraries/SiliconLabs/examples/ble_blinky/ble_blinky.ino":                                                  all_ble,
-    "../libraries/SiliconLabs/examples/ble_health_thermometer/ble_health_thermometer.ino":                          all_ble,
-    "../libraries/SiliconLabs/examples/ble_health_thermometer_client/ble_health_thermometer_client.ino":            all_ble,
-    "../libraries/SiliconLabs/examples/ble_hid_keyboard/ble_hid_keyboard.ino":                                      all_ble,
-    "../libraries/SiliconLabs/examples/ble_lightswitch_client/ble_lightswitch_client.ino":                          all_ble,
-    "../libraries/SiliconLabs/examples/ble_lightswitch_server/ble_lightswitch_server.ino":                          all_ble,
-    "../libraries/SiliconLabs/examples/ble_minimal/ble_minimal.ino":                                                all_ble,
-    "../libraries/SiliconLabs/examples/ble_thingplus_battery_gauge/ble_thingplus_battery_gauge.ino":                thingplusmatter_ble,
-    "../libraries/SiliconLabs/examples/ble_xg27_devkit_sensors/ble_xg27_devkit_sensors.ino":                        xg27devkit_ble,
+    "../libraries/SiliconLabs/examples/ble_blinky/ble_blinky.ino":                                                  all_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_health_thermometer/ble_health_thermometer.ino":                          all_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_health_thermometer_client/ble_health_thermometer_client.ino":            all_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_hid_keyboard/ble_hid_keyboard.ino":                                      all_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_lightswitch_client/ble_lightswitch_client.ino":                          all_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_lightswitch_server/ble_lightswitch_server.ino":                          all_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_minimal/ble_minimal.ino":                                                all_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_thingplus_battery_gauge/ble_thingplus_battery_gauge.ino":                thingplusmatter_ble_silabs,
+    "../libraries/SiliconLabs/examples/ble_xg27_devkit_sensors/ble_xg27_devkit_sensors.ino":                        xg27devkit_ble_silabs,
     "../libraries/SiliconLabs/examples/dac_sawtooth/dac_sawtooth.ino":                                              boards_with_dac,
-    "../libraries/SiliconLabs/examples/xg27devkit_sensors/xg27devkit_sensors.ino":                                  xg27devkit_ble,
-    "../libraries/SiliconLabs/examples/thingplusmatter_debug_unix/thingplusmatter_debug_unix.ino":                  all_ble,
-    "../libraries/SiliconLabs/examples/thingplusmatter_debug_win/thingplusmatter_debug_win.ino":                    all_ble,
+    "../libraries/SiliconLabs/examples/xg27devkit_sensors/xg27devkit_sensors.ino":                                  xg27devkit_ble_silabs,
+    "../libraries/SiliconLabs/examples/thingplusmatter_debug_unix/thingplusmatter_debug_unix.ino":                  all_ble_silabs,
+    "../libraries/SiliconLabs/examples/thingplusmatter_debug_win/thingplusmatter_debug_win.ino":                    all_ble_silabs,
     # ezBLE
-    "../libraries/ezBLE/examples/ezBLE_callbacks/ezBLE_callbacks.ino":                                              all_ble,
-    "../libraries/ezBLE/examples/ezBLE_send_and_receive/ezBLE_send_and_receive.ino":                                all_ble,
-    "../libraries/ezBLE/examples/ezBLE_simple_client/ezBLE_simple_client.ino":                                      all_ble,
-    "../libraries/ezBLE/examples/ezBLE_simple_client_callback/ezBLE_simple_client_callback.ino":                    all_ble,
-    "../libraries/ezBLE/examples/ezBLE_simple_server/ezBLE_simple_server.ino":                                      all_ble,
+    "../libraries/ezBLE/examples/ezBLE_callbacks/ezBLE_callbacks.ino":                                              all_ble_silabs,
+    "../libraries/ezBLE/examples/ezBLE_send_and_receive/ezBLE_send_and_receive.ino":                                all_ble_silabs,
+    "../libraries/ezBLE/examples/ezBLE_simple_client/ezBLE_simple_client.ino":                                      all_ble_silabs,
+    "../libraries/ezBLE/examples/ezBLE_simple_client_callback/ezBLE_simple_client_callback.ino":                    all_ble_silabs,
+    "../libraries/ezBLE/examples/ezBLE_simple_server/ezBLE_simple_server.ino":                                      all_ble_silabs,
     # ezWS2812
     "../libraries/ezWS2812/examples/blink_all/blink_all.ino":                                                       all_variants,
     "../libraries/ezWS2812/examples/colors/colors.ino":                                                             all_variants,
@@ -102,16 +140,25 @@ testlist_ble = {
     "../libraries/Si7210_hall/examples/Si7210_hall_measure/Si7210_hall_measure.ino":                                all_variants,
     # SilabsMicrophonePDM
     "../libraries/SilabsMicrophonePDM/examples/microphone_sound_level/microphone_sound_level.ino":                  boards_with_pdm,
+    # ArduinoLowPower
+    "../libraries/ArduinoLowPower/examples/DeepSleepExternalOrTimedWakeup/DeepSleepExternalOrTimedWakeup.ino":      all_variants,
+    "../libraries/ArduinoLowPower/examples/DeepSleepExternalWakeup/DeepSleepExternalWakeup.ino":                    all_variants,
+    "../libraries/ArduinoLowPower/examples/DeepSleepMemory/DeepSleepMemory.ino":                                    all_variants,
+    "../libraries/ArduinoLowPower/examples/DeepSleepTimedWakeup/DeepSleepTimedWakeup.ino":                          all_variants,
+    "../libraries/ArduinoLowPower/examples/SleepTimedWakeup/SleepTimedWakeup.ino":                                  all_variants,
 }
 
 testlist_matter = {
     "../libraries/Matter/examples/matter_air_quality_sensor/matter_air_quality_sensor.ino":                         all_matter,
     "../libraries/Matter/examples/matter_contact_sensor/matter_contact_sensor.ino":                                 all_matter,
+    "../libraries/Matter/examples/matter_decommission/matter_decommission.ino":                                     all_matter,
+    "../libraries/Matter/examples/matter_door_lock/matter_door_lock.ino":                                           all_matter,
     "../libraries/Matter/examples/matter_fan/matter_fan.ino":                                                       all_matter,
     "../libraries/Matter/examples/matter_flow_sensor/matter_flow_sensor.ino":                                       all_matter,
     "../libraries/Matter/examples/matter_humidity_sensor/matter_humidity_sensor.ino":                               all_matter,
     "../libraries/Matter/examples/matter_illuminance_sensor/matter_illuminance_sensor.ino":                         all_matter,
     "../libraries/Matter/examples/matter_lightbulb/matter_lightbulb.ino":                                           all_matter,
+    "../libraries/Matter/examples/matter_lightbulb_callback/matter_lightbulb_callback.ino":                         all_matter,
     "../libraries/Matter/examples/matter_lightbulb_color/matter_lightbulb_color.ino":                               all_matter,
     "../libraries/Matter/examples/matter_lightbulb_custom_name/matter_lightbulb_custom_name.ino":                   all_matter,
     "../libraries/Matter/examples/matter_lightbulb_dimmable/matter_lightbulb_dimmable.ino":                         all_matter,

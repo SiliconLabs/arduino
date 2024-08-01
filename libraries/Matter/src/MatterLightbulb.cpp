@@ -34,6 +34,7 @@ using namespace ::chip::app::Clusters;
 
 const EmberAfDeviceType gOnOffDeviceType[] = { { DEVICE_TYPE_ON_OFF_LIGHT, DEVICE_VERSION_DEFAULT } };
 const EmberAfDeviceType gDimmableBulbDeviceType[] = { { DEVICE_TYPE_DIMMABLE_LIGHT, DEVICE_VERSION_DEFAULT } };
+const EmberAfDeviceType gExtendedColorBulbDeviceType[] = { { DEVICE_TYPE_EXTENDED_COLOR_LIGHT, DEVICE_VERSION_DEFAULT } };
 
 constexpr CommandId onOffIncomingCommands[] = {
   app::Clusters::OnOff::Commands::Off::Id,
@@ -83,46 +84,45 @@ constexpr CommandId colorControlIncomingCommands[] = {
 
 // On/Off cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),              /* OnOff */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::GlobalSceneControl::Id, BOOLEAN, 1, 0), /* GlobalSceneControl */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnTime::Id, INT16U, 2, 0),              /* OnTime */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OffWaitTime::Id, INT16U, 2, 0),         /* OffWaitTime */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::StartUpOnOff::Id, INT8U, 1, 0),         /* StartUpOnOff */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),        /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::ClusterRevision::Id, INT16U, 2, 0),     /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),                                       /* OnOff */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::GlobalSceneControl::Id, BOOLEAN, 1, 0),                          /* GlobalSceneControl */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnTime::Id, INT16U, 2, 0),                                       /* OnTime */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OffWaitTime::Id, INT16U, 2, 0),                                  /* OffWaitTime */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::StartUpOnOff::Id, INT8U, 1, ATTRIBUTE_MASK_WRITABLE_NULLABLE),   /* StartUpOnOff */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                                 /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                         /* ClusterRevision auto added by LIST_END */
 
 // LevelControl cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(levelControlAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::CurrentLevel::Id, INT8U, 1, 0),         /* CurrentLevel */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::RemainingTime::Id, INT16U, 2, 0),       /* RemainingTime */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::MinLevel::Id, INT8U, 1, 0),             /* MinLevel */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::MaxLevel::Id, INT8U, 1, 0),             /* MaxLevel */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::Options::Id, INT8U, 1, 0),              /* Options */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::OnLevel::Id, INT8U, 1, 0),              /* OnLevel */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::StartUpCurrentLevel::Id, INT8U, 1, 0),  /* StartupCurrentLevel */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::FeatureMap::Id, BITMAP32, 4, 0),        /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::ClusterRevision::Id, INT16U, 2, 0),     /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::CurrentLevel::Id, INT8U, 1, ATTRIBUTE_MASK_NULLABLE),                  /* CurrentLevel */
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::RemainingTime::Id, INT16U, 2, 0),                                      /* RemainingTime */
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::MinLevel::Id, INT8U, 1, 0),                                            /* MinLevel */
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::MaxLevel::Id, INT8U, 1, 0),                                            /* MaxLevel */
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::Options::Id, INT8U, 1, ATTRIBUTE_MASK_WRITABLE),                       /* Options */
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::OnLevel::Id, INT8U, 1, ATTRIBUTE_MASK_WRITABLE_NULLABLE),              /* OnLevel */
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::StartUpCurrentLevel::Id, INT8U, 1, ATTRIBUTE_MASK_WRITABLE_NULLABLE),  /* StartupCurrentLevel */
+DECLARE_DYNAMIC_ATTRIBUTE(LevelControl::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                                       /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                                      /* ClusterRevision auto added by LIST_END */
 
 // ColorControl cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(colorControlAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::CurrentHue::Id, INT8U, 1, 0),            /* CurrentHue */
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::CurrentSaturation::Id, INT8U, 1, 0),     /* CurrentSaturation */
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::ColorMode::Id, ENUM8, 1, 0),             /* ColorMode */
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::EnhancedColorMode::Id, ENUM8, 1, 0),     /* EnhancedColorMode */
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::ColorCapabilities::Id, BITMAP16, 2, 0),  /* ColorCapabilities */
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::Options::Id, INT8U, 1, 0),               /* Options */
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::FeatureMap::Id, BITMAP32, 4, 0),         /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::ClusterRevision::Id, INT16U, 2, 0),      /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::CurrentHue::Id, INT8U, 1, 0),                                   /* CurrentHue */
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::CurrentSaturation::Id, INT8U, 1, 0),                            /* CurrentSaturation */
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::ColorMode::Id, ENUM8, 1, 0),                                    /* ColorMode */
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::EnhancedColorMode::Id, ENUM8, 1, 0),                            /* EnhancedColorMode */
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::ColorCapabilities::Id, BITMAP16, 2, 0),                         /* ColorCapabilities */
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::Options::Id, INT8U, 1, ATTRIBUTE_MASK_WRITABLE),                /* Options */
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::NumberOfPrimaries::Id, INT8U, 1, ATTRIBUTE_MASK_NULLABLE),      /* NumberOfPrimaries */
+DECLARE_DYNAMIC_ATTRIBUTE(ColorControl::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                                /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                               /* ClusterRevision auto added by LIST_END */
 
 // Simple Lightbulb endpoint cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(SimpleLightbulbEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(OnOff::Id, onOffAttrs, onOffIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
 DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
-DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr)
+DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Groups::Id, groupsAttrs, groupsIncomingCommands, groupsOutgoingCommands),
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 // Dimmable Lightbulb endpoint cluster list
@@ -131,7 +131,8 @@ DECLARE_DYNAMIC_CLUSTER(OnOff::Id, onOffAttrs, onOffIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(LevelControl::Id, levelControlAttrs, levelControlIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
 DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
-DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr)
+DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Groups::Id, groupsAttrs, groupsIncomingCommands, groupsOutgoingCommands),
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 // Color Lightbulb endpoint cluster list
@@ -141,7 +142,8 @@ DECLARE_DYNAMIC_CLUSTER(LevelControl::Id, levelControlAttrs, levelControlIncomin
 DECLARE_DYNAMIC_CLUSTER(ColorControl::Id, colorControlAttrs, colorControlIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, nullptr, nullptr),
 DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, nullptr, nullptr),
-DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr)
+DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, identifyIncomingCommands, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Groups::Id, groupsAttrs, groupsIncomingCommands, groupsOutgoingCommands),
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
 
 //##################################################################################################
@@ -242,10 +244,15 @@ bool MatterLightbulb::begin_internal(bulb_types_e bulb_type, EmberAfCluster* end
                                new_endpoint,
                                Span<const EmberAfDeviceType>(gOnOffDeviceType),
                                Span<DataVersion>(new_bulb_data_version, dataversion_size), 1);
-  } else if (bulb_type == lightbulb_dimmable || bulb_type == lightbulb_color) {
+  } else if (bulb_type == lightbulb_dimmable) {
     result = AddDeviceEndpoint(new_lightbulb_device,
                                new_endpoint,
                                Span<const EmberAfDeviceType>(gDimmableBulbDeviceType),
+                               Span<DataVersion>(new_bulb_data_version, dataversion_size), 1);
+  } else if (bulb_type == lightbulb_color) {
+    result = AddDeviceEndpoint(new_lightbulb_device,
+                               new_endpoint,
+                               Span<const EmberAfDeviceType>(gExtendedColorBulbDeviceType),
                                Span<DataVersion>(new_bulb_data_version, dataversion_size), 1);
   }
 
@@ -347,6 +354,24 @@ void MatterLightbulb::toggle()
   PlatformMgr().UnlockChipStack();
 }
 
+void MatterLightbulb::set_startup_on_off(DeviceLightbulb::StartupOnOff_t startup_on_off)
+{
+  if (!this->initialized) {
+    return;
+  }
+  PlatformMgr().LockChipStack();
+  this->lightbulb_device->SetStartupOnOff(startup_on_off);
+  PlatformMgr().UnlockChipStack();
+}
+
+DeviceLightbulb::StartupOnOff_t MatterLightbulb::get_startup_on_off()
+{
+  if (!this->initialized) {
+    return DeviceLightbulb::StartupOnOff_t::kNull;
+  }
+  return this->lightbulb_device->GetStartupOnOff();
+}
+
 /***************************************************************************//**
  * Bool operator for getting the on/off state of the lightbulb
  *
@@ -423,7 +448,7 @@ void MatterDimmableLightbulb::set_brightness(uint8_t brightness)
   if (!this->initialized) {
     return;
   }
-  this->lightbulb_device->SetLevel(brightness);
+  (void)this->lightbulb_device->SetLevel(brightness);
 }
 
 /***************************************************************************//**

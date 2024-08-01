@@ -1,0 +1,97 @@
+project_name: bt_arduino_gsdk_config_sparkfunthingplus
+package: Bluetooth
+label: Bluetooth - Arduino GSDK config for the SparkFun Thing Plus Matter (Based on SoC Empty)
+description: >
+  This slcp can be used in place of SoC Empty to generate the
+  SDK files needed for the Arduino Core.
+category: Bluetooth Examples
+quality: production
+
+filter:
+  - name: "Wireless Technology"
+    value: ["Bluetooth"]
+  - name: "Device Type"
+    value: ["SoC"]
+  - name: "Project Difficulty"
+    value: ["Beginner"]
+
+component:
+  - id: bluetooth_stack
+  - id: bluetooth_feature_legacy_advertiser
+  - id: bluetooth_feature_connection
+  - id: bluetooth_feature_gatt
+  - id: bluetooth_feature_gatt_server
+  - id: bluetooth_feature_legacy_scanner
+  - id: bluetooth_feature_sm
+  - id: bluetooth_feature_system
+  - id: bootloader_interface
+  - id: rail_util_pti
+  - id: app_assert
+  - id: component_catalog
+  - id: mpu
+  - id: bt_post_build
+  - id: bluetooth_feature_dynamic_gattdb
+  - id: udelay
+  - id: app_log
+  - id: iostream_usart
+    instance:
+     - vcom
+  - id: iostream_eusart
+    instance:
+    - thingplus1
+  - id: i2cspm
+    instance:
+     - qwiic
+  - id: spidrv_eusart
+    instance:
+     - thingplus
+     - thingplus1
+  - id: emlib_iadc
+  - id: freertos
+  - id: pwm
+    instance:
+    - led0
+  - id: emlib_vdac
+  - id: gpiointerrupt
+  - id: mbedtls_ccm
+  - id: emlib_rmu
+
+source:
+  - path: main.c
+  - path: app.c
+
+include:
+  - path: .
+    file_list:
+      - path: app.h
+
+config_file:
+  - path: sl_spidrv_eusart_thingplus1_config.h
+    override:
+      component: spidrv_eusart
+      instance: thingplus1
+      file_id: spidrv_eusart_config
+  - path: sl_iostream_eusart_thingplus1_config.h
+    override:
+      component: iostream_eusart
+      instance: thingplus1
+      file_id: iostream_eusart_config
+
+configuration:
+  - name: SL_STACK_SIZE
+    value: "2752"
+  - name: SL_HEAP_SIZE
+    value: "9200"
+  - name: SL_PSA_KEY_USER_SLOT_COUNT
+    value: "0"
+    condition:
+      - psa_crypto
+  - name: SL_BOARD_ENABLE_VCOM
+    value: "1"
+  - name: SL_SPIDRV_EUSART_THINGPLUS_CS_CONTROL
+    value: "spidrvCsControlApplication"
+  - name: SL_SPIDRV_EUSART_THINGPLUS1_CS_CONTROL
+    value: "spidrvCsControlApplication"
+
+tag:
+  - hardware:rf:band:2400

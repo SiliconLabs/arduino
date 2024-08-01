@@ -75,9 +75,13 @@ static const uint8_t A7  = PIN_A7;
 
 // Serial
 // ------
-#define SERIAL_HOWMANY 1
-#define PIN_SERIAL_RX  (A5) // PB2
-#define PIN_SERIAL_TX  (A4) // PB1
+#define SERIAL_HOWMANY 2
+
+#define PIN_SERIAL_RX  (17) // PA6
+#define PIN_SERIAL_TX  (18) // PA5
+
+#define PIN_SERIAL_RX1  (A5) // PB2
+#define PIN_SERIAL_TX1  (A4) // PB1
 
 // SPI
 // ---

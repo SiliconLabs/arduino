@@ -55,6 +55,7 @@ extern "C" {
   #endif // SL_CATALOG_BLUETOOTH_PRESENT
 
   #include "em_common.h"
+  #include "em_rmu.h"
   #include "app_assert.h"
   #include "em_gpio.h"
   #include "app_log.h"
@@ -102,5 +103,9 @@ void analogReferenceDAC(uint8_t reference);
 typedef enum _dac_channel_t dac_channel_t;
 void analogWrite(dac_channel_t dac_channel, int value);
 void analogWriteResolution(int resolution);
+
+bool get_system_init_finished();
+uint32_t get_system_reset_cause();
+void escape_hatch();
 
 #endif // ARDUINO_H

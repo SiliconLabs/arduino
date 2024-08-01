@@ -65,6 +65,8 @@ public:
   void SetProductName(const char* productname);
   void SetSerialNumber(const char* serialnumber);
   void SetLocation(std::string location);
+  void SetDeviceChangeCallback(void (*matter_device_change_cb)(void));
+  void CallDeviceChangeCallback();
 
   virtual EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
                                                    chip::AttributeId attributeId,
@@ -88,6 +90,15 @@ public:
   EmberAfStatus HandleWriteIdentifyAttribute(ClusterId clusterId,
                                              chip::AttributeId attributeId,
                                              uint8_t* buffer);
+
+  EmberAfStatus HandleReadGroupsAttribute(ClusterId clusterId,
+                                          chip::AttributeId attributeId,
+                                          uint8_t* buffer,
+                                          uint16_t maxReadLength);
+
+  EmberAfStatus HandleWriteGroupsAttribute(ClusterId clusterId,
+                                           chip::AttributeId attributeId,
+                                           uint8_t* buffer);
 
   void HandleIdentifyStart();
   void HandleIdentifyStop();
@@ -150,6 +161,8 @@ protected:
   uint16_t identify_time;
   uint8_t identify_type;
 
+  uint8_t groups_cluster_name_support;
+
   char device_name[DeviceDescStrSize];
   char vendor_name[DeviceDescStrSize];
   char product_name[DeviceDescStrSize];
@@ -157,10 +170,14 @@ protected:
   std::string location;
   chip::EndpointId endpoint_id;
   chip::EndpointId parent_endpoint_id;
+  void (*device_change_callback)(void);
 
   static const uint32_t bridged_device_basic_information_cluster_feature_map = 0u;
   static const uint16_t bridged_device_basic_information_cluster_revision = 2u;
 
   static const uint32_t identify_cluster_feature_map = 0u;
   static const uint16_t identify_cluster_revision = 4u;
+
+  static const uint32_t groups_cluster_feature_map = 0u;
+  static const uint16_t groups_cluster_revision = 4u;
 };

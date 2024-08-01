@@ -11,6 +11,7 @@
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
    - xG24 Dev Kit
+   - Ezurio Lyra 24P 20dBm Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */

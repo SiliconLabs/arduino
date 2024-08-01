@@ -44,8 +44,7 @@ constexpr CommandId onOffIncomingCommands[] = {
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffUnitAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),              /* OnOff */
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),        /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::ClusterRevision::Id, INT16U, 2, 0),     /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                /* ClusterRevision auto added by LIST_END */
 
 // On/Off Plug-in Unit endpoint cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(OnOffPluginUnitEndpointClusters)

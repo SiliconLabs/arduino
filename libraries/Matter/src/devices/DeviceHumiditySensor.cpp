@@ -57,6 +57,7 @@ void DeviceHumiditySensor::SetMeasuredValue(uint16_t measurement)
 
   if (changed) {
     this->HandleHumiditySensorDeviceStatusChanged(kChanged_MeasurementValue);
+    CallDeviceChangeCallback();
   }
 }
 

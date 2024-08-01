@@ -4,7 +4,7 @@
    Starts an ezBLE client which will connect to a server.
    Once it's connected the device will receive any data sent by the server.
 
-   Compatible with all Silicon Labs BLE hardware.
+   Compatible with all Silicon Labs BLE hardware with the 'BLE (Silabs)' protocol stack variant selected.
 
    Author: Tamas Jozsi (Silicon Labs)
  */

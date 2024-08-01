@@ -43,6 +43,7 @@ void DeviceSwitch::SetNumberOfPositions(uint8_t number_of_positions)
   this->number_of_positions = number_of_positions;
   if (changed) {
     this->HandleSwitchDeviceStatusChanged(kChanged_NumberOfPositions);
+    CallDeviceChangeCallback();
   }
 }
 
@@ -52,6 +53,7 @@ void DeviceSwitch::SetCurrentPosition(uint8_t current_position)
   this->current_position = current_position;
   if (changed) {
     this->HandleSwitchDeviceStatusChanged(kChanged_CurrentPosition);
+    CallDeviceChangeCallback();
   }
 }
 
@@ -61,6 +63,7 @@ void DeviceSwitch::SetMultiPressMax(uint8_t multi_press_max)
   this->multi_press_max = multi_press_max;
   if (changed) {
     this->HandleSwitchDeviceStatusChanged(kChanged_MultiPressMax);
+    CallDeviceChangeCallback();
   }
 }
 

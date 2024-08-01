@@ -45,6 +45,7 @@ void DeviceOnOffPluginUnit::SetOnOff(bool onoff)
   ChipLogProgress(DeviceLayer, "DeviceOnOffPluginUnit[%s]: %s", this->device_name, onoff ? "ON" : "OFF");
   if (changed) {
     this->HandleDeviceOnOffPluginUnitStatusChanged(kChanged_OnOff);
+    CallDeviceChangeCallback();
   }
 }
 

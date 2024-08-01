@@ -51,10 +51,60 @@
                 {
                     "category": "Silicon Labs",
                     "name": "Silicon Labs",
-                    "url": "!!local-install-url/silabs_arduino_core-2.0.0.zst",
+                    "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/silabs_arduino_core-2.0.0.zst",
                     "version": "2.0.0",
                     "architecture": "silabs",
                     "archiveFileName": "silabs_arduino_core-2.0.0.zst",
+                    "boards": [
+                        {
+                            "name": "Arduino Nano Matter"
+                        },
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "xG24 Dev Kit"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.16.4",
+                            "name": "simplicitycommander"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "0.12.0-arduino1-static",
+                            "name": "openocd"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabs/arduino"
+                    },
+                    "size": 320160894,
+                    "checksum": "SHA-256:75b9690f628cd9334c055ddb02ad559236732f3997ef59c87e833698830f19c7"
+                },
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "!!local-install-url/silabs_arduino_core-2.1.0.zst",
+                    "version": "2.1.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-2.1.0.zst",
                     "boards": [
                         {
                             "name": "Arduino Nano Matter"
@@ -73,9 +123,6 @@
                         },
                         {
                             "name": "BGM220 Explorer Kit"
-                        },
-                        {
-                            "name": "Seeed Studio Wio MG24"
                         }
                     ],
                     "toolsDependencies": [
@@ -109,28 +156,28 @@
                     "systems": [
                         {
                             "host": "x86_64-apple-darwin",
-                            "url": "!!local-install-url/arm-gnu-toolchain-12.2.rel1-darwin-x86_64-arm-none-eabi.tar.zst",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-darwin-x86_64-arm-none-eabi.tar.zst",
                             "archiveFileName": "arm-gnu-toolchain-12.2.rel1-darwin-x86_64-arm-none-eabi.tar.zst",
                             "checksum": "SHA-256:8c9d786e48427229c01df060dbf5ffb926fee39360e4773d0811118baef44506",
                             "size": "191221203"
                         },
                         {
                             "host": "arm64-apple-darwin",
-                            "url": "!!local-install-url/arm-gnu-toolchain-12.2.rel1-darwin-arm64-arm-none-eabi.tar.zst",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-darwin-arm64-arm-none-eabi.tar.zst",
                             "archiveFileName": "arm-gnu-toolchain-12.2.rel1-darwin-arm64-arm-none-eabi.tar.zst",
                             "checksum": "SHA-256:9e9091454d81fc44ca090f4f5cbffeef8cb3d7541b83381198fc761c62029c41",
                             "size": "184007579"
                         },
                         {
                             "host": "x86_64-mingw32",
-                            "url": "!!local-install-url/arm-gnu-toolchain-12.2.rel1-mingw-w64-i686-arm-none-eabi.zst",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-mingw-w64-i686-arm-none-eabi.zst",
                             "archiveFileName": "arm-gnu-toolchain-12.2.rel1-mingw-w64-i686-arm-none-eabi.zst",
                             "checksum": "SHA-256:0a8788cc3cdfcf8a03189dafc27c2936834bbbab3efc021eaf41c739eef4c253",
                             "size": "279987372"
                         },
                         {
                             "host": "x86_64-pc-linux-gnu",
-                            "url": "!!local-install-url/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.zst",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.zst",
                             "archiveFileName": "arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.zst",
                             "checksum": "SHA-256:9eb46cf29edb5bcd8b27ae0208f5313c40fd0ff1b8cbbb59cd7aa0c7326d9e5d",
                             "size": "246980758"
@@ -170,21 +217,21 @@
                     "systems": [
                         {
                             "host": "x86_64-apple-darwin",
-                            "url": "!!local-install-url/Commander_osx_1v16p4b1564.zip",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/Commander_osx_1v16p4b1564.zip",
                             "archiveFileName": "Commander_osx_1v16p4b1564.zip",
                             "checksum": "SHA-256:676d05d86b0e08d818707532b834b383623d469eb8a1d0eb1e4d6d76cf361f5f",
                             "size": "50942568"
                         },
                         {
                             "host": "x86_64-mingw32",
-                            "url": "!!local-install-url/Commander_win32_x64_1v16p4b1564.tar.zst",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/Commander_win32_x64_1v16p4b1564.tar.zst",
                             "archiveFileName": "Commander_win32_x64_1v16p4b1564.tar.zst",
                             "checksum": "SHA-256:8f6272eda45cbc0e2d0a94ccc077def812e5b2bebc05ada02c2797cbe3222fa3",
                             "size": "34107510"
                         },
                         {
                             "host": "x86_64-pc-linux-gnu",
-                            "url": "!!local-install-url/Commander_linux_x86_64_1v16p4b1564.tar.zst",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/Commander_linux_x86_64_1v16p4b1564.tar.zst",
                             "archiveFileName": "Commander_linux_x86_64_1v16p4b1564.tar.zst",
                             "checksum": "SHA-256:0d1a2136a824c2f3e9953573502cb80ff459647f41df04d17a30e42140432f8a",
                             "size": "36553955"

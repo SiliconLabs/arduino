@@ -60,6 +60,7 @@ void DeviceWindowCovering::SetCurrentOperationalStatus(OperationalStatus_t opera
 
   this->current_operational_status = opstate_map;
   this->HandleWindowCoveringDeviceStatusChanged(kChanged_OperationalStatus);
+  CallDeviceChangeCallback();
 }
 
 void DeviceWindowCovering::SetRequestedLiftPosition(uint16_t lift_position)
@@ -70,6 +71,7 @@ void DeviceWindowCovering::SetRequestedLiftPosition(uint16_t lift_position)
   ChipLogProgress(DeviceLayer, "WindowCoveringDevice[%s]: new requested position='%d'", this->device_name, lift_position);
   this->requested_lift_pos = lift_position;
   this->HandleWindowCoveringDeviceStatusChanged(kChanged_LiftPositionTargetPercent);
+  CallDeviceChangeCallback();
 }
 
 uint16_t DeviceWindowCovering::GetRequestedLiftPosition()
@@ -85,6 +87,7 @@ void DeviceWindowCovering::SetActualLiftPosition(uint16_t lift_position)
   ChipLogProgress(DeviceLayer, "WindowCoveringDevice[%s]: new actual position='%d'", this->device_name, lift_position);
   this->actual_lift_pos = lift_position;
   this->HandleWindowCoveringDeviceStatusChanged(kChanged_LiftPositionCurrentPercent);
+  CallDeviceChangeCallback();
 }
 
 uint16_t DeviceWindowCovering::GetActualLiftPosition()

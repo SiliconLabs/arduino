@@ -37,8 +37,7 @@ const EmberAfDeviceType gOccupancySensorDeviceTypes[] = { { DEVICE_TYPE_OCCUPANC
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(occupancySensorAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(OccupancySensing::Attributes::Occupancy::Id, INT8U, 1, 0),            /* Occupancy */
 DECLARE_DYNAMIC_ATTRIBUTE(OccupancySensing::Attributes::FeatureMap::Id, BITMAP32, 4, 0),        /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(OccupancySensing::Attributes::ClusterRevision::Id, INT16U, 2, 0),     /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                           /* ClusterRevision auto added by LIST_END */
 
 // Occupancy sensor cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(occupancySensorEndpointClusters)

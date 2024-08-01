@@ -9,7 +9,9 @@
    on boards without a built-in button however the button state reporting feature will be disabled.
    With the EFR Connect app you can test this functionality by going to the "Demo" tab and selecting "Blinky".
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    Get the EFR Connect app:
     - https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo
@@ -22,13 +24,14 @@
    - xG24 Explorer Kit
    - xG24 Dev Kit
    - BGM220 Explorer Kit
+   - Ezurio Lyra 24P 20dBm Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */
 
 bool btn_notification_enabled = false;
-bool btn_state_changed = false;
-uint8_t btn_state = LOW;
+volatile bool btn_state_changed = false;
+volatile uint8_t btn_state = LOW;
 static void btn_state_change_callback();
 static void send_button_state_notification();
 static void set_led_on(bool state);
@@ -184,7 +187,7 @@ static void send_button_state_notification()
   }
   sl_status_t sc = sl_bt_gatt_server_notify_all(btn_report_characteristic_handle,
                                                 sizeof(btn_state),
-                                                &btn_state);
+                                                (const uint8_t*)&btn_state);
   if (sc == SL_STATUS_OK) {
     Serial.print("Notification sent, button state: ");
     Serial.println(btn_state);

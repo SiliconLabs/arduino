@@ -44,6 +44,7 @@ void DeviceOccupancySensor::SetOccupancy(bool occupied)
 
   if (changed) {
     this->HandleOccupancySensorDeviceStatusChanged(kChanged_OccupancyValue);
+    CallDeviceChangeCallback();
   }
 }
 

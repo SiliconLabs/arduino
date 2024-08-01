@@ -33,14 +33,24 @@ static const uint32_t arduino_task_priority = 1u;
 static StackType_t arduino_task_stack[arduino_task_stack_size] = { 0 };
 static StaticTask_t arduino_task_buffer;
 static TaskHandle_t arduino_task_handle;
-bool system_init_finished = false;
+static bool system_init_finished = false;
+static uint32_t system_reset_cause = 0u;
 
 int main()
 {
+  // Save the reset cause
+  system_reset_cause = RMU_ResetCauseGet();
+  // The Matter SDK also gets the reset cause and clears it after, so we need to avoid clearing it here on Matter
+  #ifndef ARDUINO_MATTER
+  RMU_ResetCauseClear();
+  #endif
+
   // Board specific init - in most cases it's just a call to sl_system_init(),
   // but when using the Matter stack it needs a more complex init process
   init_arduino_variant();
   system_init_finished = true;
+
+  escape_hatch();
 
   arduino_task_handle = xTaskCreateStatic(arduino_task,
                                           "arduino_task",
@@ -75,4 +85,19 @@ inline static void handle_serial_events()
   Serial1.task();
   Serial1.handleSerialEvent();
   #endif // #if (NUM_HW_SERIAL > 1)
+}
+
+bool get_system_init_finished()
+{
+  return system_init_finished;
+}
+
+uint32_t get_system_reset_cause()
+{
+  return system_reset_cause;
+}
+
+SL_WEAK void escape_hatch()
+{
+  ;
 }

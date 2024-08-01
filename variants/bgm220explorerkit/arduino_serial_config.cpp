@@ -53,3 +53,28 @@ void sl_serial_deinit()
   GPIO->USARTROUTE[SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO].CTSROUTE = 0;
   GPIO->USARTROUTE[SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO].RTSROUTE = 0;
 }
+
+sl_iostream_t* sl_serial1_stream_handle = sl_iostream_instance_mikroe_info.handle;
+sl_iostream_uart_t* sl_serial1_instance_handle = sl_iostream_uart_mikroe_handle;
+
+void sl_serial1_set_baud_rate(uint32_t baudrate)
+{
+  EUSART_BaudrateSet(SL_SERIAL1_PERIPHERAL, 0, baudrate);
+}
+
+void sl_serial1_init()
+{
+  sl_iostream_eusart_init_mikroe();
+}
+
+void sl_serial1_deinit()
+{
+  sl_iostream_uart_deinit(sl_serial1_instance_handle);
+
+  // Reset the USART to GPIO peripheral routing to enable the pins to function as GPIO
+  GPIO->EUARTROUTE[SL_IOSTREAM_EUSART_MIKROE_PERIPHERAL_NO].ROUTEEN = 0;
+  GPIO->EUARTROUTE[SL_IOSTREAM_EUSART_MIKROE_PERIPHERAL_NO].TXROUTE = 0;
+  GPIO->EUARTROUTE[SL_IOSTREAM_EUSART_MIKROE_PERIPHERAL_NO].RXROUTE = 0;
+  GPIO->EUARTROUTE[SL_IOSTREAM_EUSART_MIKROE_PERIPHERAL_NO].CTSROUTE = 0;
+  GPIO->EUARTROUTE[SL_IOSTREAM_EUSART_MIKROE_PERIPHERAL_NO].RTSROUTE = 0;
+}

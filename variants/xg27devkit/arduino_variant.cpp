@@ -63,24 +63,24 @@ void init_arduino_variant()
 // Variant pin mapping - maps Arduino pin numbers to Silabs ports/pins
 // D0 -> Dmax -> A0 -> Amax -> Other peripherals
 PinName gPinNames[] = {
-  PC0, // D0 - SPI SDO
+  PC0, // D0 - SPI SDO - WU
   PC1, // D1 - SPI SDI
   PC2, // D2 - SPI SCK
   PB2, // D3 - SPI CS
-  PA5, // D4 - Tx
+  PA5, // D4 - Tx - WU
   PA6, // D5 - Rx
-  PD2, // D6 - SDA
+  PD2, // D6 - SDA - WU
   PA8, // A0 - Tx1
   PA7, // A1 - Rx1
   PB0, // A2
-  PB1, // A3
+  PB1, // A3 - WU
   PA4, // A4 - LED
-  PB3, // A5 - Button
+  PB3, // A5 - Button - WU
   PD3, // A6 - SCL
   PA4, // LED - 14
   PB3, // Button - 15
   PC6, // Sensor array power - 16
-  PC7, // Microphone power - 17
+  PC7, // Microphone power - WU - 17
   PB4, // IMU power - 18
 };
 

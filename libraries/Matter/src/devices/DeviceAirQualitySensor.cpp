@@ -46,6 +46,7 @@ void DeviceAirQualitySensor::SetMeasuredValue(uint8_t measurement)
 
   if (changed) {
     this->HandleAirQualitySensorDeviceStatusChanged(kChanged_MeasurementValue);
+    CallDeviceChangeCallback();
   }
 }
 
@@ -60,9 +61,9 @@ uint16_t DeviceAirQualitySensor::GetAirQualitySensorClusterRevision()
 }
 
 EmberAfStatus DeviceAirQualitySensor::HandleReadEmberAfAttribute(ClusterId clusterId,
-                                                           chip::AttributeId attributeId,
-                                                           uint8_t* buffer,
-                                                           uint16_t maxReadLength)
+                                                                 chip::AttributeId attributeId,
+                                                                 uint8_t* buffer,
+                                                                 uint16_t maxReadLength)
 {
   if (!this->reachable) {
     return EMBER_ZCL_STATUS_FAILURE;

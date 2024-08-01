@@ -1,0 +1,91 @@
+project_name: bt_arduino_gsdk_config_bgm220explorerkit
+package: Bluetooth
+label: Bluetooth - Arduino GSDK config for the BGM220 Explorer Kit (brd4314a) (Based on SoC Empty)
+description: >
+  This slcp can be used in place of SoC Empty to generate the
+  SDK files needed for the Arduino Core.
+category: Bluetooth Examples
+quality: production
+
+filter:
+  - name: "Wireless Technology"
+    value: ["Bluetooth"]
+  - name: "Device Type"
+    value: ["SoC"]
+  - name: "Project Difficulty"
+    value: ["Beginner"]
+
+component:
+  - id: sl_system
+  - id: device_init
+  - id: device_init_nvic
+  - id: psa_crypto
+  - id: power_manager
+  - id: bootloader_interface
+  - id: app_assert
+  - id: component_catalog
+  - id: mpu
+  - id: udelay
+  - id: app_log
+  - id: iostream_usart
+    instance:
+     - vcom
+  - id: iostream_eusart
+    instance:
+     - mikroe
+  - id: i2cspm
+    instance:
+     - qwiic
+  - id: spidrv_usart
+    instance:
+     - mikroe
+  - id: emlib_iadc
+  - id: freertos
+  - id: pwm
+    instance:
+    - led0
+  - id: gpiointerrupt
+  - id: emlib_rmu
+  - id: nvm3_default
+  - id: nvm3_default_config
+  - id: nvm3_default_flash_backend
+  - id: nvm3_lib
+  - id: bluetooth_controller
+  - id: bluetooth_feature_connection
+  - id: bluetooth_feature_connection_phy_update
+  - id: bluetooth_feature_extended_advertiser
+  - id: bluetooth_feature_extended_scanner
+  - id: bluetooth_feature_legacy_advertiser
+  - id: bluetooth_feature_legacy_scanner
+  - id: bluetooth_feature_periodic_advertiser
+
+source:
+  - path: main.c
+  - path: app.c
+
+include:
+  - path: .
+    file_list:
+      - path: app.h
+
+configuration:
+  - name: NVM3_DEFAULT_CACHE_SIZE
+    value: 10
+  - name: configTOTAL_HEAP_SIZE
+    value: 5120
+  - name: configTIMER_TASK_STACK_DEPTH
+    value: 80
+  - name: configTIMER_QUEUE_LENGTH
+    value: 5
+  # --------------------------------------
+  - name: SL_PSA_KEY_USER_SLOT_COUNT
+    value: 0
+    condition:
+      - psa_crypto
+  - name: SL_BOARD_ENABLE_VCOM
+    value: 1
+  - name: SL_SPIDRV_USART_MIKROE_CS_CONTROL
+    value: "spidrvCsControlApplication"
+
+tag:
+  - hardware:rf:band:2400

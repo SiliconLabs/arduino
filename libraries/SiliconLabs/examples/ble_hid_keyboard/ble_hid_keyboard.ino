@@ -10,7 +10,9 @@
    Open the text editor app, then press the button 0 on the board, the predefined text will be shown on the text editor.
    On disconnection the LED turns off and the BLE advertisement restarts.
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    Compatible boards:
    - Arduino Nano Matter
@@ -19,6 +21,7 @@
    - xG24 Explorer Kit
    - xG24 Dev Kit
    - BGM220 Explorer Kit
+   - Ezurio Lyra 24P 20dBm Dev Kit
 
    Note: SparkFun Thing Plus MGM240P doesn't have an on-board button, an external button should be added to a GPIO
    pin. In this example, the external button is connected to the pin A0.
@@ -44,10 +47,10 @@
 static uint16_t gattdb_hid_report_char_handle;
 
 static uint8_t input_report[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-static uint8_t input_key;
-static uint8_t input_key_counter = 0;
+volatile static uint8_t input_key;
+volatile static uint8_t input_key_counter = 0;
 
-static const uint8_t reduced_key_array[] = {
+volatile static const uint8_t reduced_key_array[] = {
   0x04,   /* a */
   0x05,   /* b */
   0x06,   /* c */

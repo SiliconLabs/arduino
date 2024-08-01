@@ -122,13 +122,13 @@ void init_arduino_variant()
 // D0 -> Dmax -> A0 -> Amax -> Other peripherals
 PinName gPinNames[] = {
   PA4, // D0 - Tx1 - SPI1 SDO
-  PA5, // D1 - Rx1 - SPI1 SDI
+  PA5, // D1 - Rx1 - SPI1 SDI - WU
   PA3, // D2 - SPI1 SCK
   PC6, // D3 - SPI1 SS
-  PC7, // D4 - SDA1
+  PC7, // D4 - SDA1 - WU
   PC8, // D5 - SCL1
   PC9, // D6
-  PD2, // D7
+  PD2, // D7 - WU
   PD3, // D8
   PD4, // D9
   PD5, // D10 - SPI SS
@@ -138,17 +138,17 @@ PinName gPinNames[] = {
   PB0, // A0 - DAC0
   PB2, // A1 - DAC2
   PB5, // A2
-  PC0, // A3
+  PC0, // A3 - WU
   PA6, // A4 - SDA
   PA7, // A5 - SCL
-  PB1, // A6 - DAC1
-  PB3, // A7 - DAC3
+  PB1, // A6 - DAC1 - WU
+  PB3, // A7 - DAC3 - WU
   PC1, // LED R - 22
   PC2, // LED G - 23
   PC3, // LED B - 24
   PA0, // Button - 25
   PC4, // Serial Tx - 26
-  PC5, // Serial Rx - 27
+  PC5, // Serial Rx - WU - 27
 };
 
 unsigned int getPinCount()

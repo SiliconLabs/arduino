@@ -30,6 +30,9 @@ component:
   - id: iostream_usart
     instance:
      - vcom
+  - id: iostream_eusart
+    instance:
+     - mikroe
   - id: i2cspm
     instance:
      - qwiic
@@ -42,6 +45,11 @@ component:
     instance:
     - led0
   - id: gpiointerrupt
+  - id: nvm3_default
+  - id: nvm3_default_config
+  - id: nvm3_default_flash_backend
+  - id: nvm3_lib
+  - id: emlib_rmu
 
 source:
   - path: main.c
@@ -54,7 +62,7 @@ include:
 
 configuration:
   - name: NVM3_DEFAULT_CACHE_SIZE
-    value: 100
+    value: 10
   - name: configTOTAL_HEAP_SIZE
     value: 5120
   - name: configTIMER_TASK_STACK_DEPTH

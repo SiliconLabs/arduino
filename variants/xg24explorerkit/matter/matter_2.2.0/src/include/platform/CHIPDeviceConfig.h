@@ -174,7 +174,7 @@
  * Human readable vendor name for the organization responsible for producing the device.
  */
 #ifndef CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME
-#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME "Bozont Labs"
+#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_NAME "Silicon Labs"
 #endif
 
 /**
@@ -188,7 +188,7 @@
  * (see src/credentials/examples/DeviceAttestationCredsExample.cpp).
  */
 #ifndef CHIP_DEVICE_CONFIG_DEVICE_VENDOR_ID
-#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_ID 0xFFF1
+#define CHIP_DEVICE_CONFIG_DEVICE_VENDOR_ID 0x1049
 #endif
 
 /**

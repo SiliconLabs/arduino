@@ -116,25 +116,25 @@ PinName gPinNames[] = {
   PC2, // D1 - SPI SDI
   PC1, // D2 - SPI SCK
   PA7, // D3 - SPI CS
-  PA5, // D4 - Tx
+  PA5, // D4 - Tx - WU
   PA6, // D5 - Rx
-  PC5, // D6 - SDA
+  PC5, // D6 - SDA - WU
   PB2, // A0 - DAC2
   PB0, // A1 - DAC0
   PB3, // A2 - DAC3
-  PD2, // A3
+  PD2, // A3 - WU
   PC4, // A4 - SCL
   PD2, // LED R - 12
   PA4, // LED G - 13
   PB0, // LED B - 14
   PB2, // Button - DAC2 - 15
-  PB3, // Button - DAC3 - 16
+  PB3, // Button - DAC3 - WU - 16
   PC9, // Sensor array power - 17
   PC8, // Microphone power - 18
-  PC0, // SPI flash CS - 19
+  PC0, // SPI flash CS - WU - 19
   PD3, // I2S SCK - 20
   PD4, // I2S SD - 21
-  PD5, // I2S WS - 22
+  PD5, // I2S WS - WU - 22
 };
 
 unsigned int getPinCount()

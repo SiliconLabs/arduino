@@ -31,6 +31,4 @@ extern "C" {
   #include "em_gpio.h"
 }
 
-extern bool system_init_finished;
-
 #endif // WIRING_PRIVATE_H

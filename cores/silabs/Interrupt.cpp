@@ -96,7 +96,7 @@ void attachInterruptParam(PinName interruptNumber, voidFuncPtrParam callback, Pi
 
 void attachInterrupt(PinName interruptNumber, voidFuncPtr callback, PinStatus mode)
 {
-  if (interruptNumber >= PIN_NAME_MAX || callback == nullptr || mode < LOW || mode > RISING || !system_init_finished) {
+  if (interruptNumber >= PIN_NAME_MAX || callback == nullptr || mode < LOW || mode > RISING || !get_system_init_finished()) {
     return;
   }
 

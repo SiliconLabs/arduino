@@ -39,8 +39,7 @@ DECLARE_DYNAMIC_ATTRIBUTE(TemperatureMeasurement::Attributes::MeasuredValue::Id,
 DECLARE_DYNAMIC_ATTRIBUTE(TemperatureMeasurement::Attributes::MinMeasuredValue::Id, INT16S, 2, 0),     /* Min Measured Value */
 DECLARE_DYNAMIC_ATTRIBUTE(TemperatureMeasurement::Attributes::MaxMeasuredValue::Id, INT16S, 2, 0),     /* Max Measured Value */
 DECLARE_DYNAMIC_ATTRIBUTE(TemperatureMeasurement::Attributes::FeatureMap::Id, BITMAP32, 4, 0),         /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(TemperatureMeasurement::Attributes::ClusterRevision::Id, INT16U, 2, 0),      /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                  /* ClusterRevision auto added by LIST_END */
 
 // Temperature sensor cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(tempMeasurementEndpointClusters)

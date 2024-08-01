@@ -63,9 +63,8 @@ public:
         colors[c] = (uint8_t)color_adj;
       }
     } else if (brightness == 0) {
-      red = 0;
-      green = 0;
-      blue = 0;
+      // If brightness is zero - set all color components to zero
+      memset(colors, 0, sizeof(colors));
     }
 
     // Go through the output array

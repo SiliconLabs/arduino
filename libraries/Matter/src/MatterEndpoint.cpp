@@ -24,14 +24,18 @@
  * THE SOFTWARE.
  */
 
+#include <app/data-model/Nullable.h>
+#include <app-common/zap-generated/cluster-enums.h>
 #include "MatterEndpoint.h"
 #include "devices/DeviceWindowCovering.h"
+#include "devices/DeviceDoorLock.h"
 #include <app/CommandHandler.h>
 
 using namespace ::chip;
 using namespace ::chip::Platform;
 using namespace ::chip::Credentials;
 using namespace ::chip::app::Clusters;
+using ::chip::app::DataModel::Nullable;
 
 using chip::Protocols::InteractionModel::Status;
 using namespace chip::app::Clusters::WindowCovering;
@@ -204,4 +208,42 @@ void SL_WEAK MatterWindowCoveringClusterServerAttributeChangedCallback(const app
 void MatterWindowCoveringPluginServerInitCallback()
 {
   ;
+}
+
+bool emberAfPluginDoorLockOnDoorLockCommand(chip::EndpointId endpointId,
+                                            const Nullable<chip::FabricIndex>& fabricIdx,
+                                            const Nullable<chip::NodeId>& nodeId,
+                                            const Optional<chip::ByteSpan>& pinCode,
+                                            DoorLock::OperationErrorEnum& err)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpointId);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev || !dev->IsReachable()) {
+    return false;
+  }
+  if (instanceof<DeviceDoorLock>(dev)) {
+    DeviceDoorLock* door_lock_device = static_cast<DeviceDoorLock*>(dev);
+    door_lock_device->SetLockState(DeviceDoorLock::lock_state_t::LOCKED);
+    return true;
+  }
+  return false;
+}
+
+bool emberAfPluginDoorLockOnDoorUnlockCommand(chip::EndpointId endpointId,
+                                              const Nullable<chip::FabricIndex>& fabricIdx,
+                                              const Nullable<chip::NodeId>& nodeId,
+                                              const Optional<chip::ByteSpan>& pinCode,
+                                              DoorLock::OperationErrorEnum& err)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpointId);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev || !dev->IsReachable()) {
+    return false;
+  }
+  if (instanceof<DeviceDoorLock>(dev)) {
+    DeviceDoorLock* door_lock_device = static_cast<DeviceDoorLock*>(dev);
+    door_lock_device->SetLockState(DeviceDoorLock::lock_state_t::UNLOCKED);
+    return true;
+  }
+  return false;
 }

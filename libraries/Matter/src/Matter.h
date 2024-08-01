@@ -40,10 +40,15 @@
 #include <setup_payload/QRCodeSetupPayloadGenerator.h>
 #include <app/clusters/identify-server/identify-server.h>
 
-extern EmberAfAttributeMetadata bridgedDeviceBasicAttrs[8];
-extern EmberAfAttributeMetadata descriptorAttrs[5];
-extern EmberAfAttributeMetadata identifyAttrs[5];
+#define ATTRIBUTE_MASK_WRITABLE_NULLABLE (ATTRIBUTE_MASK_WRITABLE | ATTRIBUTE_MASK_NULLABLE)
+
+extern EmberAfAttributeMetadata bridgedDeviceBasicAttrs[7];
+extern EmberAfAttributeMetadata descriptorAttrs[6];
+extern EmberAfAttributeMetadata identifyAttrs[4];
 extern CommandId identifyIncomingCommands[2];
+extern EmberAfAttributeMetadata groupsAttrs[3];
+extern CommandId groupsIncomingCommands[7];
+extern CommandId groupsOutgoingCommands[5];
 
 class ArduinoMatterAppliance {
 public:
@@ -56,6 +61,7 @@ public:
   void set_vendor_name(const char* vendor_name);
   void set_product_name(const char* product_name);
   void set_serial_number(const char* serial_number);
+  void set_device_change_callback(void (*matter_device_change_cb)(void));
   bool is_online();
 
 protected:
@@ -65,10 +71,13 @@ protected:
 class MatterClass {
 public:
   void begin();
+  void disableBridgeEndpoint();
   static String getManualPairingCode();
   static String getOnboardingQRCodeUrl();
+  static String getOnboardingQRCodePayload();
   static bool isDeviceCommissioned();
   static bool isDeviceThreadConnected();
+  void decommission();
 };
 
 extern MatterClass Matter;

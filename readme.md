@@ -14,6 +14,7 @@ This project enables **Silicon Labs** hardware to be used with the **Arduino** e
  - [Silicon Labs xG24 Dev Kit](https://www.silabs.com/development-tools/wireless/efr32xg24-dev-kit) ![BLE](doc/bluetooth_logo_icon.png) ![Matter](doc/matter_logo_icon.png)
  - [Silicon Labs xG27 Dev Kit](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit) ![BLE](doc/bluetooth_logo_icon.png)
  - [Silicon Labs BGM220 Explorer Kit](https://www.silabs.com/development-tools/wireless/bluetooth/bgm220-explorer-kit) ![BLE](doc/bluetooth_logo_icon.png)
+ - [Ezurio Lyra 24P 20dBm Dev Kit](https://www.ezurio.com/part/453-00145-k1) ![BLE](doc/bluetooth_logo_icon.png)
 
 ![Arduino Nano Matter](doc/nanomatter.png)
 ![SparkFun Thing Plus Matter MGM240P](doc/thingplusmatter.png)
@@ -21,6 +22,7 @@ This project enables **Silicon Labs** hardware to be used with the **Arduino** e
 ![xG24 Dev Kit](doc/xg24devkit.png)
 ![xG27 Dev Kit](doc/xg27devkit.png)
 ![BGM220 Explorer Kit](doc/bgm220explorerkit.png)
+![Ezurio Lyra 24P 20dBm Dev Kit](doc/lyra24p20.png)
 
 ## Installation
 
@@ -42,11 +44,12 @@ Burning the bootloader fully erases the flash memory first, then burns the bootl
  - If you see the built-in LED blinking, you're ready to go! Happy coding! 💻
 
 ## Radio protocol variants
-Each board supports a number of different radio protocol stacks (like *'Matter'*, *'BLE'* or *'None'*) which can be selected under *'Tools > Protocol stack'* in the Arduino IDE.
+Each board supports a number of different radio protocol stacks (like *'Matter'*, *'BLE (Arduino)'*, *'BLE (Silabs)'* and *'None'*) which can be selected under *'Tools > Protocol stack'* in the Arduino IDE.
 
- - Selecting `Matter` will include the Matter stack - which is quite resource heavy. Selecting this is only recommended when developing Matter applications. BLE is included, but cannot be used by users as the Matter SDK takes ownership of it. Matter examples will only work with this option.
- - Selecting `BLE` will include the BLE stack - which is moderately resource heavy. Select this if you're developing BLE applications. BLE examples will  only work with this option.
- - Selecting `None` will not include a radio protocol stack in your sketch - and will save a considerable amount of Flash/RAM. You can use your board as a regular Arduino without wireless hardware.
+ - Selecting `Matter` includes the Matter stack - which is quite resource heavy. Selecting this is only recommended when developing Matter applications. BLE is included, but cannot be used by users as the Matter SDK takes ownership of it. Matter examples will only work with this option.
+ - Selecting `BLE (Arduino)` provides compatibility with the [ArduinoBLE](https://github.com/arduino-libraries/ArduinoBLE) library and is moderately resource heavy. This variant is compatible with all ArduinoBLE examples and applications based on the library.
+ - Selecting `BLE (Silabs)` includes Silicon Labs' BLE stack and API ([BGAPI](https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/)) - which is moderately resource heavy. Select this if you're developing BLE applications based on BGAPI. The included Silicon Labs BLE examples will only work with this option.
+ - Selecting `None` does not include a radio protocol stack in your sketch - and saves a considerable amount of Flash/RAM. You can use your board as a regular Arduino without wireless hardware.
 
 You can see the list/icon of available radio protocols for each board under [*currently supported hardware*](#currently-supported-hardware) or by going to this menu.
 
@@ -59,11 +62,24 @@ The library sits on top of Silicon Labs' Matter SDK which is included in the *Ma
 
 See the docs for the Matter library [here](libraries/Matter/readme.md).
 
-## ezBLE
-🛜 `ezBLE` is an included Arduino library which makes sending and receiving data over BLE simple and user-friendly.
+## Libraries
 
-You can use it the same way as Serial to transfer data over BLE. See the full docs [here](libraries/ezBLE/readme.md).
+### Included with the core:
 
+ - **ArduinoLowPower 🔋** - for accessing the low power features of the devices [[docs](libraries/ArduinoLowPower/README.md)]
+ - **EEPROM 💾** - permanent storage in flash [[docs](libraries/EEPROM/README.md)]
+ - **ezBLE 🛜** - send and receive data over BLE in a simple and user-friendly way on '*BLE (Silabs)*' variants [[docs](libraries/ezBLE/readme.md)]
+ - **ezWS2812 💡** - driver for WS2812 LEDs using the hardware SPI
+ - **Matter** ![Matter](doc/matter_logo_icon.png) - [[docs](libraries/Matter/readme.md)]
+ - **Si7210_hall** - driver for Si7210 hall sensors
+ - **SilabsMicrophonePDM** - driver for PDM microphones
+ - **SiliconLabs** - various example sketches for Silicon Labs devices
+ - **SPI** - the standard Arduino SPI library
+ - **Wire** - the standard Arduino Wire library
+
+### Separately supplied:
+
+ - **ArduinoBLE ![BLE](doc/bluetooth_logo_icon.png)** - Bluetooth Low Energy library for the '*BLE (Arduino)*' variants [[docs](https://github.com/arduino-libraries/ArduinoBLE)]
 
 ## Additional APIs
 There are some additional functions besides the standard Arduino API you can call on Silicon Labs boards:
@@ -72,7 +88,7 @@ There are some additional functions besides the standard Arduino API you can cal
  - `getDeviceUniqueId()` - returns the unique ID of the microcontroller
  - `getDeviceUniqueIdStr()` - returns the unique ID of the microcontroller in hexadecimal as a string
  - `getCoreVersion()` - returns the current core version as a string
- - `setCPUClock()` - sets the CPU clock speed - it can be one of  `CPU_40MHZ`, `CPU_76MHZ`, `CPU_80MHZ`
+ - `setCPUClock()` - sets the CPU clock speed - it can be one of  `CPU_39MHZ`, `CPU_76MHZ`, `CPU_80MHZ`
  - `getCPUClock()` - returns the current CPU speed in hertz
  - `analogReferenceDAC()` - selects the voltage reference for the DAC hardware
 
@@ -107,6 +123,7 @@ Change the `device` property according to the MCU on your board. Here's a table 
 | Silicon Labs xG24 Dev Kit              | EFR32MG24B310F1536IM48 |
 | Silicon Labs xG27 Dev Kit              | EFR32BG27C140F768IM40  |
 | Silicon Labs BGM220 Explorer Kit       | BGM220PC22HNA          |
+| Ezurio Lyra 24P 20dBm Dev Kit          | BGM240PB32VNA3         |
 
 
 Change the `(variant name)` in the `configId` property according to the FQBN (Fully Qualified Board Name) of the variant you're using:
@@ -122,6 +139,7 @@ Here's a table listing all the `variant name`s:
 | Silicon Labs xG24 Dev Kit                     | xg24devkit            |
 | Silicon Labs xG27 Dev Kit                     | xg27devkit            |
 | Silicon Labs BGM220 Explorer Kit              | bgm220explorerkit     |
+| Ezurio Lyra 24P 20dBm Dev Kit                 | lyra24p20             |
 
 Change the `serverpath` property to the location of *JLinkGDBServer* on your system. *JLinkGDBServer* is installed with the *J-Link Software and Documentation pack*.
 
@@ -165,11 +183,6 @@ Go to the folder where your sketch is located and create a file named `debug_cus
  - Press the *Start Debugging* button next to the *Upload* button
 
 ## Limitations
-
-The project is under constant development and there are a few things which come with some limitations.
-
-### Bluetooth LE API
-Bluetooth LE is available on all supported devices, however the Arduino BLE API is not supported yet. You can use BLE with Silicon Labs' own [BLE API](https://docs.silabs.com/bluetooth/6.1.0/bluetooth-stack-api/). There are a handful of examples included to demonstrate how you can create BLE devices with the Silicon Labs API. Support for the Arduino BLE API is under development and will be available in a future release.
 
 ### USB-UART baud rate
 The UART baud rate of Serial can be changed freely - however if you're using it through the USB-UART bridge then it only works with *115200 bps* by default.
@@ -225,6 +238,13 @@ If you encounter an issue you can also submit it to the project issues.
 [User guide](https://www.silabs.com/documents/public/user-guides/ug465-brd4314a.pdf)
 #### Pinout diagram
 ![](doc/bgm220explorerkit_pinout.png)
+
+### Ezurio Lyra 24P 20dBm Dev Kit ![BLE](doc/bluetooth_logo_icon.png)
+
+[Product page](https://www.ezurio.com/part/453-00145-k1)
+
+#### Pinout diagram
+![](doc/lyra24p20_pinout.png)
 
 ## Issue reporting, feature requests and discussions
 

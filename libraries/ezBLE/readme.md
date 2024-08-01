@@ -1,6 +1,8 @@
 ## 🛜 ezBLE
 `ezBLE` is an Arduino library which makes sending and receiving data over BLE super simple. It provides the same API as `Serial` and handles connections, discovery, data transfer, and all BLE tasks in the background. It's compatible with all Silicon Labs BLE hardware.
 
+The library uses Silicon Labs' BLE stack and API underneath and it only works with the '*BLE (Silabs)*' protocol stack variants.
+
 You can use it the same way as Serial to transfer data over BLE. You'll need at least two devices, one acting as a server and one as a client. Once the connection is established the communication is bidirectional, each device can send and receive data from each other over BLE.
 
 Initialize it as client or server:

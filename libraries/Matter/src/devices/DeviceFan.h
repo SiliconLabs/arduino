@@ -47,6 +47,7 @@ public:
   void SetFanMode(uint8_t fan_mode);
   uint8_t GetFanMode();
   uint8_t GetFanModeSequence();
+  uint8_t GetFanSpeedMax();
   uint32_t GetFanClusterFeatureMap();
   uint16_t GetFanClusterRevision();
 
@@ -76,6 +77,7 @@ private:
   fan_mode_t current_fan_mode;
 
   static const uint8_t fan_mode_sequence        = 2u;   // Off/Low/Med/High/Auto
+  static const uint8_t fan_speed_max            = 100u; // 0-100%
   static const uint32_t fan_cluster_feature_map = 1u;   // 1-100 speeds supported
   static const uint16_t fan_cluster_revision    = 1u;
 };

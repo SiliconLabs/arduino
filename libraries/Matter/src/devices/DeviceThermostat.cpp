@@ -54,6 +54,7 @@ void DeviceThermostat::SetLocalTemperatureValue(int16_t local_temp)
 
   if (changed) {
     this->HandleThermostatDeviceStatusChanged(kChanged_LocalTemperatureValue);
+    CallDeviceChangeCallback();
   }
 }
 
@@ -78,6 +79,7 @@ void DeviceThermostat::SetHeatingSetpointValue(int16_t heating_setpoint)
 
   if (changed) {
     this->HandleThermostatDeviceStatusChanged(kChanged_HeatingSetpointValue);
+    CallDeviceChangeCallback();
   }
 }
 
@@ -94,6 +96,7 @@ void DeviceThermostat::SetSystemMode(uint8_t system_mode)
 
   if (changed) {
     this->HandleThermostatDeviceStatusChanged(kChanged_SystemModeValue);
+    CallDeviceChangeCallback();
   }
 }
 

@@ -29,8 +29,10 @@
 #define ARDUINO_SERIAL_CONFIG_H
 
 #include "sl_iostream_usart_vcom_config.h"
+#include "sl_iostream_eusart_mikroe_config.h"
 extern "C" {
   #include "em_usart.h"
+  #include "em_eusart.h"
   #include "sl_iostream_handles.h"
   #include "sl_iostream_uart.h"
 }
@@ -42,5 +44,13 @@ extern sl_iostream_uart_t* sl_serial_instance_handle;
 void sl_serial_set_baud_rate(uint32_t baudrate);
 void sl_serial_init();
 void sl_serial_deinit();
+
+#define SL_SERIAL1_PERIPHERAL SL_IOSTREAM_EUSART_MIKROE_PERIPHERAL
+
+extern sl_iostream_t* sl_serial1_stream_handle;
+extern sl_iostream_uart_t* sl_serial1_instance_handle;
+void sl_serial1_set_baud_rate(uint32_t baudrate);
+void sl_serial1_init();
+void sl_serial1_deinit();
 
 #endif // ARDUINO_SERIAL_CONFIG_H

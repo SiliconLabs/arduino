@@ -1,5 +1,7 @@
 #include <Wire.h>
 #include <SPI.h>
+#include <EEPROM.h>
+#include <ArduinoLowPower.h>
 
 void btn_isr_handler()
 {
@@ -16,7 +18,7 @@ void setup()
   Wire.setClock(400000);
   Wire.beginTransmission(0x42);
   Wire.write(0x91);
-  uint8_t i2c_data[] = {0x40, 0x41, 0x42};
+  uint8_t i2c_data[] = { 0x40, 0x41, 0x42 };
   Wire.write(i2c_data, sizeof(i2c_data));
   Wire.endTransmission();
 
@@ -38,7 +40,7 @@ void setup()
   Serial.println(spi_ret8);
   Serial.println(spi_ret16);
 
-  uint8_t spi_data[] = {0x42, 0x42, 0x42};
+  uint8_t spi_data[] = { 0x42, 0x42, 0x42 };
   SPI.transfer(spi_data, sizeof(spi_data));
   SPI.endTransaction();
 
@@ -74,6 +76,10 @@ void setup()
   unsigned long pulse_data = pulseIn(PA0, HIGH, 1000);
   pulse_data = pulseInLong(A0, LOW, 2000);
   Serial.println(pulse_data);
+
+  EEPROM.write(0, 0x42);
+  uint8_t eeprom_data = EEPROM.read(0);
+  Serial.println(eeprom_data, HEX);
 }
 
 void loop()
@@ -85,4 +91,17 @@ void loop()
   delay(1000);
   digitalWrite(LED_BUILTIN, LOW);
   delay(1000);
+
+  Serial.println(LowPower.wokeUpFromDeepSleep());
+  Serial.println(LowPower.deepSleepMemorySize());
+  LowPower.deepSleepMemoryWrite(12, 420);
+  uint32_t deep_sleep_data = LowPower.deepSleepMemoryRead(12);
+  Serial.println(deep_sleep_data);
+  LowPower.attachInterruptWakeup(PC0, nullptr, LOW);
+  LowPower.idle();
+  LowPower.idle(1000);
+  LowPower.sleep();
+  LowPower.sleep(1000);
+  LowPower.deepSleep();
+  LowPower.deepSleep(1000);
 }

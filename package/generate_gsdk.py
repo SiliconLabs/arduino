@@ -18,15 +18,40 @@ gsdk_bt_soc_empty_folder = "app/bluetooth/example/bt_soc_empty/"
 matter_lighting_app_folder = "extension/matter_extension/slc/sample-app/lighting-app/efr32/"
 matter_zap_folder = "extension/matter_extension/examples/lighting-app/silabs/data_model/"
 gsdk_license_file = "gsdk_license"
+variants_folder = "../variants/"
 
 
 def main():
     current_platform_config = get_platform_config_from_arguments()
     if current_platform_config["name"] == "all":
-        # Get all the platform configurations and remove the first one (which is the "all")
-        all_platform_configs = platform_configurations[1:]
+        # Get all the platform configurations and remove the first three (which are the "all" configs)
+        all_platform_configs = platform_configurations[5:]
         for config in all_platform_configs:
             generate_gsdk(config)
+    elif current_platform_config["name"] == "noradio_precomp_all":
+        # Generate all the noradio platform configurations
+        noradio_all_platform_configs = platform_configurations[5:]
+        for config in noradio_all_platform_configs:
+            if config["protocol_stack"] == 'noradio' and config["prebuild"]:
+                generate_gsdk(config)
+    elif current_platform_config["name"] == "ble_arduino_precomp_all":
+        # Generate all the ble (controller) platform configurations
+        ble_all_platform_configs = platform_configurations[5:]
+        for config in ble_all_platform_configs:
+            if config["protocol_stack"] == 'ble_arduino'  and config["prebuild"]:
+                generate_gsdk(config)
+    elif current_platform_config["name"] == "ble_silabs_precomp_all":
+        # Generate all the ble (silabs host) platform configurations
+        ble_silabs_all_platform_configs = platform_configurations[5:]
+        for config in ble_silabs_all_platform_configs:
+            if config["protocol_stack"] == 'ble_silabs'  and config["prebuild"]:
+                generate_gsdk(config)
+    elif current_platform_config["name"] == "matter_precomp_all":
+        # Generate all the matter platform configurations
+        matter_all_platform_configs = platform_configurations[5:]
+        for config in matter_all_platform_configs:
+            if config["protocol_stack"] == 'matter' and config["prebuild"]:
+                generate_gsdk(config)
     else:
         generate_gsdk(current_platform_config)
 
@@ -37,6 +62,7 @@ def generate_gsdk(current_platform_config):
     Generates GSDK with the provided config
     """
     config_name = current_platform_config["name"]
+    arduino_variant_name = current_platform_config["arduino_variant_name"]
     prebuild = current_platform_config["prebuild"]
     additional_files = current_platform_config["additional_files"]
     protocol_stack = current_platform_config["protocol_stack"]
@@ -47,11 +73,13 @@ def generate_gsdk(current_platform_config):
 
     output_dir = "gen_gsdk_" + config_name + "/"
     slcp_file_name = os.path.basename(project_slcp_file)
+    variant_target_folder = variants_folder + arduino_variant_name + "/" + protocol_stack + "/"
 
     print()
     print("Arduino GSDK generator/prebuilder")
     print("-" * 10)
     print(f"Name: {config_name}")
+    print(f"Arduino variant: {arduino_variant_name}")
     print(f"Board: {board_opn}")
     print(f"Project file: {slcp_file_name}")
     print(f"Prebuild: {prebuild}")
@@ -60,10 +88,13 @@ def generate_gsdk(current_platform_config):
         print(f"Matter ZAP file: {matter_project_zap_file}")
     print(f"GSDK dir: {gsdk_dir}")
     print(f"Output dir: {output_dir}")
+    if prebuild:
+        print(f"Variant target folder: {variant_target_folder}")
     print("-" * 10)
 
-    is_noradio = (protocol_stack == 'none')
-    is_ble = (protocol_stack == 'ble')
+    is_noradio = (protocol_stack == 'noradio')
+    is_ble_arduino = (protocol_stack == 'ble_arduino')
+    is_ble_silabs = (protocol_stack == 'ble_silabs')
     is_matter = (protocol_stack == 'matter')
 
     # If we're generating a GSDK with Matter then the example is at a different path
@@ -71,7 +102,9 @@ def generate_gsdk(current_platform_config):
         slcp_folder = matter_lighting_app_folder
         print("Copying ZAP file...")
         shutil.copy(matter_project_zap_file, gsdk_dir + matter_zap_folder + "lighting-app.zap")
-    elif is_ble:
+    elif is_ble_arduino:
+        slcp_folder = gsdk_cpp_empty_folder
+    elif is_ble_silabs:
         slcp_folder = gsdk_bt_soc_empty_folder
     elif is_noradio:
         slcp_folder = gsdk_cpp_empty_folder
@@ -87,9 +120,11 @@ def generate_gsdk(current_platform_config):
     apply_license_to_unlicensed_files(slc_output_dir + "autogen")
     apply_license_to_unlicensed_files(slc_output_dir + "config")
     if prebuild:
-        copy_output_files_prebuild(output_dir, is_matter)
+        copy_output_files_prebuild(output_dir, is_matter, is_ble_arduino)
+        copy_generated_sdk_to_variants(output_dir, variant_target_folder)
     else:
         copy_output_files(output_dir, is_matter)
+
     cleanup(slcp_folder, slcp_file_name, additional_files)
 
     print(f"Output location: {output_dir}")
@@ -372,7 +407,7 @@ def copy_output_files(output_dir, is_matter):
     shutil.copy(gsdk_license_file, output_dir + "gecko_sdk_" + gsdk_version + "/LICENSE")
 
 
-def copy_output_files_prebuild(output_dir, is_matter):
+def copy_output_files_prebuild(output_dir, is_matter, is_ble_arduino):
     """
     Get the built stuff in one place
     """
@@ -441,12 +476,36 @@ def copy_output_files_prebuild(output_dir, is_matter):
                 if f.endswith('.S'):
                     os.remove(filepath)
 
+    # Copy BLE HCI header files if the variant is 'BLE (Arduino)'
+    if is_ble_arduino:
+        ble_hci_header_dir = gsdk_dir + "/protocol/bluetooth/bgstack/ll/inc/"
+        ble_hci_headers = ["sl_btctrl_hci_handler.h", "sl_btctrl_hci.h", "sl_hci_common_transport.h"]
+        for header in ble_hci_headers:
+            src_path = os.path.join(ble_hci_header_dir, header)
+            if os.path.exists(src_path):
+                shutil.copy(src_path, output_dir + "/include/")
+                print(f"Copying '{header}'")
+        print(f"Copied BLE HCI header files")
+
     # Get the linkerfile
     shutil.copy(slc_output_dir + "autogen/linkerfile.ld", output_dir)
 
     print("Applying license to GSDK folder...")
     shutil.copy(gsdk_license_file, output_dir + "/LICENSE")
 
+
+def copy_generated_sdk_to_variants(output_dir, variant_target_folder):
+    """
+    Copy the generated SDK to the variants folder
+    """
+    print("Copying generated SDK to variants folder...")
+
+    print(f"Target folder: {variant_target_folder}")
+    if os.path.exists(variant_target_folder):
+        shutil.rmtree(variant_target_folder)
+
+    shutil.copytree(output_dir, variant_target_folder + os.path.basename(output_dir))
+    print("Finished copying to variants folder")
 
 def cleanup(gsdk_soc_empty_folder, slcp_file_name, additional_files):
     """
@@ -499,11 +558,28 @@ all_platform_config = {
     "name": "all"
 }
 
+noradio_precomp_all_platform_config = {
+    "name": "noradio_precomp_all",
+}
+
+ble_arduino_precomp_all_platform_config = {
+    "name": "ble_arduino_precomp_all",
+}
+
+ble_silabs_precomp_all_platform_config = {
+    "name": "ble_silabs_precomp_all",
+}
+
+matter_precomp_all_platform_config = {
+    "name": "matter_precomp_all",
+}
+
 thingplusmatter_noradio_platform_config = {
     "name": "thingplusmatter_noradio",
+    "arduino_variant_name": "thingplusmatter",
     "board_opn": "brd2704a",
     "prebuild": False,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/thingplusmatter/thingplusmatter_noradio.slcp",
     "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
                          "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
@@ -511,36 +587,62 @@ thingplusmatter_noradio_platform_config = {
 
 thingplusmatter_noradio_prebuilt_platform_config = {
     "name": "thingplusmatter_noradio_precomp",
+    "arduino_variant_name": "thingplusmatter",
     "board_opn": "brd2704a",
     "prebuild": True,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/thingplusmatter/thingplusmatter_noradio.slcp",
     "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
                          "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
 }
 
-thingplusmatter_ble_platform_config = {
-    "name": "thingplusmatter_ble",
+thingplusmatter_ble_arduino_platform_config = {
+    "name": "thingplusmatter_ble_arduino",
+    "arduino_variant_name": "thingplusmatter",
     "board_opn": "brd2704a",
     "prebuild": False,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble_arduino.slcp",
     "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
                          "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
 }
 
-thingplusmatter_ble_prebuilt_platform_config = {
-    "name": "thingplusmatter_ble_precomp",
+thingplusmatter_ble_arduino_prebuilt_platform_config = {
+    "name": "thingplusmatter_ble_arduino_precomp",
+    "arduino_variant_name": "thingplusmatter",
     "board_opn": "brd2704a",
     "prebuild": True,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble_arduino.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
+}
+
+thingplusmatter_ble_silabs_platform_config = {
+    "name": "thingplusmatter_ble_silabs",
+    "arduino_variant_name": "thingplusmatter",
+    "board_opn": "brd2704a",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble_silabs.slcp",
+    "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
+                         "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
+}
+
+thingplusmatter_ble_silabs_prebuilt_platform_config = {
+    "name": "thingplusmatter_ble_silabs_precomp",
+    "arduino_variant_name": "thingplusmatter",
+    "board_opn": "brd2704a",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/thingplusmatter/thingplusmatter_ble_silabs.slcp",
     "additional_files": ["slcp/thingplusmatter/sl_spidrv_eusart_thingplus1_config.h",
                          "slcp/thingplusmatter/sl_iostream_eusart_thingplus1_config.h"]
 }
 
 thingplusmatter_matter_platform_config = {
     "name": "thingplusmatter_matter",
+    "arduino_variant_name": "thingplusmatter",
     "board_opn": "brd2704a",
     "prebuild": False,
     "protocol_stack": 'matter',
@@ -554,6 +656,7 @@ thingplusmatter_matter_platform_config = {
 
 thingplusmatter_matter_prebuilt_platform_config = {
     "name": "thingplusmatter_matter_precomp",
+    "arduino_variant_name": "thingplusmatter",
     "board_opn": "brd2704a",
     "prebuild": True,
     "protocol_stack": 'matter',
@@ -567,45 +670,70 @@ thingplusmatter_matter_prebuilt_platform_config = {
 
 xg27devkit_noradio_platform_config = {
     "name": "xg27devkit_noradio",
+    "arduino_variant_name": "xg27devkit",
     "board_opn": "brd2602a",
     "prebuild": False,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/xg27devkit/xg27devkit_noradio.slcp",
     "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
 }
 
 xg27devkit_noradio_prebuilt_platform_config = {
     "name": "xg27devkit_noradio_precomp",
+    "arduino_variant_name": "xg27devkit",
     "board_opn": "brd2602a",
     "prebuild": True,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/xg27devkit/xg27devkit_noradio.slcp",
     "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
 }
 
-xg27devkit_ble_platform_config = {
-    "name": "xg27devkit_ble",
+xg27devkit_ble_arduino_platform_config = {
+    "name": "xg27devkit_ble_arduino",
+    "arduino_variant_name": "xg27devkit",
     "board_opn": "brd2602a",
     "prebuild": False,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/xg27devkit/xg27devkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_ble_arduino.slcp",
     "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
 }
 
-xg27devkit_ble_prebuilt_platform_config = {
-    "name": "xg27devkit_ble_precomp",
+xg27devkit_ble_arduino_prebuilt_platform_config = {
+    "name": "xg27devkit_ble_arduino_precomp",
+    "arduino_variant_name": "xg27devkit",
     "board_opn": "brd2602a",
     "prebuild": True,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/xg27devkit/xg27devkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_ble_arduino.slcp",
+    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
+}
+
+xg27devkit_ble_silabs_platform_config = {
+    "name": "xg27devkit_ble_silabs",
+    "arduino_variant_name": "xg27devkit",
+    "board_opn": "brd2602a",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_ble_silabs.slcp",
+    "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
+}
+
+xg27devkit_ble_silabs_prebuilt_platform_config = {
+    "name": "xg27devkit_ble_silabs_precomp",
+    "arduino_variant_name": "xg27devkit",
+    "board_opn": "brd2602a",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xg27devkit/xg27devkit_ble_silabs.slcp",
     "additional_files": ["slcp/xg27devkit/sl_iostream_usart_xg27devkit1_config.h"]
 }
 
 xg24explorerkit_noradio_platform_config = {
     "name": "xg24explorerkit_noradio",
+    "arduino_variant_name": "xg24explorerkit",
     "board_opn": "brd2703a",
     "prebuild": False,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_noradio.slcp",
     "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
                          "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
@@ -613,36 +741,62 @@ xg24explorerkit_noradio_platform_config = {
 
 xg24explorerkit_noradio_prebuilt_platform_config = {
     "name": "xg24explorerkit_noradio_precomp",
+    "arduino_variant_name": "xg24explorerkit",
     "board_opn": "brd2703a",
     "prebuild": True,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_noradio.slcp",
     "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
                          "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
 }
 
-xg24explorerkit_ble_platform_config = {
-    "name": "xg24explorerkit_ble",
+xg24explorerkit_ble_arduino_platform_config = {
+    "name": "xg24explorerkit_ble_arduino",
+    "arduino_variant_name": "xg24explorerkit",
     "board_opn": "brd2703a",
     "prebuild": False,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble_arduino.slcp",
     "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
                          "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
 }
 
-xg24explorerkit_ble_prebuilt_platform_config = {
-    "name": "xg24explorerkit_ble_precomp",
+xg24explorerkit_ble_arduino_prebuilt_platform_config = {
+    "name": "xg24explorerkit_ble_arduino_precomp",
+    "arduino_variant_name": "xg24explorerkit",
     "board_opn": "brd2703a",
     "prebuild": True,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble_arduino.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
+}
+
+xg24explorerkit_ble_silabs_platform_config = {
+    "name": "xg24explorerkit_ble_silabs",
+    "arduino_variant_name": "xg24explorerkit",
+    "board_opn": "brd2703a",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble_silabs.slcp",
+    "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
+                         "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
+}
+
+xg24explorerkit_ble_silabs_prebuilt_platform_config = {
+    "name": "xg24explorerkit_ble_silabs_precomp",
+    "arduino_variant_name": "xg24explorerkit",
+    "board_opn": "brd2703a",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xg24explorerkit/xg24explorerkit_ble_silabs.slcp",
     "additional_files": ["slcp/xg24explorerkit/sl_spidrv_eusart_xg24explorerkit1_config.h",
                          "slcp/xg24explorerkit/sl_iostream_eusart_xg24explorerkit1_config.h"]
 }
 
 xg24explorerkit_matter_platform_config = {
     "name": "xg24explorerkit_matter",
+    "arduino_variant_name": "xg24explorerkit",
     "board_opn": "brd2703a",
     "prebuild": False,
     "protocol_stack": 'matter',
@@ -656,6 +810,7 @@ xg24explorerkit_matter_platform_config = {
 
 xg24explorerkit_matter_prebuilt_platform_config = {
     "name": "xg24explorerkit_matter_precomp",
+    "arduino_variant_name": "xg24explorerkit",
     "board_opn": "brd2703a",
     "prebuild": True,
     "protocol_stack": 'matter',
@@ -669,42 +824,67 @@ xg24explorerkit_matter_prebuilt_platform_config = {
 
 xg24devkit_noradio_platform_config = {
     "name": "xg24devkit_noradio",
+    "arduino_variant_name": "xg24devkit",
     "board_opn": "brd2601b",
     "prebuild": False,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/xg24devkit/xg24devkit_noradio.slcp",
     "additional_files": []
 }
 
 xg24devkit_noradio_prebuilt_platform_config = {
     "name": "xg24devkit_noradio_precomp",
+    "arduino_variant_name": "xg24devkit",
     "board_opn": "brd2601b",
     "prebuild": True,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/xg24devkit/xg24devkit_noradio.slcp",
     "additional_files": []
 }
 
-xg24devkit_ble_platform_config = {
-    "name": "xg24devkit_ble",
+xg24devkit_ble_arduino_platform_config = {
+    "name": "xg24devkit_ble_arduino",
+    "arduino_variant_name": "xg24devkit",
     "board_opn": "brd2601b",
     "prebuild": False,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/xg24devkit/xg24devkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_ble_arduino.slcp",
     "additional_files": []
 }
 
-xg24devkit_ble_prebuilt_platform_config = {
-    "name": "xg24devkit_ble_precomp",
+xg24devkit_ble_arduino_prebuilt_platform_config = {
+    "name": "xg24devkit_ble_arduino_precomp",
+    "arduino_variant_name": "xg24devkit",
     "board_opn": "brd2601b",
     "prebuild": True,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/xg24devkit/xg24devkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_ble_arduino.slcp",
+    "additional_files": []
+}
+
+xg24devkit_ble_silabs_platform_config = {
+    "name": "xg24devkit_ble_silabs",
+    "arduino_variant_name": "xg24devkit",
+    "board_opn": "brd2601b",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_ble_silabs.slcp",
+    "additional_files": []
+}
+
+xg24devkit_ble_silabs_prebuilt_platform_config = {
+    "name": "xg24devkit_ble_silabs_precomp",
+    "arduino_variant_name": "xg24devkit",
+    "board_opn": "brd2601b",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xg24devkit/xg24devkit_ble_silabs.slcp",
     "additional_files": []
 }
 
 xg24devkit_matter_platform_config = {
     "name": "xg24devkit_matter",
+    "arduino_variant_name": "xg24devkit",
     "board_opn": "brd2601b",
     "prebuild": False,
     "protocol_stack": 'matter',
@@ -717,6 +897,7 @@ xg24devkit_matter_platform_config = {
 
 xg24devkit_matter_prebuilt_platform_config = {
     "name": "xg24devkit_matter_precomp",
+    "arduino_variant_name": "xg24devkit",
     "board_opn": "brd2601b",
     "prebuild": True,
     "protocol_stack": 'matter',
@@ -729,9 +910,10 @@ xg24devkit_matter_prebuilt_platform_config = {
 
 wio_mg24_noradio_platform_config = {
     "name": "wio_mg24_noradio",
+    "arduino_variant_name": "wio_mg24",
     "board_opn": "brd2907a",
     "prebuild": False,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/wio_mg24/wio_mg24_noradio.slcp",
     "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
                          "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
@@ -741,9 +923,10 @@ wio_mg24_noradio_platform_config = {
 
 wio_mg24_noradio_prebuilt_platform_config = {
     "name": "wio_mg24_noradio_precomp",
+    "arduino_variant_name": "wio_mg24",
     "board_opn": "brd2907a",
     "prebuild": True,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/wio_mg24/wio_mg24_noradio.slcp",
     "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
                          "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
@@ -751,24 +934,52 @@ wio_mg24_noradio_prebuilt_platform_config = {
                          ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
 }
 
-wio_mg24_ble_platform_config = {
-    "name": "wio_mg24_ble",
+wio_mg24_ble_arduino_platform_config = {
+    "name": "wio_mg24_ble_arduino",
+    "arduino_variant_name": "wio_mg24",
     "board_opn": "brd2907a",
     "prebuild": False,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/wio_mg24/wio_mg24_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_ble_arduino.slcp",
     "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
                          "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
                          ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
                          ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
 }
 
-wio_mg24_ble_prebuilt_platform_config = {
-    "name": "wio_mg24_ble_precomp",
+wio_mg24_ble_arduino_prebuilt_platform_config = {
+    "name": "wio_mg24_ble_arduino_precomp",
+    "arduino_variant_name": "wio_mg24",
     "board_opn": "brd2907a",
     "prebuild": True,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/wio_mg24/wio_mg24_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_ble_arduino.slcp",
+    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
+                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
+                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
+                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
+}
+
+wio_mg24_ble_silabs_platform_config = {
+    "name": "wio_mg24_ble_silabs",
+    "arduino_variant_name": "wio_mg24",
+    "board_opn": "brd2907a",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_ble_silabs.slcp",
+    "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
+                         "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
+                         ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
+                         ["slcp/wio_mg24/brd2907a_config.slcc", "hardware/board/config/component/"]]
+}
+
+wio_mg24_ble_silabs_prebuilt_platform_config = {
+    "name": "wio_mg24_ble_silabs_precomp",
+    "arduino_variant_name": "wio_mg24",
+    "board_opn": "brd2907a",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/wio_mg24/wio_mg24_ble_silabs.slcp",
     "additional_files": ["slcp/wio_mg24/sl_spidrv_eusart_wio_mg24_config.h",
                          "slcp/wio_mg24/sl_iostream_eusart_wio_mg24_config.h",
                          ["slcp/wio_mg24/brd2907a.slcc", "hardware/board/component/"],
@@ -777,45 +988,70 @@ wio_mg24_ble_prebuilt_platform_config = {
 
 bgm220explorerkit_noradio_platform_config = {
     "name": "bgm220explorerkit_noradio",
+    "arduino_variant_name": "bgm220explorerkit",
     "board_opn": "brd4314a",
     "prebuild": False,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_noradio.slcp",
     "additional_files": []
 }
 
 bgm220explorerkit_noradio_prebuilt_platform_config = {
     "name": "bgm220explorerkit_noradio_precomp",
+    "arduino_variant_name": "bgm220explorerkit",
     "board_opn": "brd4314a",
     "prebuild": True,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_noradio.slcp",
     "additional_files": []
 }
 
-bgm220explorerkit_ble_platform_config = {
-    "name": "bgm220explorerkit_ble",
+bgm220explorerkit_ble_arduino_platform_config = {
+    "name": "bgm220explorerkit_ble_arduino",
+    "arduino_variant_name": "bgm220explorerkit",
     "board_opn": "brd4314a",
     "prebuild": False,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble_arduino.slcp",
     "additional_files": []
 }
 
-bgm220explorerkit_ble_prebuilt_platform_config = {
-    "name": "bgm220explorerkit_ble_precomp",
+bgm220explorerkit_ble_arduino_prebuilt_platform_config = {
+    "name": "bgm220explorerkit_ble_arduino_precomp",
+    "arduino_variant_name": "bgm220explorerkit",
     "board_opn": "brd4314a",
     "prebuild": True,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble_arduino.slcp",
+    "additional_files": []
+}
+
+bgm220explorerkit_ble_silabs_platform_config = {
+    "name": "bgm220explorerkit_ble_silabs",
+    "arduino_variant_name": "bgm220explorerkit",
+    "board_opn": "brd4314a",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble_silabs.slcp",
+    "additional_files": []
+}
+
+bgm220explorerkit_ble_silabs_prebuilt_platform_config = {
+    "name": "bgm220explorerkit_ble_silabs_precomp",
+    "arduino_variant_name": "bgm220explorerkit",
+    "board_opn": "brd4314a",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/bgm220explorerkit/bgm220explorerkit_ble_silabs.slcp",
     "additional_files": []
 }
 
 nanomatter_noradio_platform_config = {
     "name": "nano_matter_noradio",
+    "arduino_variant_name": "nano_matter",
     "board_opn": "brd2707a",
     "prebuild": False,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/nano_matter/nano_matter_noradio.slcp",
     "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
                          "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
@@ -829,9 +1065,10 @@ nanomatter_noradio_platform_config = {
 
 nanomatter_noradio_prebuilt_platform_config = {
     "name": "nano_matter_noradio_precomp",
+    "arduino_variant_name": "nano_matter",
     "board_opn": "brd2707a",
     "prebuild": True,
-    "protocol_stack": 'none',
+    "protocol_stack": 'noradio',
     "slcp_file": "slcp/nano_matter/nano_matter_noradio.slcp",
     "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
                          "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
@@ -843,12 +1080,13 @@ nanomatter_noradio_prebuilt_platform_config = {
                          ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
 }
 
-nanomatter_ble_platform_config = {
-    "name": "nano_matter_ble",
+nanomatter_ble_arduino_platform_config = {
+    "name": "nano_matter_ble_arduino",
+    "arduino_variant_name": "nano_matter",
     "board_opn": "brd2707a",
     "prebuild": False,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/nano_matter/nano_matter_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/nano_matter/nano_matter_ble_arduino.slcp",
     "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
                          "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
                          "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
@@ -859,12 +1097,47 @@ nanomatter_ble_platform_config = {
                          ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
 }
 
-nanomatter_ble_prebuilt_platform_config = {
-    "name": "nano_matter_ble_precomp",
+nanomatter_ble_arduino_prebuilt_platform_config = {
+    "name": "nano_matter_ble_arduino_precomp",
+    "arduino_variant_name": "nano_matter",
     "board_opn": "brd2707a",
     "prebuild": True,
-    "protocol_stack": 'ble',
-    "slcp_file": "slcp/nano_matter/nano_matter_ble.slcp",
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/nano_matter/nano_matter_ble_arduino.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
+}
+
+nanomatter_ble_silabs_platform_config = {
+    "name": "nano_matter_ble_silabs",
+    "arduino_variant_name": "nano_matter",
+    "board_opn": "brd2707a",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/nano_matter/nano_matter_ble_silabs.slcp",
+    "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
+                         "slcp/nano_matter/sl_iostream_eusart_nanomatter1_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter_config.h",
+                         "slcp/nano_matter/sl_i2cspm_nanomatter1_config.h",
+                         ["slcp/nano_matter/brd2707a.slcc", "hardware/board/component/"],
+                         ["slcp/nano_matter/brd2707a_config.slcc", "hardware/board/config/component/"]]
+}
+
+nanomatter_ble_silabs_prebuilt_platform_config = {
+    "name": "nano_matter_ble_silabs_precomp",
+    "arduino_variant_name": "nano_matter",
+    "board_opn": "brd2707a",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/nano_matter/nano_matter_ble_silabs.slcp",
     "additional_files": ["slcp/nano_matter/sl_spidrv_eusart_nanomatter_config.h",
                          "slcp/nano_matter/sl_spidrv_eusart_nanomatter1_config.h",
                          "slcp/nano_matter/sl_iostream_usart_nanomatter_config.h",
@@ -877,6 +1150,7 @@ nanomatter_ble_prebuilt_platform_config = {
 
 nanomatter_matter_platform_config = {
     "name": "nano_matter_matter",
+    "arduino_variant_name": "nano_matter",
     "board_opn": "brd2707a",
     "prebuild": False,
     "protocol_stack": 'matter',
@@ -896,6 +1170,7 @@ nanomatter_matter_platform_config = {
 
 nanomatter_matter_prebuilt_platform_config = {
     "name": "nano_matter_matter_precomp",
+    "arduino_variant_name": "nano_matter",
     "board_opn": "brd2707a",
     "prebuild": True,
     "protocol_stack": 'matter',
@@ -913,43 +1188,131 @@ nanomatter_matter_prebuilt_platform_config = {
     "matter_vendor_id": "0x1515"
 }
 
+lyra24p20_noradio_platform_config = {
+    "name": "lyra24p20_noradio",
+    "arduino_variant_name": "lyra24p20",
+    "board_opn": "brd2904a",
+    "prebuild": False,
+    "protocol_stack": 'noradio',
+    "slcp_file": "slcp/lyra24p20/lyra24p20_noradio.slcp",
+    "additional_files": ["slcp/lyra24p20/sl_spidrv_eusart_lyra24p20_config.h",
+                         "slcp/lyra24p20/sl_iostream_eusart_lyra24p20_config.h"]
+}
+
+lyra24p20_noradio_prebuilt_platform_config = {
+    "name": "lyra24p20_noradio_precomp",
+    "arduino_variant_name": "lyra24p20",
+    "board_opn": "brd2904a",
+    "prebuild": True,
+    "protocol_stack": 'noradio',
+    "slcp_file": "slcp/lyra24p20/lyra24p20_noradio.slcp",
+    "additional_files": ["slcp/lyra24p20/sl_spidrv_eusart_lyra24p20_config.h",
+                         "slcp/lyra24p20/sl_iostream_eusart_lyra24p20_config.h"]
+}
+
+lyra24p20_ble_arduino_platform_config = {
+    "name": "lyra24p20_ble_arduino",
+    "arduino_variant_name": "lyra24p20",
+    "board_opn": "brd2904a",
+    "prebuild": False,
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/lyra24p20/lyra24p20_ble_arduino.slcp",
+    "additional_files": ["slcp/lyra24p20/sl_spidrv_eusart_lyra24p20_config.h",
+                         "slcp/lyra24p20/sl_iostream_eusart_lyra24p20_config.h"]
+}
+
+lyra24p20_ble_arduino_prebuilt_platform_config = {
+    "name": "lyra24p20_ble_arduino_precomp",
+    "arduino_variant_name": "lyra24p20",
+    "board_opn": "brd2904a",
+    "prebuild": True,
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/lyra24p20/lyra24p20_ble_arduino.slcp",
+    "additional_files": ["slcp/lyra24p20/sl_spidrv_eusart_lyra24p20_config.h",
+                         "slcp/lyra24p20/sl_iostream_eusart_lyra24p20_config.h"]
+}
+
+lyra24p20_ble_silabs_platform_config = {
+    "name": "lyra24p20_ble_silabs",
+    "arduino_variant_name": "lyra24p20",
+    "board_opn": "brd2904a",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/lyra24p20/lyra24p20_ble_silabs.slcp",
+    "additional_files": ["slcp/lyra24p20/sl_spidrv_eusart_lyra24p20_config.h",
+                         "slcp/lyra24p20/sl_iostream_eusart_lyra24p20_config.h"]
+}
+
+lyra24p20_ble_silabs_prebuilt_platform_config = {
+    "name": "lyra24p20_ble_silabs_precomp",
+    "arduino_variant_name": "lyra24p20",
+    "board_opn": "brd2904a",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/lyra24p20/lyra24p20_ble_silabs.slcp",
+    "additional_files": ["slcp/lyra24p20/sl_spidrv_eusart_lyra24p20_config.h",
+                         "slcp/lyra24p20/sl_iostream_eusart_lyra24p20_config.h"]
+}
+
 platform_configurations = [all_platform_config,
+                           noradio_precomp_all_platform_config,
+                           ble_arduino_precomp_all_platform_config,
+                           ble_silabs_precomp_all_platform_config,
+                           matter_precomp_all_platform_config,
                            thingplusmatter_noradio_platform_config,
                            thingplusmatter_noradio_prebuilt_platform_config,
-                           thingplusmatter_ble_platform_config,
-                           thingplusmatter_ble_prebuilt_platform_config,
+                           thingplusmatter_ble_arduino_platform_config,
+                           thingplusmatter_ble_arduino_prebuilt_platform_config,
+                           thingplusmatter_ble_silabs_platform_config,
+                           thingplusmatter_ble_silabs_prebuilt_platform_config,
                            thingplusmatter_matter_platform_config,
                            thingplusmatter_matter_prebuilt_platform_config,
                            xg27devkit_noradio_platform_config,
                            xg27devkit_noradio_prebuilt_platform_config,
-                           xg27devkit_ble_platform_config,
-                           xg27devkit_ble_prebuilt_platform_config,
+                           xg27devkit_ble_arduino_platform_config,
+                           xg27devkit_ble_arduino_prebuilt_platform_config,
+                           xg27devkit_ble_silabs_platform_config,
+                           xg27devkit_ble_silabs_prebuilt_platform_config,
                            xg24explorerkit_noradio_platform_config,
                            xg24explorerkit_noradio_prebuilt_platform_config,
-                           xg24explorerkit_ble_platform_config,
-                           xg24explorerkit_ble_prebuilt_platform_config,
+                           xg24explorerkit_ble_arduino_platform_config,
+                           xg24explorerkit_ble_arduino_prebuilt_platform_config,
+                           xg24explorerkit_ble_silabs_platform_config,
+                           xg24explorerkit_ble_silabs_prebuilt_platform_config,
                            xg24explorerkit_matter_platform_config,
                            xg24explorerkit_matter_prebuilt_platform_config,
                            xg24devkit_noradio_platform_config,
                            xg24devkit_noradio_prebuilt_platform_config,
-                           xg24devkit_ble_platform_config,
-                           xg24devkit_ble_prebuilt_platform_config,
+                           xg24devkit_ble_arduino_platform_config,
+                           xg24devkit_ble_arduino_prebuilt_platform_config,
+                           xg24devkit_ble_silabs_platform_config,
+                           xg24devkit_ble_silabs_prebuilt_platform_config,
                            xg24devkit_matter_platform_config,
                            xg24devkit_matter_prebuilt_platform_config,
-                           wio_mg24_noradio_platform_config,
-                           wio_mg24_noradio_prebuilt_platform_config,
-                           wio_mg24_ble_platform_config,
-                           wio_mg24_ble_prebuilt_platform_config,
+                           #wio_mg24_noradio_platform_config,
+                           #wio_mg24_noradio_prebuilt_platform_config,
+                           #wio_mg24_ble_arduino_platform_config,
+                           #wio_mg24_ble_arduino_prebuilt_platform_config,
                            bgm220explorerkit_noradio_platform_config,
                            bgm220explorerkit_noradio_prebuilt_platform_config,
-                           bgm220explorerkit_ble_platform_config,
-                           bgm220explorerkit_ble_prebuilt_platform_config,
+                           bgm220explorerkit_ble_arduino_platform_config,
+                           bgm220explorerkit_ble_arduino_prebuilt_platform_config,
+                           bgm220explorerkit_ble_silabs_platform_config,
+                           bgm220explorerkit_ble_silabs_prebuilt_platform_config,
                            nanomatter_noradio_platform_config,
                            nanomatter_noradio_prebuilt_platform_config,
-                           nanomatter_ble_platform_config,
-                           nanomatter_ble_prebuilt_platform_config,
+                           nanomatter_ble_arduino_platform_config,
+                           nanomatter_ble_arduino_prebuilt_platform_config,
+                           nanomatter_ble_silabs_platform_config,
+                           nanomatter_ble_silabs_prebuilt_platform_config,
                            nanomatter_matter_platform_config,
-                           nanomatter_matter_prebuilt_platform_config]
+                           nanomatter_matter_prebuilt_platform_config,
+                           lyra24p20_noradio_platform_config,
+                           lyra24p20_noradio_prebuilt_platform_config,
+                           lyra24p20_ble_arduino_platform_config,
+                           lyra24p20_ble_arduino_prebuilt_platform_config,
+                           lyra24p20_ble_silabs_platform_config,
+                           lyra24p20_ble_silabs_prebuilt_platform_config]
 
 
 if __name__ == "__main__":

@@ -78,7 +78,7 @@
  *  @brief Fallback value for the basic information cluster's Vendor name attribute
  *   if the actual vendor name is not provisioned in the device memory.
  */
-#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME "Bozont Labs"
+#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME "Silicon Labs"
 
 /**
  *  @brief Fallback value for the basic information cluster's product name attribute

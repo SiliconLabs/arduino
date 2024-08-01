@@ -57,6 +57,7 @@ void DeviceIlluminanceSensor::SetMeasuredValue(uint16_t measurement)
 
   if (changed) {
     this->HandleIlluminanceSensorDeviceStatusChanged(kChanged_MeasurementValue);
+    CallDeviceChangeCallback();
   }
 }
 

@@ -33,7 +33,6 @@ void tone(uint8_t _pin, unsigned int frequency, unsigned long duration)
   if (pin_name == PIN_NAME_NC) {
     return;
   }
-  Serial.println("qui tutto ok");
   tone(pin_name, frequency, duration);
 }
 

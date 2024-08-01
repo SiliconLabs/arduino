@@ -40,7 +40,9 @@ UARTClass::UARTClass(sl_iostream_t* stream,
                      void(*deinit_fn)(void),
                      void(*serial_event_fn)(void)) :
   serial_mutex(nullptr),
-  initialized(true)
+  initialized(true),
+  baudrate(115200),
+  suspended(false)
 {
   this->serial_mutex = xSemaphoreCreateMutexStatic(&this->serial_mutex_buf);
   configASSERT(this->serial_mutex);
@@ -57,11 +59,10 @@ void UARTClass::begin(unsigned long baudrate)
   if (this->initialized) {
     return;
   }
-  //#ifndef ARDUINO_MATTER
   this->init_fn();
   this->baud_rate_set_fn(baudrate);
   this->initialized = true;
-  //#endif // ARDUINO_MATTER
+  this->baudrate = baudrate;
 }
 
 void UARTClass::begin(unsigned long baudrate, uint16_t config)
@@ -72,6 +73,9 @@ void UARTClass::begin(unsigned long baudrate, uint16_t config)
 
 void UARTClass::end()
 {
+  if (!this->initialized) {
+    return;
+  }
   this->deinit_fn();
   this->initialized = false;
 }
@@ -120,6 +124,26 @@ void UARTClass::printf(const char *fmt, ...)
   vsnprintf(message, sizeof(message), fmt, args);
   va_end(args);
   this->write((uint8_t*)message, strlen(message));
+}
+
+void UARTClass::suspend()
+{
+  if (!this->initialized) {
+    return;
+  }
+  // The small delay is here to allow the last bytes to be transmitted
+  delay(1);
+  this->end();
+  this->suspended = true;
+}
+
+void UARTClass::resume()
+{
+  if (!this->suspended) {
+    return;
+  }
+  this->begin(this->baudrate);
+  this->suspended = false;
 }
 
 UARTClass::operator bool()

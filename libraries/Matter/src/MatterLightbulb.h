@@ -46,6 +46,8 @@ public:
   void set_onoff(bool value);
   bool get_onoff();
   void toggle();
+  void set_startup_on_off(DeviceLightbulb::StartupOnOff_t startup_on_off);
+  DeviceLightbulb::StartupOnOff_t get_startup_on_off();
 
   operator bool();
   void operator=(bool state);

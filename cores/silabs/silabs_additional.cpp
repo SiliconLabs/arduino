@@ -70,7 +70,7 @@ void setCPUClock(cpu_clock_t clock)
 {
   CMU_DPLLInit_TypeDef pll_init;
   switch (clock) {
-    case CPU_40MHZ:
+    case CPU_39MHZ:
       CMU_CLOCK_SELECT_SET(SYSCLK, HFXO);
       return;
     case CPU_76MHZ:

@@ -39,7 +39,7 @@ void pinMode(pin_size_t pinNumber, PinMode mode)
 
 void pinMode(PinName pinNumber, PinMode pinMode)
 {
-  if (!system_init_finished || pinNumber >= PIN_NAME_MAX) {
+  if (!get_system_init_finished() || pinNumber >= PIN_NAME_MAX) {
     return;
   }
   GPIO_Port_TypeDef hw_port = getSilabsPortFromArduinoPin(pinNumber);
@@ -73,7 +73,7 @@ PinStatus digitalRead(pin_size_t pinNumber)
 
 PinStatus digitalRead(PinName pinNumber)
 {
-  if (!system_init_finished || pinNumber >= PIN_NAME_MAX) {
+  if (!get_system_init_finished() || pinNumber >= PIN_NAME_MAX) {
     return PinStatus::LOW;
   }
   GPIO_Port_TypeDef hw_port = getSilabsPortFromArduinoPin(pinNumber);
@@ -93,7 +93,7 @@ void digitalWrite(pin_size_t pinNumber, PinStatus status)
 
 void digitalWrite(PinName pinNumber, PinStatus status)
 {
-  if (!system_init_finished || pinNumber >= PIN_NAME_MAX) {
+  if (!get_system_init_finished() || pinNumber >= PIN_NAME_MAX) {
     return;
   }
   GPIO_Port_TypeDef out_port = getSilabsPortFromArduinoPin(pinNumber);

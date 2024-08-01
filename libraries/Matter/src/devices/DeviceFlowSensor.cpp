@@ -57,6 +57,7 @@ void DeviceFlowSensor::SetMeasuredValue(uint16_t measurement)
 
   if (changed) {
     this->HandleFlowSensorDeviceStatusChanged(kChanged_MeasurementValue);
+    CallDeviceChangeCallback();
   }
 }
 

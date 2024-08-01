@@ -45,6 +45,7 @@ void DeviceContactSensor::SetStateValue(bool state_value)
     ChipLogProgress(DeviceLayer, "ContactSensorDevice[%s]: new state='%d'", this->device_name, state_value);
     this->state_value = state_value;
     this->HandleContactSensorDeviceStatusChanged(kChanged_StateValue);
+    CallDeviceChangeCallback();
   }
 }
 

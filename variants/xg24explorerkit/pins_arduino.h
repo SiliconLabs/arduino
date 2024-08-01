@@ -79,8 +79,8 @@ static const uint8_t A7  = PIN_A7;
 // ------
 #define SERIAL_HOWMANY 2
 
-#define PIN_SERIAL_RX (A5) // PD5
-#define PIN_SERIAL_TX (A4) // PD4
+#define PIN_SERIAL_RX (21) // PA6
+#define PIN_SERIAL_TX (22) // PA5
 
 #define PIN_SERIAL_RX1 (A7) // PA0
 #define PIN_SERIAL_TX1 (A6) // PB1

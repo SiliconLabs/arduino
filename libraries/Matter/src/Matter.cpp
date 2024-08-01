@@ -25,6 +25,7 @@
  */
 
 #include "Matter.h"
+#include <app/server/Server.h>
 #include <SilabsDeviceDataProvider.h>
 
 using namespace chip;
@@ -42,7 +43,8 @@ DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::DeviceTypeList::Id, ARRAY, kDe
 DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ServerList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* ServerList */
 DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::ClientList::Id, ARRAY, kDescriptorAttributeArraySize, 0),     /* ClientList */
 DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::PartsList::Id, ARRAY, kDescriptorAttributeArraySize, 0),      /* PartsList */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE(Descriptor::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                              /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                           /* ClusterRevision auto added by LIST_END */
 
 // BridgedDeviceBasicInformation cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(bridgedDeviceBasicAttrs)
@@ -52,19 +54,41 @@ DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::ProductName
 DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::SerialNumber::Id, CHAR_STRING, Device::DeviceDescStrSize, 0), /* SerialNumber */
 DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::Reachable::Id, BOOLEAN, 1, 0),                                /* Reachable */
 DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                              /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(BridgedDeviceBasicInformation::Attributes::ClusterRevision::Id, INT16U, 2, 0),                           /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                                              /* ClusterRevision auto added by LIST_END */
 
 // Identify cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(identifyAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::IdentifyTime::Id, INT16U, 2, 0),      /* IdentifyTime */
-DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::IdentifyType::Id, INT8U, 1, 0),       /* IdentifyType */
-DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::FeatureMap::Id, BITMAP32, 4, 0),      /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::ClusterRevision::Id, INT16U, 2, 0),   /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::IdentifyTime::Id, INT16U, 2, ATTRIBUTE_MASK_WRITABLE),  /* IdentifyTime */
+DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::IdentifyType::Id, INT8U, 1, 0),                         /* IdentifyType */
+DECLARE_DYNAMIC_ATTRIBUTE(Identify::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                        /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                   /* ClusterRevision auto added by LIST_END */
 
 CommandId identifyIncomingCommands[] = {
   app::Clusters::Identify::Commands::Identify::Id,
+  kInvalidCommandId,
+};
+
+// Groups cluster attributes
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(groupsAttrs)
+DECLARE_DYNAMIC_ATTRIBUTE(Groups::Attributes::NameSupport::Id, INT8U, 1, 0),        /* NameSupport */
+DECLARE_DYNAMIC_ATTRIBUTE(Groups::Attributes::FeatureMap::Id, BITMAP32, 4, 0),      /* FeatureMap */
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                               /* ClusterRevision auto added by LIST_END */
+
+CommandId groupsIncomingCommands[] = {
+  app::Clusters::Groups::Commands::AddGroup::Id,
+  app::Clusters::Groups::Commands::ViewGroup::Id,
+  app::Clusters::Groups::Commands::GetGroupMembership::Id,
+  app::Clusters::Groups::Commands::RemoveGroup::Id,
+  app::Clusters::Groups::Commands::RemoveAllGroups::Id,
+  app::Clusters::Groups::Commands::AddGroupIfIdentifying::Id,
+  kInvalidCommandId,
+};
+
+CommandId groupsOutgoingCommands[] = {
+  app::Clusters::Groups::Commands::AddGroupResponse::Id,
+  app::Clusters::Groups::Commands::ViewGroupResponse::Id,
+  app::Clusters::Groups::Commands::GetGroupMembershipResponse::Id,
+  app::Clusters::Groups::Commands::RemoveGroupResponse::Id,
   kInvalidCommandId,
 };
 
@@ -148,9 +172,22 @@ bool ArduinoMatterAppliance::is_online()
   return false;
 }
 
+void ArduinoMatterAppliance::set_device_change_callback(void (*matter_device_changed_cb)(void))
+{
+  if (this->base_matter_device) {
+    this->base_matter_device->SetDeviceChangeCallback(matter_device_changed_cb);
+  }
+}
+
 void MatterClass::begin()
 {
   InitDynamicEndpointHandler();
+}
+
+void MatterClass::disableBridgeEndpoint()
+{
+  // The bridge endpoint is on index 1
+  emberAfEndpointEnableDisable(emberAfEndpointFromIndex(1), false);
 }
 
 String MatterClass::getManualPairingCode()
@@ -184,6 +221,18 @@ String MatterClass::getOnboardingQRCodeUrl()
   return "N/A";
 }
 
+String MatterClass::getOnboardingQRCodePayload()
+{
+  char setupPayloadBuffer[chip::QRCodeBasicSetupPayloadGenerator::kMaxQRCodeBase38RepresentationLength + 1];
+  chip::MutableCharSpan setupPayload(setupPayloadBuffer);
+
+  CHIP_ERROR err = Silabs::SilabsDeviceDataProvider::GetDeviceDataProvider().GetSetupPayload(setupPayload);
+  if (CHIP_NO_ERROR == err) {
+    return setupPayload.data();
+  }
+  return "N/A";
+}
+
 bool MatterClass::isDeviceCommissioned()
 {
   return ConnectivityMgr().IsThreadProvisioned();
@@ -192,6 +241,16 @@ bool MatterClass::isDeviceCommissioned()
 bool MatterClass::isDeviceThreadConnected()
 {
   return ConnectivityMgr().IsThreadAttached();
+}
+
+void MatterClass::decommission()
+{
+  chip::Server::GetInstance().ScheduleFactoryReset();
+  while (1) {
+    // Wait for the factory reset to complete
+    // The device will reboot after the decommissioning has completed
+    yield();
+  }
 }
 
 MatterClass Matter;

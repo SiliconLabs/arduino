@@ -50,8 +50,7 @@ DECLARE_DYNAMIC_ATTRIBUTE(Switch::Attributes::NumberOfPositions::Id, INT8U, 1, 0
 DECLARE_DYNAMIC_ATTRIBUTE(Switch::Attributes::CurrentPosition::Id, INT8U, 1, 0),     /* CurrentPosition */
 DECLARE_DYNAMIC_ATTRIBUTE(Switch::Attributes::MultiPressMax::Id, INT8U, 1, 0),       /* MultiPressMax */
 DECLARE_DYNAMIC_ATTRIBUTE(Switch::Attributes::FeatureMap::Id, BITMAP32, 4, 0),       /* FeatureMap */
-DECLARE_DYNAMIC_ATTRIBUTE(Switch::Attributes::ClusterRevision::Id, INT16U, 2, 0),    /* ClusterRevision */
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                /* ClusterRevision auto added by LIST_END */
 
 // Switch cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(switchEndpointClusters)

@@ -4,7 +4,7 @@
    Demonstrates the usage of callbacks in ezBLE. Starts an ezBLE client which will connect to a server.
    Callback functions are registered for connection disconnection and data receive events.
 
-   Compatible with all Silicon Labs BLE hardware.
+   Compatible with all Silicon Labs BLE hardware with the 'BLE (Silabs)' protocol stack variant selected.
 
    Author: Tamas Jozsi (Silicon Labs)
  */

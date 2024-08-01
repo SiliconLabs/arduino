@@ -55,6 +55,7 @@ void init_arduino_variant()
 
   // Deinit Serial, Wire and SPI by default - sl_system_init() initializes it
   Serial.end();
+  Serial1.end();
   I2C_Deinit(SL_I2C_PERIPHERAL); // Wire.end()
   SPIDRV_DeInit(SL_SPIDRV_PERIPHERAL_HANDLE); //SPI.end();
 }
@@ -63,22 +64,24 @@ void init_arduino_variant()
 // D0 -> Dmax -> A0 -> Amax -> Other peripherals
 PinName gPinNames[] = {
   PA0, // D0
-  PC0, // D1 - SPI SDO
+  PC0, // D1 - SPI SDO - WU
   PC1, // D2 - SPI SDI
   PC2, // D3 - SPI SCK
   PC3, // D4 - SPI CS
   PC6, // D5
   PB0, // D6
-  PC7, // A0
+  PC7, // A0 - WU
   PA4, // A1
   PD3, // A2 - SDA
-  PD2, // A3 - SCL
-  PB1, // A4 - Tx - 11
-  PB2, // A5 - Rx - 12
-  PB3, // A6
+  PD2, // A3 - SCL - WU
+  PB1, // A4 - Tx1 - WU - 11
+  PB2, // A5 - Rx1 - 12
+  PB3, // A6 - WU
   PB4, // A7
   PA4, // LED - 15
   PC7, // Button - 16
+  PA6, // Rx - 17
+  PA5, // Tx - WU - 18
 };
 
 unsigned int getPinCount()

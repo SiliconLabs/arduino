@@ -133,6 +133,7 @@ component:
   - id: emlib_vdac
   - id: gpiointerrupt
   - id: psa_crypto_config
+  - id: emlib_rmu
 
 requires:
 # On Series 2 LCD and external flash run over USART, VCOM runs over EUSART

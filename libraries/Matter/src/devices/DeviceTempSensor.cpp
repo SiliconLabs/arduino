@@ -57,6 +57,7 @@ void DeviceTempSensor::SetMeasuredValue(int16_t measurement)
 
   if (changed) {
     this->HandleTempSensorDeviceStatusChanged(kChanged_MeasurementValue);
+    CallDeviceChangeCallback();
   }
 }
 

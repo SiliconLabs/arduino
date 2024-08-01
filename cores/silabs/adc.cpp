@@ -40,6 +40,9 @@ AdcClass::AdcClass() :
 
 void AdcClass::init(PinName pin, uint8_t reference)
 {
+  // Set up the ADC pin as an input
+  pinMode(pin, INPUT);
+
   // Create ADC init structs with default values
   IADC_Init_t init = IADC_INIT_DEFAULT;
   IADC_AllConfigs_t all_configs = IADC_ALLCONFIGS_DEFAULT;

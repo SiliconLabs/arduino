@@ -10,7 +10,9 @@
    When the connection is fully established then the other board's LED can be controlled by pressing the button
    on the device running this sketch. Button press events are sent through BLE.
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    Compatible boards:
    - Arduino Nano Matter
@@ -19,6 +21,7 @@
    - xG24 Explorer Kit
    - xG24 Dev Kit
    - BGM220 Explorer Kit
+   - Ezurio Lyra 24P 20dBm Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */

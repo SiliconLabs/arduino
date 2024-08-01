@@ -9,7 +9,9 @@
    You can control the LED with another device running the 'ble_lightswitch_client' example.
    Alternatively, you can use EFR Connect's GATT explorer to turn the LED on/off.
 
-   Find out more on the API usage at: https://docs.silabs.com/bluetooth/6.0.0/bluetooth-stack-api/
+   Find out more on the API usage at: https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/
+
+   This example only works with the 'BLE (Silabs)' protocol stack variant.
 
    Get the EFR Connect app:
     - https://play.google.com/store/apps/details?id=com.siliconlabs.bledemo
@@ -22,6 +24,7 @@
    - xG24 Explorer Kit
    - xG24 Dev Kit
    - BGM220 Explorer Kit
+   - Ezurio Lyra 24P 20dBm Dev Kit
 
    Author: Tamas Jozsi (Silicon Labs)
  */

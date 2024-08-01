@@ -33,8 +33,10 @@ Device::Device(const char* device_name) :
   identify_in_progress(false),
   identify_time(0),
   identify_type(0),
+  groups_cluster_name_support(0),
   location(""),
-  endpoint_id(0)
+  endpoint_id(0),
+  device_change_callback(nullptr)
 {
   chip::Platform::CopyString(this->device_name, device_name);
   chip::Platform::CopyString(this->vendor_name, "Silicon Labs");
@@ -118,6 +120,18 @@ void Device::SetLocation(std::string location)
     this->location = location;
     ChipLogProgress(DeviceLayer, "Device[%s]: New location=\"%s\"", this->device_name, this->location.c_str());
     this->HandleDeviceStatusChanged(kChanged_Location);
+  }
+}
+
+void Device::SetDeviceChangeCallback(void (*matter_device_change_cb)(void))
+{
+  this->device_change_callback = matter_device_change_cb;
+}
+
+void Device::CallDeviceChangeCallback()
+{
+  if (this->device_change_callback) {
+    this->device_change_callback();
   }
 }
 
@@ -248,11 +262,11 @@ EmberAfStatus Device::HandleWriteIdentifyAttribute(ClusterId clusterId,
     return EMBER_ZCL_STATUS_FAILURE;
   }
 
-  if (attributeId == Identify::Attributes::IdentifyTime::Id && clusterId == Identify::Id) {
+  if (attributeId == Identify::Attributes::IdentifyTime::Id) {
     this->identify_time = *buffer;
     app::ConcreteAttributePath attributePath(this->endpoint_id, Identify::Id, Identify::Attributes::IdentifyTime::Id);
     MatterIdentifyClusterServerAttributeChangedCallback(attributePath);
-  } else if (attributeId == Identify::Attributes::IdentifyType::Id && clusterId == Identify::Id) {
+  } else if (attributeId == Identify::Attributes::IdentifyType::Id) {
     this->identify_type = *buffer;
     app::ConcreteAttributePath attributePath(this->endpoint_id, Identify::Id, Identify::Attributes::IdentifyType::Id);
     MatterIdentifyClusterServerAttributeChangedCallback(attributePath);
@@ -276,4 +290,49 @@ void Device::HandleIdentifyStop()
 bool Device::GetIdentifyInProgress()
 {
   return this->identify_in_progress;
+}
+
+EmberAfStatus Device::HandleReadGroupsAttribute(ClusterId clusterId,
+                                                chip::AttributeId attributeId,
+                                                uint8_t* buffer,
+                                                uint16_t maxReadLength)
+{
+  using namespace chip::app::Clusters;
+
+  if (clusterId != Groups::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if ((attributeId == Groups::Attributes::NameSupport::Id) && (maxReadLength == 1)) {
+    *buffer = this->groups_cluster_name_support;
+  } else if ((attributeId == Groups::Attributes::FeatureMap::Id) && (maxReadLength == 4)) {
+    uint32_t featureMap = this->groups_cluster_feature_map;
+    memcpy(buffer, &featureMap, sizeof(featureMap));
+  } else if ((attributeId == Groups::Attributes::ClusterRevision::Id) && (maxReadLength == 2)) {
+    uint16_t clusterRevision = this->groups_cluster_revision;
+    memcpy(buffer, &clusterRevision, sizeof(clusterRevision));
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
+}
+
+EmberAfStatus Device::HandleWriteGroupsAttribute(ClusterId clusterId,
+                                                 chip::AttributeId attributeId,
+                                                 uint8_t* buffer)
+{
+  using namespace chip::app::Clusters;
+
+  if (clusterId != Groups::Id) {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  if (attributeId == Groups::Attributes::NameSupport::Id) {
+    this->groups_cluster_name_support = *buffer;
+  } else {
+    return EMBER_ZCL_STATUS_FAILURE;
+  }
+
+  return EMBER_ZCL_STATUS_SUCCESS;
 }

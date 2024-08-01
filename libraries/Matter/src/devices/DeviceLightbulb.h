@@ -35,7 +35,15 @@ public:
     kChanged_OnOff = kChanged_Last << 1,
     kChanged_Level = kChanged_Last << 2,
     kChanged_Color = kChanged_Last << 3,
+    kChanged_StartupOnOff = kChanged_Last << 4,
   } Changed;
+
+  enum StartupOnOff_t : uint8_t {
+    kOff = 0,
+    kOn = 1,
+    kToggle = 2,
+    kNull = 255,
+  };
 
   DeviceLightbulb(const char* device_name);
 
@@ -43,7 +51,7 @@ public:
   void SetOnOff(bool onoff);
   void Toggle();
   uint8_t GetLevel();
-  void SetLevel(uint8_t level);
+  bool SetLevel(uint8_t level);
   void SetHue(uint8_t hue);
   uint8_t GetHue();
   void SetSaturation(uint8_t saturation);
@@ -59,14 +67,21 @@ public:
   uint8_t GetLevelControlMaxLevel();
   uint8_t GetLevelControlMinLevel();
   uint8_t GetLevelControlOptions();
+  void SetLevelControlOptions(uint8_t options);
   uint8_t GetLevelControlOnLevel();
+  void SetLevelControlOnLevel(uint8_t on_level);
   uint8_t GetLevelControlStartupCurrentLevel();
+  void SetLevelControlStartupCurrentLevel(uint8_t startup_current_level);
   uint16_t GetLevelControlRemainingTime();
 
   uint8_t GetColorControlOptions();
+  void SetColorControlOptions(uint8_t options);
   uint8_t GetColorControlColorMode();
   uint8_t GetColorControlEnhancedColorMode();
   uint8_t GetColorControlColorCapabilities();
+
+  void SetStartupOnOff(StartupOnOff_t startup_on_off);
+  StartupOnOff_t GetStartupOnOff();
 
   EmberAfStatus HandleReadEmberAfAttribute(ClusterId clusterId,
                                            chip::AttributeId attributeId,
@@ -90,6 +105,11 @@ private:
   uint8_t saturation;
   uint8_t level;
 
+  uint8_t level_control_options;
+  uint8_t level_control_on_level;
+  uint8_t level_control_startup_current_level;
+  uint8_t color_control_options;
+
   static const uint32_t onoff_cluster_feature_map         = 1u;   // Level control for lighting (bit 0) enabled
   static const uint32_t level_control_cluster_feature_map = 3u;   // On/Off (bit 0) and Lighting support (bit 1) enabled
   static const uint32_t color_control_cluster_feature_map = 1u;   // Hue/Saturation support (bit 0) enabled
@@ -100,12 +120,9 @@ private:
 
   static const uint8_t level_control_min_level = 1u;
   static const uint8_t level_control_max_level = 254u;
-  static const uint8_t level_control_options = 0u;                // No extra options enabled
-  static const uint8_t level_control_on_level = 254u;
-  static const uint8_t level_control_startup_current_level = 254u;
   static const uint16_t level_control_remaining_time = 0u;
 
-  static const uint8_t color_control_options = 0u;                // No extra options enabled
+  static const uint8_t color_control_number_of_primaries = 0u;    // No color primaries
   static const uint8_t color_control_color_mode = 0u;             // Current hue and saturation determines the color
   static const uint8_t color_control_enhanced_color_mode = 0u;    // CurrentHue and CurrentSaturation
   static const uint16_t color_control_color_capabilities = color_control_cluster_feature_map & 0x000F;  // Bits 0-4 must be the same as the FeatureMap - all other bits must be 0

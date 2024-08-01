@@ -57,6 +57,7 @@ void DevicePressureSensor::SetMeasuredValue(int16_t measurement)
 
   if (changed) {
     this->HandlePressureSensorDeviceStatusChanged(kChanged_MeasurementValue);
+    CallDeviceChangeCallback();
   }
 }
 

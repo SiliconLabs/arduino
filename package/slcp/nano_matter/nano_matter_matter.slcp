@@ -235,8 +235,6 @@ configuration:
     value: 1
     condition: [matter_thread_coap_cert_libs]
   - {name: SL_STACK_SIZE, value: '4608'}
-  - name: SL_BOARD_ENABLE_VCOM
-    value: "1"
 
 toolchain_settings:
   - option: gcc_c++_compiler_option

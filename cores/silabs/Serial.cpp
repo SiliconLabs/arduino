@@ -40,7 +40,7 @@ UARTClass::UARTClass(sl_iostream_t* stream,
                      void(*deinit_fn)(void),
                      void(*serial_event_fn)(void)) :
   serial_mutex(nullptr),
-  initialized(true),
+  initialized(false),
   baudrate(115200),
   suspended(false)
 {

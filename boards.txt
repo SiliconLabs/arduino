@@ -714,3 +714,140 @@ lyra24p20.menu.protocol_stack.ble_silabs.build.ld_libs=-lstdc++ -lgcc -lc -lm -l
 lyra24p20.menu.protocol_stack.none.build.ldscript={build.variant.path}/noradio/linkerfile.ld
 lyra24p20.menu.protocol_stack.ble_arduino.build.ldscript={build.variant.path}/ble_arduino/linkerfile.ld
 lyra24p20.menu.protocol_stack.ble_silabs.build.ldscript={build.variant.path}/ble_silabs/linkerfile.ld
+
+
+########################
+# Seeed Studio XIAO MG24
+# OPN: brd4187c
+########################
+
+xiao_mg24.name=Seeed Studio XIAO MG24 (Sense)
+xiao_mg24.menu.protocol_stack.matter=Matter
+xiao_mg24.menu.protocol_stack.ble_arduino=BLE (Arduino)
+xiao_mg24.menu.protocol_stack.ble_silabs=BLE (Silabs)
+xiao_mg24.menu.protocol_stack.none=None
+xiao_mg24.upload.tool=openocd
+xiao_mg24.upload.tool.default=openocd
+xiao_mg24.upload.maximum_data_size=262144
+xiao_mg24.upload.maximum_size=1572864
+xiao_mg24.upload.protocol=SWD
+xiao_mg24.upload.setup_command=
+xiao_mg24.upload.use_1200bps_touch=false
+xiao_mg24.upload.wait_for_upload_port=false
+xiao_mg24.upload.native_usb=false
+xiao_mg24.bootloader.tool=openocd
+xiao_mg24.bootloader.tool.default=openocd
+xiao_mg24.bootloader.file=seeed-studio-xiao-mg24-bootloader-storage-internal-single-512k.hex
+xiao_mg24.build.mcu=cortex-m33
+xiao_mg24.build.target_part=EFR32MG24B220F1536IM48-B
+xiao_mg24.build.f_cpu=39000000
+xiao_mg24.build.board=XIAO_MG24
+xiao_mg24.build.core=silabs
+xiao_mg24.build.variant=xiao_mg24
+xiao_mg24.build.variant_system_lib=
+xiao_mg24.vid.0=0x2886
+xiao_mg24.pid.0=0x0062
+xiao_mg24.upload_port.0.vid=0x2886
+xiao_mg24.upload_port.0.pid=0x8062
+xiao_mg24.debug.server=openocd
+
+xiao_mg24.menu.protocol_stack.matter.gsdk_folder=gecko_sdk_4.4.0
+xiao_mg24.menu.protocol_stack.matter.matter_sdk_folder=matter_2.2.0
+xiao_mg24.menu.protocol_stack.matter.build.gsdk_path={build.variant.path}/matter/{gsdk_folder}
+xiao_mg24.menu.protocol_stack.matter.build.matter_sdk_path={build.variant.path}/matter/{matter_sdk_folder}
+xiao_mg24.menu.protocol_stack.matter.build.precompiled_gsdk="{build.variant.path}/matter/gsdk.a"
+xiao_mg24.menu.protocol_stack.ble_arduino.build.precompiled_gsdk="{build.variant.path}/ble_arduino/gsdk.a"
+xiao_mg24.menu.protocol_stack.ble_silabs.build.precompiled_gsdk="{build.variant.path}/ble_silabs/gsdk.a"
+xiao_mg24.menu.protocol_stack.none.build.precompiled_gsdk="{build.variant.path}/noradio/gsdk.a"
+
+xiao_mg24.menu.protocol_stack.ble_arduino.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/ble_arduino/include"
+xiao_mg24.menu.protocol_stack.ble_silabs.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/ble_silabs/include"
+xiao_mg24.menu.protocol_stack.none.build.include_list="-I{build.variant.path}" "-I{build.variant.path}/noradio/include"
+
+xiao_mg24.menu.protocol_stack.matter.build.include_list="-I{build.variant.path}/matter" "-I{build.variant.path}/matter/autogen/zap-generated" "-I{build.variant.path}/matter/autogen/zap-generated/app" "-I{build.variant.path}/matter/config" "-I{build.variant.path}/matter/config/btconf" "-I{build.variant.path}/matter/config/common" "-I{build.variant.path}/matter/autogen" "-I{build.variant.path}/matter/include" "-I{build.matter_sdk_path}/examples/lighting-app/silabs/include" "-I{build.matter_sdk_path}/examples/platform/silabs" "-I{build.matter_sdk_path}/src" "-I{build.matter_sdk_path}/src/include" "-I{build.matter_sdk_path}/src/lib" "-I{build.matter_sdk_path}/third_party/nlassert/repo/include" "-I{build.matter_sdk_path}/third_party/nlio/repo/include" "-I{build.matter_sdk_path}/zzz_generated/app-common" "-I{build.matter_sdk_path}/src/lib/address_resolve" "-I{build.matter_sdk_path}/src/app" "-I{build.matter_sdk_path}/zzz_generated/app-common/app-common/zap-generated/attributes" "-I{build.matter_sdk_path}/src/lib/dnssd" "-I{build.matter_sdk_path}/examples/platform/silabs/efr32" "-I{build.matter_sdk_path}/src/platform/silabs/efr32" "-I{build.matter_sdk_path}/src/include/platform" "-I{build.matter_sdk_path}/src/include/platform/internal" "-I{build.matter_sdk_path}/src/platform/logging" "-I{build.matter_sdk_path}/src/include/platform/internal/testing" "-I{build.matter_sdk_path}/src/platform/silabs" "-I{build.matter_sdk_path}/src/platform/OpenThread" "-I{build.matter_sdk_path}/src/platform/silabs/platformAbstraction" "-I{build.matter_sdk_path}/src/platform" "-I{build.matter_sdk_path}/src/platform/FreeRTOS" "-I{build.matter_sdk_path}/src/protocols/interaction_model" "-I{build.matter_sdk_path}/src/access/examples" "-I{build.matter_sdk_path}/src/access" "-I{build.matter_sdk_path}/src/lib/asn1" "-I{build.matter_sdk_path}/src/protocols/bdx" "-I{build.matter_sdk_path}/src/ble" "-I{build.matter_sdk_path}/src/app/server" "-I{build.matter_sdk_path}/src/controller" "-I{build.matter_sdk_path}/src/lib/core" "-I{build.matter_sdk_path}/src/crypto" "-I{build.matter_sdk_path}/src/app/reporting" "-I{build.matter_sdk_path}/src/app/MessageDef" "-I{build.matter_sdk_path}/src/protocols/echo" "-I{build.matter_sdk_path}/src/protocols/user_directed_commissioning" "-I{build.matter_sdk_path}/src/protocols" "-I{build.matter_sdk_path}/src/protocols/secure_channel" "-I{build.matter_sdk_path}/zzz_generated/app-common/app-common/zap-generated" "-I{build.matter_sdk_path}/src/credentials/examples" "-I{build.matter_sdk_path}/src/credentials/tests" "-I{build.matter_sdk_path}/src/credentials" "-I{build.matter_sdk_path}/src/credentials/attestation_verifier" "-I{build.matter_sdk_path}/src/inet" "-I{build.matter_sdk_path}/examples/providers" "-I{build.matter_sdk_path}/src/messaging" "-I{build.matter_sdk_path}/src/transport/raw" "-I{build.matter_sdk_path}/src/setup_payload" "-I{build.matter_sdk_path}/src/lib/support/logging" "-I{build.matter_sdk_path}/src/lib/support" "-I{build.matter_sdk_path}/src/lib/support/verhoeff" "-I{build.matter_sdk_path}/src/system" "-I{build.matter_sdk_path}/src/transport" "-I{build.matter_sdk_path}/src/app/clusters/basic-information" "-I{build.matter_sdk_path}/src/app/clusters/color-control-server" "-I{build.matter_sdk_path}/src/app/clusters/scenes-server" "-I{build.matter_sdk_path}/src/app/clusters/diagnostic-logs-server" "-I{build.matter_sdk_path}/src/app/clusters/door-lock-server" "-I{build.matter_sdk_path}/src/app/clusters/fan-control-server" "-I{build.matter_sdk_path}/src/app/clusters/general-commissioning-server" "-I{build.matter_sdk_path}/src/app/clusters/general-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/groups-server" "-I{build.matter_sdk_path}/src/app/icd" "-I{build.matter_sdk_path}/src/app/clusters/identify-server" "-I{build.matter_sdk_path}/slc/inc" "-I{build.matter_sdk_path}/src/app/clusters/level-control" "-I{build.matter_sdk_path}/src/app/clusters/network-commissioning" "-I{build.matter_sdk_path}/src/app/clusters/occupancy-sensor-server" "-I{build.matter_sdk_path}/src/app/clusters/on-off-server" "-I{build.matter_sdk_path}/src/app/clusters/ota-requestor" "-I{build.matter_sdk_path}/examples/platform/silabs/provision" "-I{build.matter_sdk_path}/third_party/silabs/gecko_sdk/util/third_party/segger/systemview/SEGGER" "-I{build.matter_sdk_path}/src/app/clusters/software-diagnostics-server" "-I{build.matter_sdk_path}/src/app/clusters/switch-server" "-I{build.matter_sdk_path}/src/tracing" "-I{build.gsdk_path}/platform/Device/SiliconLabs/EFR32MG24/Include" "-I{build.gsdk_path}/app/common/util/app_assert" "-I{build.gsdk_path}/app/common/util/app_log" "-I{build.gsdk_path}/platform/common/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgcommon/inc" "-I{build.gsdk_path}/protocol/bluetooth/inc" "-I{build.gsdk_path}/protocol/bluetooth/bgstack/ll/inc" "-I{build.gsdk_path}/hardware/board/inc" "-I{build.gsdk_path}/platform/bootloader" "-I{build.gsdk_path}/platform/bootloader/api" "-I{build.gsdk_path}/platform/CMSIS/Core/Include" "-I{build.gsdk_path}/platform/CMSIS/RTOS2/Include" "-I{build.gsdk_path}/hardware/driver/configuration_over_swo/inc" "-I{build.gsdk_path}/platform/driver/debug/inc" "-I{build.gsdk_path}/platform/service/device_init/inc" "-I{build.gsdk_path}/platform/emdrv/dmadrv/inc" "-I{build.gsdk_path}/platform/emdrv/common/inc" "-I{build.gsdk_path}/platform/emlib/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/fem_util" "-I{build.gsdk_path}/util/third_party/freertos/cmsis/Include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/include" "-I{build.gsdk_path}/util/third_party/freertos/kernel/portable/GCC/ARM_CM33_NTZ/non_secure" "-I{build.gsdk_path}/platform/emdrv/gpiointerrupt/inc" "-I{build.gsdk_path}/platform/service/hfxo_manager/inc" "-I{build.gsdk_path}/platform/driver/i2cspm/inc" "-I{build.gsdk_path}/platform/service/iostream/inc" "-I{build.gsdk_path}/platform/driver/leddrv/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/config/preset" "-I{build.gsdk_path}/platform/security/sl_component/sl_mbedtls_support/inc" "-I{build.gsdk_path}/util/third_party/mbedtls/include" "-I{build.gsdk_path}/util/third_party/mbedtls/library" "-I{build.gsdk_path}/platform/service/mpu/inc" "-I{build.gsdk_path}/hardware/driver/mx25_flash_shutdown/inc/sl_mx25_flash_shutdown_usart" "-I{build.gsdk_path}/platform/emdrv/nvm3/inc" "-I{build.gsdk_path}/util/third_party/openthread/include" "-I{build.gsdk_path}/util/third_party/openthread/include/openthread" "-I{build.gsdk_path}/util/third_party/openthread/src/core" "-I{build.gsdk_path}/util/third_party/openthread/src/lib" "-I{build.gsdk_path}/util/third_party/openthread/third_party/tcplp" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms" "-I{build.gsdk_path}/util/third_party/openthread/examples/platforms/utils" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/efr32" "-I{build.gsdk_path}/protocol/openthread/platform-abstraction/include" "-I{build.gsdk_path}/platform/peripheral/inc" "-I{build.gsdk_path}/platform/service/power_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_psa_driver/inc" "-I{build.gsdk_path}/platform/driver/pwm/inc" "-I{build.gsdk_path}/platform/radio/rail_lib/common" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ble" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/ieee802154" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/wmbus" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/zwave" "-I{build.gsdk_path}/platform/radio/rail_lib/chip/efr32/efr32xg2x" "-I{build.gsdk_path}/platform/radio/rail_lib/protocol/sidewalk" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_power_manager_init" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_pti" "-I{build.gsdk_path}/platform/radio/rail_lib/plugin/rail_util_rssi" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/inc" "-I{build.gsdk_path}/platform/security/sl_component/se_manager/src" "-I{build.gsdk_path}/util/plugin/security_manager" "-I{build.gsdk_path}/util/silicon_labs/silabs_core/memory_manager" "-I{build.gsdk_path}/platform/common/toolchain/inc" "-I{build.gsdk_path}/platform/service/system/inc" "-I{build.gsdk_path}/platform/service/sleeptimer/inc" "-I{build.gsdk_path}/platform/security/sl_component/sl_protocol_crypto/src" "-I{build.gsdk_path}/platform/emdrv/spidrv/inc" "-I{build.gsdk_path}/platform/service/udelay/inc"
+
+xiao_mg24.menu.protocol_stack.none.build.precompiled_libs="{build.variant.path}/noradio/libnvm3_CM33_gcc.a"
+
+xiao_mg24.menu.protocol_stack.ble_arduino.build.precompiled_libs="{build.variant.path}/ble_arduino/libnvm3_CM33_gcc.a" "{build.variant.path}/ble_arduino/libbgcommon_efr32xg24_gcc_release.a" "{build.variant.path}/ble_arduino/libbluetooth_controller_efr32xg24_gcc_release.a" "{build.variant.path}/ble_arduino/librail_efr32xg24_gcc_release.a"
+
+xiao_mg24.menu.protocol_stack.ble_silabs.build.precompiled_libs="{build.variant.path}/ble_silabs/libbgcommon_efr32xg24_gcc_release.a" "{build.variant.path}/ble_silabs/libbluetooth_controller_efr32xg24_gcc_release.a" "{build.variant.path}/ble_silabs/libbluetooth_host_efr32xg24_gcc_release.a" "{build.variant.path}/ble_silabs/libnvm3_CM33_gcc.a" "{build.variant.path}/ble_silabs/librail_efr32xg24_gcc_release.a"
+
+xiao_mg24.menu.protocol_stack.matter.build.precompiled_libs="{build.variant.path}/matter/libbgcommon_efr32xg24_gcc_release.a" "{build.variant.path}/matter/libbluetooth_controller_efr32xg24_gcc_release.a" "{build.variant.path}/matter/libbluetooth_host_efr32xg24_gcc_release.a" "{build.variant.path}/matter/libnvm3_CM33_gcc.a" "{build.variant.path}/matter/librail_multiprotocol_efr32xg24_gcc_release.a" "{build.variant.path}/matter/libsl_openthread_efr32mg2x_gcc.a"
+
+xiao_mg24.build.board_specific_macros='-DNUM_LEDS=1' '-DNUM_HW_SERIAL=2' '-DNUM_HW_SPI=2' '-DNUM_HW_I2C=2' '-DNUM_DAC_HW=2' '-DARDUINO_MAIN_TASK_STACK_SIZE=2048'
+
+xiao_mg24.menu.protocol_stack.none.build.extra_flags={build.board_specific_macros} '-DEFR32MG24B220F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DHFXO_FREQ=39000000' '-DSL_BOARD_NAME="BRD4187C"' '-DSL_BOARD_REV="A01"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>'
+
+xiao_mg24.menu.protocol_stack.ble_arduino.build.extra_flags={build.board_specific_macros} '-DEFR32MG24B220F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DHFXO_FREQ=39000000' '-DSL_BOARD_NAME="BRD4187C"' '-DSL_BOARD_REV="A01"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xiao_mg24.menu.protocol_stack.ble_silabs.build.extra_flags={build.board_specific_macros} '-DEFR32MG24B220F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DHFXO_FREQ=39000000' '-DSL_BOARD_NAME="BRD4187C"' '-DSL_BOARD_REV="A01"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=0' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xiao_mg24.menu.protocol_stack.matter.build.extra_flags={build.board_specific_macros} '-DARDUINO_MATTER' '-DCHIP_CRYPTO_PLATFORM=1' '-DIS_DEMO_LIGHT=1' '-DNVM3_DEFAULT_MAX_OBJECT_SIZE=4092' '-DNVM3_DEFAULT_NVM_SIZE=40960' '-DSL_STATUS_LED=0' '-D_WANT_REENT_SMALL=1' '-DconfigNUM_THREAD_LOCAL_STORAGE_POINTERS=2' '-DconfigNUM_USER_THREAD_LOCAL_STORAGE_POINTERS=0' '-DCHIP_ADDRESS_RESOLVE_IMPL_INCLUDE_HEADER=<lib/address_resolve/AddressResolve_DefaultImpl.h>' '-DCHIP_HAVE_CONFIG_H=1' '-DRADIO_CONFIG_DMP_SUPPORT=1' '-DCURRENT_TIME_NOT_IMPLEMENTED=1' '-DMBEDTLS_USER_CONFIG_FILE=<sli_psa_builtin_config.h>' '-DOPENTHREAD_CONFIG_DETERMINISTIC_ECDSA_ENABLE=0' '-DOPENTHREAD_CONFIG_ENABLE_BUILTIN_MBEDTLS=0' '-DSILABS_OTA_ENABLED=1' '-DRTT_USE_ASM=0' '-DENABLE_WSTK_LEDS=1' '-DEFR32MG24B220F1536IM48=1' '-DSL_APP_PROPERTIES=1' '-DHARDWARE_BOARD_DEFAULT_RF_BAND_2400=1' '-DHARDWARE_BOARD_SUPPORTS_1_RF_BAND=1' '-DHARDWARE_BOARD_SUPPORTS_RF_BAND_2400=1' '-DHFXO_FREQ=39000000' '-DSL_BOARD_NAME="BRD4187C"' '-DSL_BOARD_REV="A01"' '-DconfigNUM_SDK_THREAD_LOCAL_STORAGE_POINTERS=2' '-DSL_COMPONENT_CATALOG_PRESENT=1' '-DMBEDTLS_CONFIG_FILE=<sl_mbedtls_config.h>' '-DOPENTHREAD_CORE_CONFIG_PLATFORM_CHECK_FILE="openthread-core-efr32-config-check.h"' '-DOPENTHREAD_PROJECT_CORE_CONFIG_FILE="openthread-core-efr32-config.h"' '-DOPENTHREAD_CONFIG_FILE="sl_openthread_generic_config.h"' '-DOPENTHREAD_FTD=1' '-DSL_OPENTHREAD_STACK_FEATURES_CONFIG_FILE="sl_openthread_features_config.h"' '-DMBEDTLS_PSA_CRYPTO_CONFIG_FILE=<psa_crypto_config.h>' '-DSL_RAIL_LIB_MULTIPROTOCOL_SUPPORT=1' '-DSL_RAIL_UTIL_PA_CONFIG_HEADER=<sl_rail_util_pa_config.h>' '-DSLI_RADIOAES_REQUIRES_MASKING=1'
+
+xiao_mg24.build.float_flags=
+
+xiao_mg24.build.s_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -imacros sl_gcc_preinclude.h -x assembler-with-cpp -c -g
+
+### Radioless build flags
+#########################
+xiao_mg24.menu.protocol_stack.none.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.none.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.none.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map {compiler.mapfile_path} -Wl,--gc-sections
+
+xiao_mg24.menu.protocol_stack.none.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+### BLE (Arduino) build flags
+#############################
+xiao_mg24.menu.protocol_stack.ble_arduino.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.ble_arduino.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.ble_arduino.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map {compiler.mapfile_path} -Wl,--gc-sections
+
+xiao_mg24.menu.protocol_stack.ble_arduino.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+### BLE (Silabs) build flags
+############################
+xiao_mg24.menu.protocol_stack.ble_silabs.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.ble_silabs.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.ble_silabs.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map {compiler.mapfile_path}  -Wl,--gc-sections
+
+xiao_mg24.menu.protocol_stack.ble_silabs.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys -lsupc++
+
+### Matter build flags
+######################
+xiao_mg24.menu.protocol_stack.matter.build.c_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c99 -Wall -Wextra -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-sign-compare -Wno-psabi -mcmse --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.matter.build.cpp_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -c -g {compiler.warning_flags} {build.float_flags} -std=c++11 -std=gnu++17 -Wall -Wextra -fno-exceptions -fdata-sections -ffunction-sections -fomit-frame-pointer -imacros sl_gcc_preinclude.h -mcmse -Wno-deprecated-declarations -Wno-maybe-uninitialized -Wno-missing-field-initializers -Wno-unused-parameter -Wno-cast-function-type -Wno-psabi -fno-strict-aliasing -fno-unwind-tables -fno-asynchronous-unwind-tables -fno-common -Wno-sign-compare --specs=nano.specs -g
+
+xiao_mg24.menu.protocol_stack.matter.build.ld_flags=-mcpu={build.mcu} -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard --specs=nano.specs -Xlinker -Map {compiler.mapfile_path} -Wl,--wrap=malloc -Wl,--wrap=free -Wl,--wrap=realloc -Wl,--wrap=calloc -Wl,--wrap=MemoryAlloc -Wl,--wrap=_malloc_r -Wl,--wrap=_realloc_r -Wl,--wrap=_free_r -Wl,--wrap=_calloc_r -Wl,--gc-sections
+
+xiao_mg24.menu.protocol_stack.matter.build.ld_libs=-lstdc++ -lgcc -lc -lm -lnosys
+
+### Linker files
+################
+xiao_mg24.menu.protocol_stack.none.build.ldscript={build.variant.path}/noradio/linkerfile.ld
+xiao_mg24.menu.protocol_stack.ble_arduino.build.ldscript={build.variant.path}/ble_arduino/linkerfile.ld
+xiao_mg24.menu.protocol_stack.ble_silabs.build.ldscript={build.variant.path}/ble_silabs/linkerfile.ld
+xiao_mg24.menu.protocol_stack.matter.build.ldscript={build.variant.path}/matter/linkerfile.ld
+
+### Debug info
+################
+xiao_mg24.debug.server.openocd.scripts.0=interface/cmsis-dap.cfg
+xiao_mg24.debug.server.openocd.scripts.1=target/efm32s2_g23.cfg
+xiao_mg24.debug.server=openocd
+#xiao_mg24.debug.svd_file={runtime.platform.path}/svd/MGM240SD22VNA.svd
+
+xiao_mg24.debug.cortex-debug.custom.postAttachCommands.0=monitor reset halt
+#xiao_mg24.debug.cortex-debug.custom.postAttachCommands.1=monitor reset_config srst_nogate
+#xiao_mg24.debug.cortex-debug.custom.postAttachCommands.2=monitor gdb_breakpoint_override hard
+xiao_mg24.debug.cortex-debug.custom.postAttachCommands.3=monitor gdb_sync
+xiao_mg24.debug.cortex-debug.custom.postAttachCommands.4=c
+xiao_mg24.debug.cortex-debug.custom.overrideRestartCommands.0=monitor reset halt
+xiao_mg24.debug.cortex-debug.custom.overrideRestartCommands.1=monitor gdb_sync
+xiao_mg24.debug.cortex-debug.custom.overrideRestartCommands.2=c
+xiao_mg24.debug.cortex-debug.custom.request=attach

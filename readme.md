@@ -15,6 +15,7 @@ This project enables **Silicon Labs** hardware to be used with the **Arduino** e
  - [Silicon Labs xG27 Dev Kit](https://www.silabs.com/development-tools/wireless/efr32xg27-development-kit) ![BLE](doc/bluetooth_logo_icon.png)
  - [Silicon Labs BGM220 Explorer Kit](https://www.silabs.com/development-tools/wireless/bluetooth/bgm220-explorer-kit) ![BLE](doc/bluetooth_logo_icon.png)
  - [Ezurio Lyra 24P 20dBm Dev Kit](https://www.ezurio.com/part/453-00145-k1) ![BLE](doc/bluetooth_logo_icon.png)
+ - [Seeed Studio XIAO MG24 (Sense)](https://www.seeedstudio.com/Seeed-Studio-XIAO-MG24-p-6247.html) ![BLE](doc/bluetooth_logo_icon.png) ![Matter](doc/matter_logo_icon.png)
 
 ![Arduino Nano Matter](doc/nanomatter.png)
 ![SparkFun Thing Plus Matter MGM240P](doc/thingplusmatter.png)
@@ -23,6 +24,7 @@ This project enables **Silicon Labs** hardware to be used with the **Arduino** e
 ![xG27 Dev Kit](doc/xg27devkit.png)
 ![BGM220 Explorer Kit](doc/bgm220explorerkit.png)
 ![Ezurio Lyra 24P 20dBm Dev Kit](doc/lyra24p20.png)
+![Seeed Studio XIAO MG24 (Sense)](doc/xiao_mg24.png)
 
 ## Installation
 
@@ -69,12 +71,13 @@ See the docs for the Matter library [here](libraries/Matter/readme.md).
  - **ArduinoLowPower 🔋** - for accessing the low power features of the devices [[docs](libraries/ArduinoLowPower/README.md)]
  - **EEPROM 💾** - permanent storage in flash [[docs](libraries/EEPROM/README.md)]
  - **ezBLE 🛜** - send and receive data over BLE in a simple and user-friendly way on '*BLE (Silabs)*' variants [[docs](libraries/ezBLE/readme.md)]
- - **ezWS2812 💡** - driver for WS2812 LEDs using the hardware SPI
+ - **ezWS2812 💡** - driver for WS2812 LEDs using the hardware SPI or GPIO
  - **Matter** ![Matter](doc/matter_logo_icon.png) - [[docs](libraries/Matter/readme.md)]
  - **Si7210_hall** - driver for Si7210 hall sensors
  - **SilabsMicrophonePDM** - driver for PDM microphones
  - **SiliconLabs** - various example sketches for Silicon Labs devices
  - **SPI** - the standard Arduino SPI library
+ - **WatchdogTimer 🐶** - for keeping an eye on correct behavior - [[docs](libraries/WatchdogTimer/readme.md)]
  - **Wire** - the standard Arduino Wire library
 
 ### Separately supplied:
@@ -88,8 +91,9 @@ There are some additional functions besides the standard Arduino API you can cal
  - `getDeviceUniqueId()` - returns the unique ID of the microcontroller
  - `getDeviceUniqueIdStr()` - returns the unique ID of the microcontroller in hexadecimal as a string
  - `getCoreVersion()` - returns the current core version as a string
- - `setCPUClock()` - sets the CPU clock speed - it can be one of  `CPU_39MHZ`, `CPU_76MHZ`, `CPU_80MHZ`
+ - `setCPUClock()` - sets the CPU clock speed - it can be one of `CPU_39MHZ`, `CPU_76MHZ`, `CPU_78MHZ`, `CPU_80MHZ`
  - `getCPUClock()` - returns the current CPU speed in hertz
+ - `getCPUCycleCount()` - returns the current CPU cycle counter value - overflows often - useful for precision timing
  - `analogReferenceDAC()` - selects the voltage reference for the DAC hardware
 
 
@@ -98,7 +102,7 @@ All Silicon Labs boards (except for the Nano Matter) come equipped with an onboa
  - The [J-Link Software and Documentation pack](https://www.segger.com/downloads/jlink/) installed on your system
  - A debugger configuration file next to your sketch
 
-If you'd like to debug on the Nano Matter see [*this*](#debugging-on-the-arduino-nano-matter) chapter.
+If you'd like to debug on the Nano Matter see [*this*](#debugging-on-openocd-compatible-boards) chapter.
 
 ### Debugger configuration file
 Go to the folder where your sketch is located and create a file named `debug_custom.json` - and add the following content to it:
@@ -156,11 +160,11 @@ These examples can be easily modified to work with the other boards just by chan
 
 Here's the [official Arduino guide](https://docs.arduino.cc/tutorials/mkr-wifi-1010/mkr-jlink-setup#installing-the-j-link-gdb-server-software) on using SEGGER J-Link debuggers.
 
-## Debugging on the Arduino Nano Matter
+## Debugging on OpenOCD compatible boards
 
-The *Arduino Nano Matter* comes equipped with a *Atmel SAMD11* board controller which can be used to debug the main CPU.
+OpenOCD capable boards like the *Arduino Nano Matter* come equipped with a *Atmel SAMD11* board controller which can be used to debug the main CPU.
 
-You'll need to perform the following steps to debug on the Nano Matter:
+You'll need to perform the following steps to debug on OpenOCD boards:
 
 ### Debugger configuration file
 Go to the folder where your sketch is located and create a file named `debug_custom.json` - and add the following content to it:
@@ -176,6 +180,24 @@ Go to the folder where your sketch is located and create a file named `debug_cus
 ]
 ```
 
+Change the `device` property according to the MCU on your board. Here's a table for reference:
+| Board                      | MCU           |
+| -------------              |:-------------:|
+| Arduino Nano Matter        | MGM240SD22VNA          |
+| Seeed Studio XIAO MG24     | EFR32MG24B220F1536IM48 |
+
+Change the `(variant name)` in the `configId` property according to the FQBN (Fully Qualified Board Name) of the variant you're using:
+
+*"configId": SiliconLabs:silabs:`(variant name)`:programmer=openocd*
+
+Here's a table listing all the OpenOCD `variant name`s:
+
+| Board                      | Variant name  |
+| -------------              |:-------------:|
+| Arduino Nano Matter        | nano_matter   |
+| Seeed Studio XIAO MG24     | xiao_mg24     |
+
+
 ### Launch a debugging session
 
  - Make sure 'OpenOCD' is selected in *Tools > Programmer*.
@@ -188,7 +210,7 @@ Go to the folder where your sketch is located and create a file named `debug_cus
 The UART baud rate of Serial can be changed freely - however if you're using it through the USB-UART bridge then it only works with *115200 bps* by default.
 This is because the Silicon Labs boards use an EFM32 microcontroller as a board controller/debugger/flasher/USB-UART converter and this controller has a separate configuration.
 If you wish to change the baud rate used through the USB-UART bridge, then you can configure the board controller to use a different speed from it's admin console. The admin console can be reached from [Simplicity Studio](https://www.silabs.com/developers/simplicity-studio). Use [this](https://community.silabs.com/s/article/wstk-virtual-com-port-baudrate-setting?language=en_US) guide to change the baud rate in the board controller. The baud rate in your sketch must match the baud rate configured in the board controller - otherwise communication won't work.
-This limitation **does NOT affect the Arduino Nano Matter** as it uses a different board controller.
+This limitation **does NOT affect the Arduino Nano Matter or other OpenOCD compatible boards** as they use a different board controller.
 
 ## Questions and help
 
@@ -245,6 +267,10 @@ If you encounter an issue you can also submit it to the project issues.
 
 #### Pinout diagram
 ![](doc/lyra24p20_pinout.png)
+
+### Seeed Studio XIAO MG24 (Sense) ![BLE](doc/bluetooth_logo_icon.png) ![Matter](doc/matter_logo_icon.png)
+
+[Product page](https://www.seeedstudio.com/Seeed-Studio-XIAO-MG24-p-6247.html)
 
 ## Issue reporting, feature requests and discussions
 

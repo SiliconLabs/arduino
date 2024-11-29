@@ -26,6 +26,7 @@
 
 #include <cstdio>
 #include "silabs_additional.h"
+#include "arduino_i2c_config.h"
 extern "C" {
   #include "em_emu.h"
   #include "em_cmu.h"
@@ -66,6 +67,19 @@ String getCoreVersion()
   return String(ARDUINO_SILABS);
 }
 
+// DPLL config for 78 MHz CPU clock - Matter variants default to this
+#define DPLL_HFXO_TO_78MHZ                                                \
+  {                                                                       \
+    78000000,                     /* Target frequency                  */ \
+    3839,                         /* Factor N                          */ \
+    1919,                         /* Factor M                          */ \
+    cmuSelect_HFXO,               /* Select HFXO as reference clock    */ \
+    cmuDPLLEdgeSel_Fall,          /* Select falling edge of ref clock  */ \
+    cmuDPLLLockMode_Phase,        /* Use frequency lock mode           */ \
+    true,                         /* Enable automatic lock recovery    */ \
+    false                         /* Don't enable dither function      */ \
+  }
+
 void setCPUClock(cpu_clock_t clock)
 {
   CMU_DPLLInit_TypeDef pll_init;
@@ -75,6 +89,9 @@ void setCPUClock(cpu_clock_t clock)
       return;
     case CPU_76MHZ:
       pll_init = CMU_DPLL_HFXO_TO_76_8MHZ;
+      break;
+    case CPU_78MHZ:
+      pll_init = DPLL_HFXO_TO_78MHZ;
       break;
     case CPU_80MHZ:
       pll_init = CMU_DPLL_HFXO_TO_80MHZ;
@@ -95,7 +112,8 @@ uint32_t getCPUClock()
   return SystemCoreClockGet();
 }
 
-void I2C_Deinit(I2C_TypeDef* i2c_peripheral) {
+void I2C_Deinit(I2C_TypeDef* i2c_peripheral)
+{
   I2C_Reset(i2c_peripheral);
 
   // Reset the I2C to GPIO peripheral routing to enable the pins to function as GPIO
@@ -104,36 +122,34 @@ void I2C_Deinit(I2C_TypeDef* i2c_peripheral) {
     GPIO->I2CROUTE[0].ROUTEEN = 0;
     GPIO->I2CROUTE[0].SCLROUTE = 0;
     GPIO->I2CROUTE[0].SDAROUTE = 0;
+    NVIC_DisableIRQ(I2C0_IRQn);
   }
   #endif
+
   #if defined(I2C1)
   if (i2c_peripheral == I2C1) {
     GPIO->I2CROUTE[1].ROUTEEN = 0;
     GPIO->I2CROUTE[1].SCLROUTE = 0;
     GPIO->I2CROUTE[1].SDAROUTE = 0;
+    NVIC_DisableIRQ(I2C1_IRQn);
   }
   #endif
+
   #if defined(I2C2)
   if (i2c_peripheral == I2C2) {
     GPIO->I2CROUTE[2].ROUTEEN = 0;
     GPIO->I2CROUTE[2].SCLROUTE = 0;
     GPIO->I2CROUTE[2].SDAROUTE = 0;
+    NVIC_DisableIRQ(I2C2_IRQn);
   }
   #endif
 
-  #if defined(I2C0)
-  if (i2c_peripheral == I2C0) {
-    NVIC_DisableIRQ(I2C0_IRQn);
-  }
-  #endif
-  #if defined(I2C1)
-  if (i2c_peripheral == I2C1) {
-    NVIC_DisableIRQ(I2C1_IRQn);
-  }
-  #endif
-  #if defined(I2C2)
-  if (i2c_peripheral == I2C2) {
-    NVIC_DisableIRQ(I2C2_IRQn);
-  }
+  // Reset the I2C pins to floating input
+  GPIO_PinModeSet(SL_I2C_SCL_PORT, SL_I2C_SCL_PIN, gpioModeInput, 0);
+  GPIO_PinModeSet(SL_I2C_SDA_PORT, SL_I2C_SDA_PIN, gpioModeInput, 0);
+
+  #if (NUM_HW_I2C > 1)
+  GPIO_PinModeSet(SL_I2C1_SCL_PORT, SL_I2C1_SCL_PIN, gpioModeInput, 0);
+  GPIO_PinModeSet(SL_I2C1_SDA_PORT, SL_I2C1_SDA_PIN, gpioModeInput, 0);
   #endif
 }

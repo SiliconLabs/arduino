@@ -51,7 +51,33 @@ public:
     this->SPI_peripheral.end();
   }
 
-  void set_pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100)
+  void set_pixel(uint32_t num, uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100, bool end_transfer = true)
+  {
+    for (uint32_t i = 0; i < num; i++) {
+      this->set_next_pixel(red, green, blue, brightness);
+    }
+    if (end_transfer) {
+      this->end_transfer();
+    }
+  }
+
+  void set_all(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100)
+  {
+    for (uint32_t i = 0; i < this->num_leds; i++) {
+      this->set_next_pixel(red, green, blue, brightness);
+    }
+    this->end_transfer();
+  }
+
+  void end_transfer()
+  {
+    this->SPI_peripheral.transfer(0);
+    delayMicroseconds(100);
+  }
+
+private:
+
+  void set_next_pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100)
   {
     // Assign the colors in the output array in GRB order (instead of RGB)
     uint8_t colors[3] = { green, red, blue };
@@ -82,32 +108,6 @@ public:
     }
   }
 
-  // Allows individual LEDs to be set to different colors
-  void set_pixel(uint32_t num, uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100, bool end_transfer = true)
-  {
-    for (uint32_t i = 0; i < num; i++) {
-      this->set_pixel(red, green, blue, brightness);
-    }
-    if (end_transfer) {
-      this->end_transfer();
-    }
-  }
-
-  void set_all(uint8_t red, uint8_t green, uint8_t blue, uint8_t brightness = 100)
-  {
-    for (uint32_t i = 0; i < this->num_leds; i++) {
-      this->set_pixel(red, green, blue, brightness);
-    }
-    this->end_transfer();
-  }
-
-  void end_transfer()
-  {
-    this->SPI_peripheral.transfer(0);
-    delay(1);
-  }
-
-private:
   inline void one()
   {
     this->SPI_peripheral.transfer(0xF8);

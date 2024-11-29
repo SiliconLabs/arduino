@@ -1,0 +1,263 @@
+project_name: bt_arduino_gsdk_config_xiao_mg24_matter
+label: Arduino Matter and GSDK config for the Seeed Studio Xiao MG24
+description: >
+  Arduino Matter and GSDK config for the Seeed Studio Xiao MG24
+quality: production
+package: Matter
+
+sdk_extension:
+  - id: matter
+    version: "2.2.0"
+
+component:
+  - id: device_init
+  - id: fem_util
+  - id: simple_led
+    instance: [led0]
+
+  - id: matter_wstk_leds
+    from: matter
+
+  - id: matter
+    from: matter
+  - id: matter_platform_efr32
+    from: matter
+  - id: matter_ble
+    from: matter
+  - id: matter_thread_ftd
+    from: matter
+  - id: rail_util_pti
+  - id: matter_ota_support
+    from: matter
+  - id: matter_crypto
+    from: matter
+  #- id: matter_shell
+  #  from: matter
+  - id: matter_gatt
+    from: matter
+
+  - id: matter_lighting
+    from: matter
+  - id: app_common
+    from: matter
+
+  - id: silabs_factory_data_provider
+    from: matter
+
+  - id: matter_access_control
+    from: matter
+  - id: matter_administrator_commissioning
+    from: matter
+  - id: matter_basic_information
+    from: matter
+  - id: matter_color_control
+    from: matter
+  - id: matter_descriptor
+    from: matter
+  - id: matter_diagnostic_logs
+    from: matter
+  - id: matter_fixed_label
+    from: matter
+  - id: matter_general_commissioning
+    from: matter
+  - id: matter_general_diagnostics
+    from: matter
+  - id: matter_group_key_mgmt
+    from: matter
+  - id: matter_groups
+    from: matter
+  - id: matter_identify
+    from: matter
+  - id: matter_level_control
+    from: matter
+  - id: matter_localization_configuration
+    from: matter
+  - id: matter_network_commissioning
+    from: matter
+  - id: matter_on_off
+    from: matter
+  - id: matter_operational_credentials
+    from: matter
+  - id: matter_ota_requestor
+    from: matter
+  - id: matter_software_diagnostics
+    from: matter
+  - id: matter_thread_network_diagnostics
+    from: matter
+  - id: matter_time_format_localization
+    from: matter
+  - id: matter_user_label
+    from: matter
+  - id: matter_switch
+    from: matter
+  - id: matter_occupancy_sensor
+    from: matter
+  - id: matter_door_lock
+    from: matter
+  - id: matter_thermostat
+    from: matter
+  - id: matter_fan_control
+    from: matter
+  #- id: matter_window_covering
+  #  from: matter
+  # Override configuration for JTAG use
+  #- id: matter_configuration_over_swo
+  #  from: matter
+  # Override RTT
+  - id: matter_segger_rtt
+    from: matter
+  # Addtitional stuff required by the Arduino platform
+  - id: app_assert
+  - id: udelay
+  - id: app_log
+  - id: iostream_usart
+    instance:
+     - xiao_mg24
+  - id: iostream_eusart
+    instance:
+    - xiao_mg24_1
+  - id: i2cspm
+    instance:
+     - xiao_mg24
+     - xiao_mg24_1
+  - id: spidrv_eusart
+    instance:
+     - xiao_mg24
+     - xiao_mg24_1
+  - id: emlib_iadc
+  - id: freertos
+  - id: pwm
+    instance:
+    - led0
+  - id: emlib_vdac
+  - id: gpiointerrupt
+  - id: configuration_over_swo
+  - id: psa_crypto_config
+  - id: emlib_rmu
+
+requires:
+# On Series 2 LCD and external flash run over USART, VCOM runs over EUSART
+# Select UART/EUART drivers based on device series
+  - name: matter_drivers_series_1
+    condition:
+     - device_series_1
+  - name: matter_drivers_series_2
+    condition:
+     - device_series_2
+  - name: brd4187c
+
+config_file:
+  - path: ../../../../examples/lighting-app/silabs/data_model/lighting-app.zap
+    directory: common
+  - path: sl_iostream_usart_xiao_mg24_config.h
+    override:
+      component: iostream_usart
+      instance: xiao_mg24
+      file_id: iostream_usart_config
+  - path: sl_iostream_eusart_xiao_mg24_1_config.h
+    override:
+      component: iostream_eusart
+      instance: xiao_mg24_1
+      file_id: iostream_eusart_config
+  - path: sl_spidrv_eusart_xiao_mg24_config.h
+    override:
+      component: spidrv_eusart
+      instance: xiao_mg24
+      file_id: spidrv_eusart_config
+  - path: sl_spidrv_eusart_xiao_mg24_1_config.h
+    override:
+      component: spidrv_eusart
+      instance: xiao_mg24_1
+      file_id: spidrv_eusart_config
+  - path: sl_i2cspm_xiao_mg24_config.h
+    override:
+      component: i2cspm
+      instance: xiao_mg24
+      file_id: i2cspm_config
+  - path: sl_i2cspm_xiao_mg24_1_config.h
+    override:
+      component: i2cspm
+      instance: xiao_mg24_1
+      file_id: i2cspm_config
+
+include:
+  - path: ../../../../examples/lighting-app/silabs/include
+    file_list:
+      - path: AppConfig.h
+      - path: AppEvent.h
+      - path: AppTask.h
+      - path: CHIPProjectConfig.h
+      - path: LightingManager.h
+    directory: include
+
+source:
+  - path: ../../../../examples/lighting-app/silabs/src/AppTask.cpp
+    directory: src
+  - path: ../../../../examples/lighting-app/silabs/src/LightingManager.cpp
+    directory: src
+  - path: ../../../../examples/lighting-app/silabs/src/main.cpp
+    directory: src
+  - path: ../../../../examples/lighting-app/silabs/src/ZclCallbacks.cpp
+    directory: src
+
+define:
+  - name: CHIP_CRYPTO_PLATFORM
+    value: "1"
+  - name: _WANT_REENT_SMALL
+    value: "1"
+  - name: IS_DEMO_LIGHT
+    value: "1"
+  - name: NVM3_DEFAULT_NVM_SIZE
+    value: "40960"
+  - name: NVM3_DEFAULT_MAX_OBJECT_SIZE
+    value: "4092"
+  - name: SL_STATUS_LED
+    value: "0"
+  - name: configNUM_USER_THREAD_LOCAL_STORAGE_POINTERS
+    value: 0
+  - name: configNUM_THREAD_LOCAL_STORAGE_POINTERS
+    value: 2
+configuration:
+  - name: OPENTHREAD_CONFIG_LOG_OUTPUT
+    value: OPENTHREAD_CONFIG_LOG_OUTPUT_APP
+  - name: SL_MBEDTLS_KEY_EXCHANGE_ECDHE_ECDSA_ENABLED
+    value: 1
+    condition: [matter_thread_cert_libs]
+  - name: SL_MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
+    value: 1
+  - name: OPENTHREAD_CONFIG_COAP_API_ENABLE
+    value: 1
+    condition: [matter_thread_coap_cert_libs]
+  - name: OPENTHREAD_CONFIG_COAP_OBSERVE_API_ENABLE
+    value: 1
+    condition: [matter_thread_coap_cert_libs]
+  - name: OPENTHREAD_CONFIG_COAP_SECURE_API_ENABLE
+    value: 1
+    condition: [matter_thread_coap_cert_libs]
+  - {name: SL_STACK_SIZE, value: '4608'}
+
+toolchain_settings:
+  - option: gcc_c++_compiler_option
+    value: -std=gnu++17
+template_contribution:
+  - name: memory_flash_start
+    value: 0x0
+    condition: [device_series_1]
+  - name: memory_flash_size
+    value: 0x000FF800
+    condition: [device_series_1]
+  - name: memory_flash_start
+    value: 0x08006000
+    condition: [device_series_2]
+  - name: memory_flash_size
+    value: 0x00178000
+    condition: [device_series_2]
+
+readme:
+  - path: ./README.md
+ui_hints:
+  highlight:
+    - path: README.md
+      focus: false
+post_build:
+  profile: application

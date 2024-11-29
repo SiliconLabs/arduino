@@ -38,13 +38,13 @@ def main():
         # Generate all the ble (controller) platform configurations
         ble_all_platform_configs = platform_configurations[5:]
         for config in ble_all_platform_configs:
-            if config["protocol_stack"] == 'ble_arduino'  and config["prebuild"]:
+            if config["protocol_stack"] == 'ble_arduino' and config["prebuild"]:
                 generate_gsdk(config)
     elif current_platform_config["name"] == "ble_silabs_precomp_all":
         # Generate all the ble (silabs host) platform configurations
         ble_silabs_all_platform_configs = platform_configurations[5:]
         for config in ble_silabs_all_platform_configs:
-            if config["protocol_stack"] == 'ble_silabs'  and config["prebuild"]:
+            if config["protocol_stack"] == 'ble_silabs' and config["prebuild"]:
                 generate_gsdk(config)
     elif current_platform_config["name"] == "matter_precomp_all":
         # Generate all the matter platform configurations
@@ -111,6 +111,7 @@ def generate_gsdk(current_platform_config):
 
     copy_slcp_file(slcp_folder, project_slcp_file, additional_files)
     generate_project_with_slc(slcp_folder, slcp_file_name, board_opn)
+    patch_peripheral_inits()
     if prebuild:
         patch_makefiles()
     if is_matter:
@@ -125,7 +126,8 @@ def generate_gsdk(current_platform_config):
     else:
         copy_output_files(output_dir, is_matter)
 
-    cleanup(slcp_folder, slcp_file_name, additional_files)
+    keep_gen_folder = get_keep_gen_folder_parameter_from_arguments()
+    cleanup(slcp_folder, slcp_file_name, additional_files, keep_gen_folder)
 
     print(f"Output location: {output_dir}")
     print("Finished!")
@@ -179,6 +181,43 @@ def find_type_of_file_in_dir(file_extension, dir):
                 ret_file = file_path
                 break
     return ret_file
+
+
+def patch_peripheral_inits():
+    """
+    Removes the peripheral initialization calls from the generated project.
+    The GSDK automatically initializes all included peripherals - but Arduino has a different philosophy.
+    By patching these out the peripherals won't be initialized after boot - only when the user requests them.
+    """
+    event_handler_file_path = "/autogen/sl_event_handler.c"
+
+    with open(slc_output_dir + event_handler_file_path, "r") as in_file:
+        buf = in_file.readlines()
+
+    with open(slc_output_dir + event_handler_file_path, "w") as out_file:
+        for line in buf:
+            if "sl_debug_swo_init();" in line:
+                 line = "  //" + line
+            if "sl_cos_send_config();" in line:
+                line = "  //" + line
+            if "sl_i2cspm_init_instances();" in line:
+                 line = "  //" + line
+            if "sl_spidrv_init_instances();" in line:
+                 line = "  //" + line
+            if "sl_iostream_uart_init_instances();" in line:
+                 line = "  //" + line
+            if "sl_iostream_usart_init_instances();" in line:
+                 line = "  //" + line
+            if "sl_iostream_eusart_init_instances();" in line:
+                 line = "  //" + line
+            if "sl_rail_util_pti_init();" in line:
+                 line = "  //" + line
+            if "sl_pwm_init_instances();" in line:
+                line = "  //" + line
+            if "sl_simple_led_init_instances();" in line:
+                line = "  //" + line
+            out_file.write(line)
+    print("Patched peripheral initialization calls")
 
 
 def patch_makefiles():
@@ -507,7 +546,7 @@ def copy_generated_sdk_to_variants(output_dir, variant_target_folder):
     shutil.copytree(output_dir, variant_target_folder + os.path.basename(output_dir))
     print("Finished copying to variants folder")
 
-def cleanup(gsdk_soc_empty_folder, slcp_file_name, additional_files):
+def cleanup(gsdk_soc_empty_folder, slcp_file_name, additional_files, keep_gen_folder=False):
     """
     Clean up
     """
@@ -523,8 +562,11 @@ def cleanup(gsdk_soc_empty_folder, slcp_file_name, additional_files):
         else:
             filename = os.path.basename(file)
             os.remove(gsdk_dir + gsdk_soc_empty_folder + filename)
-    # Remove the generated project
-    shutil.rmtree(slc_output_dir)
+    # Remove the generated project if requested
+    if keep_gen_folder:
+        print("Keeping the 'gen' folder")
+    else:
+        shutil.rmtree(slc_output_dir)
 
 
 def get_platform_config_from_arguments():
@@ -551,6 +593,21 @@ def get_platform_config_from_arguments():
         print(f"Platform configuration with the name '{input_config_name}' not found!")
         print_available_configs()
         exit(-1)
+
+
+def get_keep_gen_folder_parameter_from_arguments():
+    """
+    Determines if the generated folder should be kept from the command line arguments
+    """
+    try:
+        input_keep_gen_folder = sys.argv[2]
+    except Exception:
+        return False
+
+    if input_keep_gen_folder == "--keep" or input_keep_gen_folder == "-k":
+        return True
+    else:
+        return False
 
 
 # Configurations
@@ -1254,6 +1311,132 @@ lyra24p20_ble_silabs_prebuilt_platform_config = {
                          "slcp/lyra24p20/sl_iostream_eusart_lyra24p20_config.h"]
 }
 
+xiao_mg24_noradio_platform_config = {
+    "name": "xiao_mg24_noradio",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": False,
+    "protocol_stack": 'noradio',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_noradio.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"]
+}
+
+xiao_mg24_noradio_prebuilt_platform_config = {
+    "name": "xiao_mg24_noradio_precomp",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": True,
+    "protocol_stack": 'noradio',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_noradio.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"]
+}
+
+xiao_mg24_ble_arduino_platform_config = {
+    "name": "xiao_mg24_ble_arduino",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": False,
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_ble_arduino.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"]
+}
+
+xiao_mg24_ble_arduino_prebuilt_platform_config = {
+    "name": "xiao_mg24_ble_arduino_precomp",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": True,
+    "protocol_stack": 'ble_arduino',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_ble_arduino.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"]
+}
+
+xiao_mg24_ble_silabs_platform_config = {
+    "name": "xiao_mg24_ble_silabs",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": False,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_ble_silabs.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"]
+}
+
+xiao_mg24_ble_silabs_prebuilt_platform_config = {
+    "name": "xiao_mg24_ble_silabs_precomp",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": True,
+    "protocol_stack": 'ble_silabs',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_ble_silabs.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"]
+}
+
+xiao_mg24_matter_platform_config = {
+    "name": "xiao_mg24_matter",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": False,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_matter.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
+xiao_mg24_matter_prebuilt_platform_config = {
+    "name": "xiao_mg24_matter_precomp",
+    "arduino_variant_name": "xiao_mg24",
+    "board_opn": "brd4187c",
+    "prebuild": True,
+    "protocol_stack": 'matter',
+    "slcp_file": "slcp/xiao_mg24/xiao_mg24_matter.slcp",
+    "additional_files": ["slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_spidrv_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_iostream_usart_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_iostream_eusart_xiao_mg24_1_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_config.h",
+                         "slcp/xiao_mg24/sl_i2cspm_xiao_mg24_1_config.h"],
+    "matter_zap_file": "slcp/common/arduino_matter.zap",
+    "matter_vendor_name": "Silicon Labs",
+    "matter_vendor_id": "0x1049"
+}
+
 platform_configurations = [all_platform_config,
                            noradio_precomp_all_platform_config,
                            ble_arduino_precomp_all_platform_config,
@@ -1312,7 +1495,15 @@ platform_configurations = [all_platform_config,
                            lyra24p20_ble_arduino_platform_config,
                            lyra24p20_ble_arduino_prebuilt_platform_config,
                            lyra24p20_ble_silabs_platform_config,
-                           lyra24p20_ble_silabs_prebuilt_platform_config]
+                           lyra24p20_ble_silabs_prebuilt_platform_config,
+                           xiao_mg24_noradio_platform_config,
+                           xiao_mg24_noradio_prebuilt_platform_config,
+                           xiao_mg24_ble_arduino_platform_config,
+                           xiao_mg24_ble_arduino_prebuilt_platform_config,
+                           xiao_mg24_ble_silabs_platform_config,
+                           xiao_mg24_ble_silabs_prebuilt_platform_config,
+                           xiao_mg24_matter_platform_config,
+                           xiao_mg24_matter_prebuilt_platform_config]
 
 
 if __name__ == "__main__":

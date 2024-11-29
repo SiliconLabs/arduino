@@ -25,6 +25,9 @@
  */
 
 #include "arduino_serial_config.h"
+extern "C" {
+  #include "em_cmu.h"
+}
 
 sl_iostream_t* sl_serial_stream_handle = sl_iostream_instance_vcom_info.handle;
 sl_iostream_uart_t* sl_serial_instance_handle = sl_iostream_uart_vcom_handle;
@@ -49,6 +52,10 @@ void sl_serial_deinit()
   GPIO->USARTROUTE[SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO].RXROUTE = 0;
   GPIO->USARTROUTE[SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO].CTSROUTE = 0;
   GPIO->USARTROUTE[SL_IOSTREAM_USART_VCOM_PERIPHERAL_NO].RTSROUTE = 0;
+
+  // Set up the pin as floating input
+  GPIO_PinModeSet(SL_IOSTREAM_USART_VCOM_TX_PORT, SL_IOSTREAM_USART_VCOM_TX_PIN, gpioModeInput, 0);
+  GPIO_PinModeSet(SL_IOSTREAM_USART_VCOM_RX_PORT, SL_IOSTREAM_USART_VCOM_RX_PIN, gpioModeInput, 0);
 }
 
 sl_iostream_t* sl_serial1_stream_handle = sl_iostream_instance_xg27devkit1_info.handle;
@@ -74,4 +81,8 @@ void sl_serial1_deinit()
   GPIO->USARTROUTE[SL_IOSTREAM_USART_XG27DEVKIT1_PERIPHERAL_NO].RXROUTE = 0;
   GPIO->USARTROUTE[SL_IOSTREAM_USART_XG27DEVKIT1_PERIPHERAL_NO].CTSROUTE = 0;
   GPIO->USARTROUTE[SL_IOSTREAM_USART_XG27DEVKIT1_PERIPHERAL_NO].RTSROUTE = 0;
+
+  // Set up the pin as floating input
+  GPIO_PinModeSet(SL_IOSTREAM_USART_XG27DEVKIT1_TX_PORT, SL_IOSTREAM_USART_XG27DEVKIT1_TX_PIN, gpioModeInput, 0);
+  GPIO_PinModeSet(SL_IOSTREAM_USART_XG27DEVKIT1_RX_PORT, SL_IOSTREAM_USART_XG27DEVKIT1_RX_PIN, gpioModeInput, 0);
 }

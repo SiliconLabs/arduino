@@ -14,6 +14,7 @@
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
    - xG24 Dev Kit
+   - Seeed Studio XIAO MG24 (Sense)
 
    Author: Tamas Jozsi (Silicon Labs)
  */

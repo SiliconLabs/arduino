@@ -52,6 +52,7 @@ component:
   - id: nvm3_default_flash_backend
   - id: nvm3_lib
   - id: emlib_rmu
+  - id: emlib_wdog
 
 source:
   - path: main.c

@@ -107,8 +107,6 @@ configuration:
     value: "0"
     condition:
       - psa_crypto
-  - name: SL_BOARD_ENABLE_VCOM
-    value: "1"
   - name: SL_SPIDRV_EUSART_NANOMATTER_CS_CONTROL
     value: "spidrvCsControlApplication"
   - name: SL_SPIDRV_EUSART_NANOMATTER1_CS_CONTROL

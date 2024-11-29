@@ -12,6 +12,7 @@
    - xG24 Explorer Kit
    - xG24 Dev Kit
    - Ezurio Lyra 24P 20dBm Dev Kit
+   - Seeed Studio XIAO MG24 (Sense)
 
    Author: Tamas Jozsi (Silicon Labs)
  */

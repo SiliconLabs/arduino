@@ -12,7 +12,7 @@ It creates a brand new core zip and hosts it on the local network, so it can be 
 You need to provide the compiler and other tools by hand as of now (just copy them to the host_dir)
 """
 
-core_version = "2.1.0"
+core_version = "2.2.0"
 host_dir = "install_host/"
 core_zip_name = "silabs_arduino_core-"+ core_version + ".zst"
 package_json_name = "package_arduinosilabs_index.json"

@@ -31,6 +31,7 @@
 // For the API description refer to: https://www.arduino.cc/reference/en/language/functions/communication/wire/
 
 #include "api/RingBuffer.h"
+#include "api/HardwareI2C.h"
 
 #include <cmath>
 #include <cstddef>
@@ -42,7 +43,8 @@
 #include "semphr.h"
 
 namespace arduino {
-class TwoWire {
+class TwoWire : public HardwareI2C
+{
 public:
   /***************************************************************************//**
    * Constructor for TwoWire
@@ -90,7 +92,7 @@ public:
    *
    * @return Returns the number of bytes received
    ******************************************************************************/
-  uint8_t requestFrom(uint8_t address, uint8_t number_of_bytes);
+  size_t requestFrom(uint8_t address, size_t number_of_bytes);
 
   /***************************************************************************//**
    * Requests bytes from an I2C follower
@@ -104,7 +106,7 @@ public:
    *
    * @return Returns the number of bytes received
    ******************************************************************************/
-  uint8_t requestFrom(uint8_t address, uint8_t number_of_bytes, uint8_t stop);
+  size_t requestFrom(uint8_t address, size_t number_of_bytes, bool stop);
 
   /***************************************************************************//**
    * Starts an I2C transmission with a follower device
@@ -112,7 +114,7 @@ public:
    *
    * @param[in] address The address of the I2C follower
    ******************************************************************************/
-  void beginTransmission(uint16_t follower_address);
+  void beginTransmission(uint8_t follower_address);
 
   /***************************************************************************//**
    * Ends the I2C transmission with a follower device
@@ -123,7 +125,11 @@ public:
    *
    * @return Returns a WireStatus indicating the result of the operation
    ******************************************************************************/
-  uint8_t endTransmission(bool stop = true);
+  uint8_t endTransmission(bool stop);
+  uint8_t endTransmission()
+  {
+    return endTransmission(true);
+  }
 
   /***************************************************************************//**
    * Sends the provided byte over the I2C bus
@@ -161,6 +167,15 @@ public:
    * @return Returns the next received byte, -1 on failure
    ******************************************************************************/
   int read();
+
+  /***************************************************************************//**
+   * Returns the next byte from the receive buffer if available without removing it
+   * (leader/follower mode)
+   *
+   * @return Returns the next received byte, -1 on failure
+   * @todo Not implemented
+   ******************************************************************************/
+  int peek() { return -1; }
 
   /***************************************************************************//**
    * Sets the bus clock speed
@@ -253,7 +268,7 @@ private:
    *
    * @return Returns zero on OK, non-zero otherwise
    ******************************************************************************/
-  uint32_t i2c_leader_read(uint8_t *cmd, size_t cmdLen, uint8_t *result, size_t resultLen, uint16_t i2c_address);
+  int32_t i2c_leader_read(uint8_t *cmd, size_t cmdLen, uint8_t *result, size_t resultLen, uint16_t i2c_address);
 
   /***************************************************************************//**
    * Sends a command and data to the follower device over the I2C bus
@@ -266,7 +281,7 @@ private:
    *
    * @return Returns zero on OK, non-zero otherwise
    ******************************************************************************/
-  uint32_t i2c_leader_write(uint8_t *cmd, size_t cmdLen, uint8_t *data, size_t dataLen, uint16_t i2c_address);
+  int32_t i2c_leader_write(uint8_t *cmd, size_t cmdLen, uint8_t *data, size_t dataLen, uint16_t i2c_address);
 
   bool timeout_flag;
   bool reset_on_timeout;

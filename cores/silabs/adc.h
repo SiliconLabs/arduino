@@ -68,6 +68,16 @@ public:
    ******************************************************************************/
   void set_reference(uint8_t reference);
 
+  /***************************************************************************//**
+   * Sets the ADC read resolution
+   *
+   * @param[in] resolution The selected read resolution in bits
+   ******************************************************************************/
+  void set_read_resolution(uint8_t resolution);
+
+  // The maximum read resolution of the ADC
+  static const uint8_t max_read_resolution_bits = 12u;
+
 private:
   /***************************************************************************//**
    * Initializes the ADC hardware
@@ -80,6 +90,7 @@ private:
   bool initialized;
   PinName current_adc_pin;
   uint8_t current_adc_reference;
+  uint8_t current_read_resolution;
   static const IADC_PosInput_t GPIO_to_ADC_pin_map[64];
 
   SemaphoreHandle_t adc_mutex;

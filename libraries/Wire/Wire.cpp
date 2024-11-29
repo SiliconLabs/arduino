@@ -97,6 +97,24 @@ void TwoWire::begin(uint8_t follower_mode_address)
                                                          | (this->i2c_scl_pin << _GPIO_I2C_SCLROUTE_PIN_SHIFT));
   GPIO->I2CROUTE[this->i2c_peripheral_num].ROUTEEN = GPIO_I2C_ROUTEEN_SDAPEN | GPIO_I2C_ROUTEEN_SCLPEN;
 
+  CMU_Clock_TypeDef i2cClock;
+  #if defined(I2C0)
+  if (this->i2c_peripheral == I2C0) {
+    i2cClock = cmuClock_I2C0;
+  }
+  #endif
+  #if defined(I2C1)
+  if (this->i2c_peripheral == I2C1) {
+    i2cClock = cmuClock_I2C1;
+  }
+  #endif
+  #if defined(I2C2)
+  if (this->i2c_peripheral == I2C2) {
+    i2cClock = cmuClock_I2C2;
+  }
+  #endif
+  CMU_ClockEnable(i2cClock, true);
+
   // Initialize the I2C peripheral
   I2C_Init(this->i2c_peripheral, &i2cInit);
 
@@ -142,7 +160,7 @@ void TwoWire::end()
   I2C_Deinit(this->i2c_peripheral);
 }
 
-uint8_t TwoWire::requestFrom(uint8_t follower_address, uint8_t number_of_bytes)
+size_t TwoWire::requestFrom(uint8_t follower_address, size_t number_of_bytes)
 {
   if (this->role == wire_role_t::NOT_INITIALIZED || this->role == wire_role_t::FOLLOWER) {
     return 0;
@@ -180,18 +198,21 @@ uint8_t TwoWire::requestFrom(uint8_t follower_address, uint8_t number_of_bytes)
   return 0;
 }
 
-uint8_t TwoWire::requestFrom(uint8_t address, uint8_t number_of_bytes, uint8_t stop)
+size_t TwoWire::requestFrom(uint8_t address, size_t number_of_bytes, bool stop)
 {
   if (this->role == wire_role_t::NOT_INITIALIZED || this->role == wire_role_t::FOLLOWER) {
     return 0;
   }
 
   uint8_t result = this->requestFrom(address, number_of_bytes);
-  this->endTransmission(stop);
+
+  if (stop) {
+    this->endTransmission(stop);
+  }
   return result;
 }
 
-void TwoWire::beginTransmission(uint16_t follower_address)
+void TwoWire::beginTransmission(uint8_t follower_address)
 {
   if (this->role == wire_role_t::NOT_INITIALIZED || this->role == wire_role_t::FOLLOWER) {
     return;
@@ -204,28 +225,32 @@ void TwoWire::beginTransmission(uint16_t follower_address)
 
 uint8_t TwoWire::endTransmission(bool stop)
 {
+  (void)stop;
+
   if (this->role == wire_role_t::NOT_INITIALIZED || this->role == wire_role_t::FOLLOWER) {
-    return 0;
+    return WireStatus::OTHER_ERROR;
   }
 
-  if (stop) {
-    uint32_t ret = 0u;
-    // If we have data in the Tx buffer - send it out without waiting for incoming bytes
-    if (this->tx_buf_write_idx > 0) {
-      ret = this->i2c_leader_write(this->tx_buffer, this->tx_buf_write_idx, NULL, 0, this->follower_address);
-    }
-
-    this->tx_buf_write_idx = 0u;
-    this->follower_address = 0;
-    this->transmission_in_progress = false;
-
-    if (ret != 0) {
-      xSemaphoreGive(this->wire_mutex);
-      return WireStatus::OTHER_ERROR;
-    }
+  // force success if no data is sent
+  int32_t ret = WireStatus::SUCCESS;
+  // if we have data in the Tx buffer - send it out without waiting for incoming bytes
+  if (this->tx_buf_write_idx > 0) {
+    ret = this->i2c_leader_write(this->tx_buffer, this->tx_buf_write_idx, NULL, 0, this->follower_address);
   }
+
+  this->tx_buf_write_idx = 0u;
+  this->follower_address = 0;
+  this->transmission_in_progress = false;
+
   xSemaphoreGive(this->wire_mutex);
-  return 0;
+
+  if (ret == 0) {
+    return WireStatus::SUCCESS;
+  } else if (ret == i2cTransferNack) {
+    return WireStatus::NACK_ADDRESS;
+  }
+
+  return WireStatus::OTHER_ERROR;
 }
 
 size_t TwoWire::write(uint8_t value)
@@ -351,7 +376,7 @@ bool TwoWire::getWireTimeoutFlag()
   return this->timeout_flag;
 }
 
-uint32_t TwoWire::i2c_leader_read(uint8_t *cmd, size_t cmdLen, uint8_t *result, size_t resultLen, uint16_t i2c_address)
+int32_t TwoWire::i2c_leader_read(uint8_t *cmd, size_t cmdLen, uint8_t *result, size_t resultLen, uint16_t i2c_address)
 {
   I2C_TransferSeq_TypeDef seq;
   I2C_TransferReturn_TypeDef ret;
@@ -384,7 +409,7 @@ uint32_t TwoWire::i2c_leader_read(uint8_t *cmd, size_t cmdLen, uint8_t *result, 
   return ret;
 }
 
-uint32_t TwoWire::i2c_leader_write(uint8_t *cmd, size_t cmdLen, uint8_t *data, size_t dataLen, uint16_t i2c_address)
+int32_t TwoWire::i2c_leader_write(uint8_t *cmd, size_t cmdLen, uint8_t *data, size_t dataLen, uint16_t i2c_address)
 {
   I2C_TransferSeq_TypeDef seq;
   I2C_TransferReturn_TypeDef ret;

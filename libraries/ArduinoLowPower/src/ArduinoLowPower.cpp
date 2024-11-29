@@ -235,15 +235,12 @@ void BURTC_IRQHandler(void)
 // the device from going to EM4 too quickly. If the device enters EM4 sleep the programmer
 // is not able to communicate with it - and without this mechanism it can easily be bricked.
 // This function will run before any user code and keep the device awake when the built-in button
-// is pressed during startup so that the programmer has a chance to communicate with it.
+// (or the configured escape pin) is pressed during startup so that the programmer has a chance to
+// communicate with it.
 void escape_hatch()
 {
-  #ifndef BTN_BUILTIN
-  #define BTN_BUILTIN PA0
-  #endif
-
-  pinMode(BTN_BUILTIN, INPUT_PULLUP);
-  if (digitalRead(BTN_BUILTIN) != LOW) {
+  pinMode(DEEP_SLEEP_ESCAPE_PIN, INPUT_PULLUP);
+  if (digitalRead(DEEP_SLEEP_ESCAPE_PIN) != LOW) {
     return;
   }
 

@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2023 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,14 +35,14 @@
 
 // LEDs
 // ----
-#define LED_BUILTIN   (15u) // PA4
+#define LED_BUILTIN   (8u) // A1 - PA4
 #define PIN_LED       (LED_BUILTIN)
 #define LED_BUILTIN_ACTIVE   HIGH
 #define LED_BUILTIN_INACTIVE !LED_BUILTIN_ACTIVE
 
 // Buttons
 // -------
-#define BTN_BUILTIN   (16) // PC7
+#define BTN_BUILTIN   (7u) // A0 - PC7
 
 // Analog pins
 // -----------
@@ -102,5 +102,9 @@ static const uint8_t SCK   = D3; // PC2
 #define PIN_WIRE_SCL  (A3)
 static const uint8_t SDA = A2; // PD3
 static const uint8_t SCL = A3; // PD2
+
+// Deep Sleep escape pin
+// ---------------------
+#define DEEP_SLEEP_ESCAPE_PIN   BTN_BUILTIN
 
 #endif // PINS_ARDUINO_H

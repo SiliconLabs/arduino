@@ -32,32 +32,11 @@
 
 extern "C" {
   #include "sl_system_init.h"
-  #include "sl_component_catalog.h"
-  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
-    #include "rail.h"
-  #endif
 }
 
 void init_arduino_variant()
 {
   sl_system_init();
-
-  // Disable SWO by default and allow PA3 to be used as a GPIO pin
-  GPIO_DbgSWOEnable(false);
-
-  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
-  // Disable RAIL PTI by default and allow PC4 and PC5 to be used as a GPIO pin
-  RAIL_PtiConfig_t railPtiConfig = {};
-  railPtiConfig.mode = RAIL_PTI_MODE_DISABLED;
-  RAIL_ConfigPti(RAIL_EFR32_HANDLE, &railPtiConfig);
-  RAIL_EnablePti(RAIL_EFR32_HANDLE, false);
-  #endif
-
-  // Deinit Serial, Wire and SPI by default - sl_system_init() initializes it
-  Serial.end();
-  Serial1.end();
-  I2C_Deinit(SL_I2C_PERIPHERAL); // Wire.end()
-  SPIDRV_DeInit(SL_SPIDRV_PERIPHERAL_HANDLE); //SPI.end();
 }
 
 // Variant pin mapping - maps Arduino pin numbers to Silabs ports/pins

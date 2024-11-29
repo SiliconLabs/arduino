@@ -29,13 +29,6 @@
 #include "arduino_i2c_config.h"
 #include "arduino_spi_config.h"
 
-extern "C" {
-  #include "sl_component_catalog.h"
-  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
-    #include "rail.h"
-  #endif
-}
-
 #ifdef ARDUINO_MATTER
 
 #include "AppConfig.h"
@@ -91,30 +84,6 @@ void init_arduino_variant()
   sl_system_init();
 
   #endif //ARDUINO_MATTER
-
-  // Disable SWO by default and allow PA3 to be used as a GPIO pin
-  GPIO_DbgSWOEnable(false);
-
-  #ifdef SL_CATALOG_RAIL_LIB_PRESENT
-  // Disable RAIL PTI by default and allow PC6 and PC7 to be used as a GPIO pin
-  RAIL_PtiConfig_t railPtiConfig = {};
-  railPtiConfig.mode = RAIL_PTI_MODE_DISABLED;
-  RAIL_ConfigPti(RAIL_EFR32_HANDLE, &railPtiConfig);
-  RAIL_EnablePti(RAIL_EFR32_HANDLE, false);
-  #endif
-
-  // Deinit Serial, Wire and SPI by default - sl_system_init() initializes it
-  Serial.end();
-  Serial1.end();
-  I2C_Deinit(SL_I2C_PERIPHERAL); // Wire.end()
-  I2C_Deinit(SL_I2C1_PERIPHERAL); // Wire1.end();
-  SPIDRV_DeInit(SL_SPIDRV_PERIPHERAL_HANDLE); //SPI.end();
-
-  // Reenable the clock for EUSART0 in CMU (cmuClock_EUSART0) for the SPI1 to successfully deinit
-  // This clock is turned off in Serial.end() as they share the same EUSART0 peripheral.
-  // We turn it back on so that the SPI1 can deinitialize without running to a fault when accessing the EUSART0 registers.
-  CMU_ClockEnable(cmuClock_EUSART0, true);
-  SPIDRV_DeInit(SL_SPIDRV1_PERIPHERAL_HANDLE); // SPI1.end();
 }
 
 // Variant pin mapping - maps Arduino pin numbers to Silabs ports/pins

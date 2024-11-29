@@ -32,6 +32,7 @@ AdcClass::AdcClass() :
   initialized(false),
   current_adc_pin(PD2),
   current_adc_reference(AR_VDD),
+  current_read_resolution(this->max_read_resolution_bits),
   adc_mutex(nullptr)
 {
   this->adc_mutex = xSemaphoreCreateMutexStatic(&this->adc_mutex_buf);
@@ -147,6 +148,10 @@ uint16_t AdcClass::get_sample(PinName pin)
   uint16_t result = IADC_readSingleData(IADC0);
 
   xSemaphoreGive(this->adc_mutex);
+
+  // Apply the configured read resolution
+  result = result >> (this->max_read_resolution_bits - this->current_read_resolution);
+
   return result;
 }
 
@@ -159,6 +164,14 @@ void AdcClass::set_reference(uint8_t reference)
   this->current_adc_reference = reference;
   this->init(this->current_adc_pin, this->current_adc_reference);
   xSemaphoreGive(this->adc_mutex);
+}
+
+void AdcClass::set_read_resolution(uint8_t resolution) {
+  if (resolution > this->max_read_resolution_bits) {
+    this->current_read_resolution = this->max_read_resolution_bits;
+    return;
+  }
+  this->current_read_resolution = resolution;
 }
 
 const IADC_PosInput_t AdcClass::GPIO_to_ADC_pin_map[64] = {

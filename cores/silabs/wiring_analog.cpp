@@ -39,7 +39,7 @@ int analogRead(pin_size_t pin)
 
 int analogRead(PinName pin)
 {
-  return (int) ADC.get_sample(pin);
+  return (int)ADC.get_sample(pin);
 }
 
 void analogReference(uint8_t reference)
@@ -129,4 +129,9 @@ void analogWriteResolution(int resolution)
   #if (NUM_DAC_HW > 1)
   DAC_1.set_write_resolution((uint8_t)resolution);
   #endif // (NUM_DAC_HW > 1)
+}
+
+void analogReadResolution(int resolution)
+{
+  ADC.set_read_resolution((uint8_t)resolution);
 }

@@ -1,7 +1,7 @@
 /*
    BLE HID (Human Interface Device) keyboard example
 
-   The example creates a simple HID keyboard that inputs predefined text over BLE when a button is pressed.
+   The example creates a simple HID keyboard that inputs a predefined text over BLE when a button is pressed.
 
    On startup, the sketch will start a BLE advertisement with the configured name, and then
    it will accept any incoming connection. When a device is connected and enables notification for the
@@ -22,9 +22,10 @@
    - xG24 Dev Kit
    - BGM220 Explorer Kit
    - Ezurio Lyra 24P 20dBm Dev Kit
+   - Seeed Studio XIAO MG24 (Sense)
 
-   Note: SparkFun Thing Plus MGM240P doesn't have an on-board button, an external button should be added to a GPIO
-   pin. In this example, the external button is connected to the pin A0.
+   Note: on boards which don't have an on-board button an external button should be added to a GPIO
+   pin. In this example the external button is connected to the pin A0.
 
    Author: Hai Nguyen (Silicon Labs)
  */
@@ -42,7 +43,7 @@
 
 #ifndef BTN_BUILTIN
 #define BTN_BUILTIN            PA0
-#endif // BTN_BUILTIN
+#endif
 
 static uint16_t gattdb_hid_report_char_handle;
 
@@ -444,13 +445,29 @@ static void ble_initialize_gatt_db()
     .data = { 0x4B, 0x2A }
   };
 
-  const uint8_t report_map_init_value[] = { 0x05, 0x01, 0x09, 0x06, 0xa1, 0x01, 0x05,
-                                            0x07, 0x19, 0xe0, 0x29, 0xe7, 0x15, 0x00,
-                                            0x25, 0x01, 0x75, 0x01, 0x95, 0x08, 0x81,
-                                            0x02, 0x95, 0x01, 0x75, 0x08, 0x81, 0x01,
-                                            0x95, 0x06, 0x75, 0x08, 0x15, 0x00, 0x25,
-                                            0x65, 0x05, 0x07, 0x19, 0x00, 0x29, 0x65,
-                                            0x81, 0x00, 0xc0 };
+  const uint8_t report_map_init_value[] = { 0x05, 0x01, // Usage Page (Generic Desktop)
+                                            0x09, 0x06, // Usage (Keyboard)
+                                            0xa1, 0x01, // Collection (Application)
+                                            0x05, 0x07, // Usage Page (Keyboard/Keypad)
+                                            0x19, 0xe0, // Usage Minimum (224)
+                                            0x29, 0xe7, // Usage Maximum (231)
+                                            0x15, 0x00, // Logical Minimum (0)
+                                            0x25, 0x01, // Logical Maximum (1)
+                                            0x75, 0x01, // Report Size (1)
+                                            0x95, 0x08, // Report Count (8)
+                                            0x81, 0x02, // Input Modifier byte
+                                            0x95, 0x01, // Report Count (1)
+                                            0x75, 0x08, // Report Size (8)
+                                            0x81, 0x01, // Input Reserved byte
+                                            0x95, 0x06, // Report Count (6)
+                                            0x75, 0x08, // Report Size (8)
+                                            0x15, 0x00, // Logical Minimum (0)
+                                            0x25, 0x65, // Logical Maximum (101)
+                                            0x05, 0x07, // Usage Page (Keyboard/Keypad)
+                                            0x19, 0x00, // Usage minimum (0)
+                                            0x29, 0x65, // Usage maximum (101)
+                                            0x81, 0x00, // Input Data byte
+                                            0xc0 };     // End Collection
   sc = sl_bt_gattdb_add_uuid16_characteristic(gattdb_session_id,
                                               service,
                                               SL_BT_GATTDB_CHARACTERISTIC_READ,
@@ -458,7 +475,7 @@ static void ble_initialize_gatt_db()
                                               0x00,
                                               report_map_characteristic_uuid,
                                               sl_bt_gattdb_fixed_length_value,
-                                              45,
+                                              sizeof(report_map_init_value),
                                               sizeof(report_map_init_value),
                                               report_map_init_value,
                                               &characteristic);
@@ -500,7 +517,7 @@ static void ble_initialize_gatt_db()
   app_assert_status(sc);
 
   // HID control characteristic
-  sl_bt_uuid_16_t hid_Control_characteristic_uuid = {
+  sl_bt_uuid_16_t hid_control_characteristic_uuid = {
     .data = { 0x4C, 0x2A }
   };
 
@@ -510,7 +527,7 @@ static void ble_initialize_gatt_db()
                                               SL_BT_GATTDB_CHARACTERISTIC_WRITE_NO_RESPONSE,
                                               0x00,
                                               0x00,
-                                              hid_Control_characteristic_uuid,
+                                              hid_control_characteristic_uuid,
                                               sl_bt_gattdb_fixed_length_value,
                                               1,
                                               sizeof(hid_control_init_value),

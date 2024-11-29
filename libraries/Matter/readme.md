@@ -13,6 +13,7 @@ Supported Arduino boards:
  - SparkFun Thing Plus Matter
  - Silicon Labs xG24 Explorer Kit
  - Silicon Labs xG24 Dev Kit
+ - Seeed Studio XIAO MG24 (Sense)
 
 Supported Thread Border Routers:
 

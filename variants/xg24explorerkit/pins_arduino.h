@@ -123,4 +123,8 @@ static const uint8_t SCL = A3; // PB4
 static const uint8_t SDA1 = 20; // PC5
 static const uint8_t SCL1 = 19; // PC4
 
+// Deep Sleep escape pin
+// ---------------------
+#define DEEP_SLEEP_ESCAPE_PIN   BTN_BUILTIN
+
 #endif // PINS_ARDUINO_H

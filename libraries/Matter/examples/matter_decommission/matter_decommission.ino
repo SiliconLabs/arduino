@@ -12,6 +12,7 @@
    - SparkFun Thing Plus MGM240P
    - xG24 Explorer Kit
    - xG24 Dev Kit
+   - Seeed Studio XIAO MG24 (Sense)
 
    Author: Tamas Jozsi (Silicon Labs)
  */
@@ -50,12 +51,14 @@ void setup()
 
   Serial.println("Waiting for Thread network...");
   while (!Matter.isDeviceThreadConnected()) {
+    decommission_handler();
     delay(200);
   }
   Serial.println("Connected to Thread network");
 
   Serial.println("Waiting for Matter device discovery...");
   while (!matter_bulb.is_online()) {
+    decommission_handler();
     delay(200);
   }
   Serial.println("Matter device is now online");

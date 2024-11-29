@@ -103,6 +103,7 @@ void analogReferenceDAC(uint8_t reference);
 typedef enum _dac_channel_t dac_channel_t;
 void analogWrite(dac_channel_t dac_channel, int value);
 void analogWriteResolution(int resolution);
+void analogReadResolution(int resolution);
 
 bool get_system_init_finished();
 uint32_t get_system_reset_cause();

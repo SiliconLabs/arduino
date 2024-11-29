@@ -35,6 +35,7 @@
 typedef enum {
   CPU_39MHZ,
   CPU_76MHZ,
+  CPU_78MHZ,
   CPU_80MHZ
 } cpu_clock_t;
 
@@ -87,6 +88,25 @@ void setCPUClock(cpu_clock_t clock);
  ******************************************************************************/
 uint32_t getCPUClock();
 
+/***************************************************************************//**
+ * Gets the current CPU cycle count
+ *
+ * The CPU cycle counter is a 32-bit counter that increments every CPU cycle
+ * and overflows quite often. Useful for precision timing.
+ *
+ * @return the current CPU cycle count
+ ******************************************************************************/
+inline __attribute__((always_inline))
+uint32_t getCPUCycleCount()
+{
+  return DWT->CYCCNT;
+}
+
+/***************************************************************************//**
+ * Deinitializes a selected I2C peripheral
+ *
+ * @param i2c_peripheral Pointer to the I2C peripheral to be deinitialized
+ ******************************************************************************/
 void I2C_Deinit(I2C_TypeDef* i2c_peripheral);
 
 #endif // SILABS_ADDITIONAL_H

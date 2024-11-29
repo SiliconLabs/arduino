@@ -2,7 +2,7 @@
 # Packages the core into a ZIP/ZST file excluding unnecessary files and folders
 # and calculates the file size and the SHA256 checksum of the output file
 
-CORE_VERSION=2.1.0
+CORE_VERSION=2.2.0
 EXCLUDE_LIST_ZIP=''silabs-arduino/.git/**\*' 'silabs-arduino/package/**\*' 'silabs-arduino/test/**\*' 'silabs-arduino/.DS_Store/**\*' 'silabs-arduino/.github/**\*' 'silabs-arduino/extra/core-api/**\*''
 EXCLUDE_LIST_ZST="--exclude=silabs-arduino/.git --exclude=silabs-arduino/package --exclude=silabs-arduino/test --exclude=silabs-arduino/.DS_Store --exclude=silabs-arduino/.github --exclude=silabs-arduino/extra/core-api"
 OUTPUT_FILE_NAME=silabs_arduino_core-$CORE_VERSION

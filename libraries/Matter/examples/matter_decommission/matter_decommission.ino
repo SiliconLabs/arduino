@@ -47,12 +47,14 @@ void setup()
   }
   while (!Matter.isDeviceCommissioned()) {
     delay(200);
+    decommission_handler();
   }
 
   Serial.println("Waiting for Thread network...");
   while (!Matter.isDeviceThreadConnected()) {
     decommission_handler();
     delay(200);
+    decommission_handler();
   }
   Serial.println("Connected to Thread network");
 
@@ -60,6 +62,7 @@ void setup()
   while (!matter_bulb.is_online()) {
     decommission_handler();
     delay(200);
+    decommission_handler();
   }
   Serial.println("Matter device is now online");
 }

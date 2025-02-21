@@ -75,10 +75,19 @@ xg27devkit_ble_silabs = [
     ["xg27devkit", "ble_silabs"],
 ]
 
+xiao_mg24_ble_silabs = [
+    ["xiao_mg24", "ble_silabs"],
+]
+
 boards_with_pdm = [
     ["xg27devkit", "ble_arduino"],
     ["xg27devkit", "ble_silabs"],
     ["xg27devkit", "none"],
+]
+
+ble_silabs_boards_with_imu = [
+    ["xg24devkit", "ble_silabs"],
+    ["xg27devkit", "ble_silabs"],
 ]
 
 boards_with_dac = [
@@ -111,6 +120,10 @@ all_matter = [
     ["xiao_mg24", "matter"],
 ]
 
+all_ai_ml = [
+   ["nano_matter", "none"],
+]
+
 nano_matter_matter = [
     ["nano_matter", "matter"],
 ]
@@ -119,12 +132,14 @@ testlist_quick = {
     "test_sketch/test_sketch.ino":                                                                                     all_variants,
 }
 
-testlist_ble = {
+testlist_common = {
     # Silicon Labs example library
     "../../libraries/SiliconLabs/examples/ble_blinky/ble_blinky.ino":                                                  all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_health_thermometer/ble_health_thermometer.ino":                          all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_health_thermometer_client/ble_health_thermometer_client.ino":            all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_hid_keyboard/ble_hid_keyboard.ino":                                      all_ble_silabs,
+    "../../libraries/SiliconLabs/examples/ble_hid_mouse/ble_hid_mouse.ino":                                            ble_silabs_boards_with_imu,
+    "../../libraries/SiliconLabs/examples/ble_hid_mouse_xiao_mg24/ble_hid_mouse_xiao_mg24.ino":                        xiao_mg24_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_lightswitch_client/ble_lightswitch_client.ino":                          all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_lightswitch_server/ble_lightswitch_server.ino":                          all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_minimal/ble_minimal.ino":                                                all_ble_silabs,
@@ -147,6 +162,8 @@ testlist_ble = {
     "../../libraries/ezWS2812/examples/individual_leds/individual_leds.ino":                                           all_variants,
     # Si7210Hall
     "../../libraries/Si7210_hall/examples/Si7210_hall_measure/Si7210_hall_measure.ino":                                all_variants,
+    # SilabsMicrophoneAnalog
+    "../../libraries/SilabsMicrophoneAnalog/examples/MicrophoneVolume/MicrophoneVolume.ino":                           all_variants,
     # SilabsMicrophonePDM
     "../../libraries/SilabsMicrophonePDM/examples/microphone_sound_level/microphone_sound_level.ino":                  boards_with_pdm,
     # ArduinoLowPower
@@ -158,6 +175,9 @@ testlist_ble = {
     # WatchdogTimer
     "../../libraries/WatchdogTimer/examples/watchdog_timer_interrupt/watchdog_timer_interrupt.ino":                    all_variants,
     "../../libraries/WatchdogTimer/examples/watchdog_timer_reset/watchdog_timer_reset.ino":                            all_variants,
+    # SilabsTFLiteMicro
+    "../../libraries/SilabsTFLiteMicro/examples/imu_capture_nano_matter/imu_capture_nano_matter.ino":                  all_ai_ml,
+    "../../libraries/SilabsTFLiteMicro/examples/magic_wand_nano_matter/magic_wand_nano_matter.ino":                    all_ai_ml,
 }
 
 testlist_matter = {
@@ -200,14 +220,14 @@ def main():
     testlist = testlist_quick
     if test_config == "quick":
         testlist = testlist_quick
-    elif test_config == "ble":
-        testlist = testlist_ble
+    elif test_config == "common":
+        testlist = testlist_common
     elif test_config == "matter":
         testlist = testlist_matter
     else:
         testlist = dict()
         testlist.update(testlist_quick)
-        testlist.update(testlist_ble)
+        testlist.update(testlist_common)
         testlist.update(testlist_matter)
 
     testcase_count = count_testcases(testlist)
@@ -319,9 +339,9 @@ def get_config_from_arguments():
     if input_config_name == "quick":
         print("Running quick tests only")
         return "quick"
-    elif input_config_name == "ble":
-        print("Running BLE tests only")
-        return "ble"
+    elif input_config_name == "common":
+        print("Running common tests only")
+        return "common"
     elif input_config_name == "matter":
         print("Running Matter tests only")
         return "matter"

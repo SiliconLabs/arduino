@@ -1159,3 +1159,7 @@ static void sound_read_cb(sl_bt_evt_gatt_server_user_read_request_t *data)
   Serial.print("sound_read_cb response; value=");
   Serial.println(soundLevel_db);
 }
+
+#ifndef BLE_STACK_SILABS
+  #error "This example is only compatible with the Silicon Labs BLE stack. Please select 'BLE (Silabs)' in 'Tools > Protocol stack'."
+#endif

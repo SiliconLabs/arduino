@@ -74,7 +74,9 @@ See the docs for the Matter library [here](libraries/Matter/readme.md).
  - **ezWS2812 💡** - driver for WS2812 LEDs using the hardware SPI or GPIO
  - **Matter** ![Matter](doc/matter_logo_icon.png) - [[docs](libraries/Matter/readme.md)]
  - **Si7210_hall** - driver for Si7210 hall sensors
- - **SilabsMicrophonePDM** - driver for PDM microphones
+ - **SilabsMicrophoneAnalog 🎙️** - driver for analog microphones [[docs](libraries/SilabsMicrophonerAnalog/readme.md)]
+ - **SilabsMicrophonePDM 🎤** - driver for PDM microphones
+  - **SilabsTFLiteMicro 🤖** - TensorFlow Lite for Microcontrollers AI/ML library [[docs](libraries/SilabsTFLiteMicro/readme.md)]
  - **SiliconLabs** - various example sketches for Silicon Labs devices
  - **SPI** - the standard Arduino SPI library
  - **WatchdogTimer 🐶** - for keeping an eye on correct behavior - [[docs](libraries/WatchdogTimer/readme.md)]
@@ -303,6 +305,8 @@ There's a script which does all this for you on macOS/Linux:
 cd package
 ./bootstrap.sh
 ```
+
+For further details see [this page](./package/README.md).
 
 ##
 

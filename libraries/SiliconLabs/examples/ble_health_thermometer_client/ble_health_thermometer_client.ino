@@ -283,3 +283,7 @@ static float translate_IEEE_11073_temperature_to_float(IEEE_11073_float const *I
 
   return ((float)mantissa) * pow(10.0f, (float)exponent);
 }
+
+#ifndef BLE_STACK_SILABS
+  #error "This example is only compatible with the Silicon Labs BLE stack. Please select 'BLE (Silabs)' in 'Tools > Protocol stack'."
+#endif

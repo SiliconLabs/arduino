@@ -2,4 +2,5 @@
 package/gen
 package/gen_gsdk*
 package/install_host*
+package/generate_gsdk.cfg
 installed.json

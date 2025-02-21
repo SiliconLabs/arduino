@@ -47,6 +47,24 @@ void analogReference(uint8_t reference)
   ADC.set_reference(reference);
 }
 
+void analogReadDMA(PinName pin, uint32_t *buffer, uint32_t size, void (*user_onsampling_finished_callback)())
+{
+  if(user_onsampling_finished_callback) {
+    ADC.scan_start(pin, buffer, size, user_onsampling_finished_callback);
+  } else {
+    ADC.scan_stop();
+  }
+}
+
+void analogReadDMA(pin_size_t pin, uint32_t *buffer, uint32_t size, void (*user_onsampling_finished_callback)())
+{
+  PinName pin_name = pinToPinName(pin);
+  if (pin_name == PIN_NAME_NC) {
+    return;
+  }
+  analogReadDMA(pin_name, buffer, size, user_onsampling_finished_callback);
+}
+
 void analogReferenceDAC(uint8_t reference)
 {
   #if (NUM_DAC_HW > 0)

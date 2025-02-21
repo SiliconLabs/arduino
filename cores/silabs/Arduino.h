@@ -105,6 +105,18 @@ void analogWrite(dac_channel_t dac_channel, int value);
 void analogWriteResolution(int resolution);
 void analogReadResolution(int resolution);
 
+/***************************************************************************//**
+ * Starts continuous ADC sample acquisition using DMA
+ *
+ * @param[in] pin The selected analog input pin
+ * @param[in] buffer Pointer to the sampling buffer
+ * @param[in] size The size of the sampling buffer
+ * @param[in] user_onsampling_finished_callback Callback that gets called when an
+ *            acquisition finishes - pass 'nullptr' to stop sampling
+ ******************************************************************************/
+void analogReadDMA(PinName pin, uint32_t *buffer, uint32_t size, void (*user_onsampling_finished_callback)());
+void analogReadDMA(pin_size_t pin, uint32_t *buffer, uint32_t size, void (*user_onsampling_finished_callback)());
+
 bool get_system_init_finished();
 uint32_t get_system_reset_cause();
 void escape_hatch();

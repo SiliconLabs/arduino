@@ -294,3 +294,7 @@ static void ble_initialize_gatt_db()
   sc = sl_bt_gattdb_commit(gattdb_session_id);
   app_assert_status(sc);
 }
+
+#ifndef BLE_STACK_SILABS
+  #error "This example is only compatible with the Silicon Labs BLE stack. Please select 'BLE (Silabs)' in 'Tools > Protocol stack'."
+#endif

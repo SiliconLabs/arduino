@@ -54,6 +54,7 @@ component:
   - id: nvm3_lib
   - id: emlib_rmu
   - id: emlib_wdog
+  - id: tensorflow_lite_micro
 
 source:
   - path: main.c
@@ -96,6 +97,10 @@ config_file:
       instance: nanomatter1
       file_id: i2cspm_config
 
+define:
+  - name: TF_LITE_STATIC_MEMORY
+    value: "1"
+
 configuration:
   - name: SL_PSA_KEY_USER_SLOT_COUNT
     value: "0"
@@ -105,6 +110,8 @@ configuration:
     value: "spidrvCsControlApplication"
   - name: SL_SPIDRV_EUSART_NANOMATTER1_CS_CONTROL
     value: "spidrvCsControlApplication"
+  - name: SL_TFLITE_MICRO_ARENA_SIZE
+    value: "8192"
 
 tag:
   - hardware:rf:band:2400

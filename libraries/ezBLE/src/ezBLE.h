@@ -27,6 +27,10 @@
 #ifndef EZBLE_H
 #define EZBLE_H
 
+#ifndef BLE_STACK_SILABS
+  #error "This library is only compatible with the Silicon Labs BLE stack. Please select 'BLE (Silabs)' in 'Tools > Protocol stack'."
+#endif
+
 #include "Arduino.h"
 extern "C" {
   #include "sl_bluetooth.h"

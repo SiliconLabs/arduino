@@ -149,7 +149,7 @@ Here's a table listing all the `variant name`s:
 
 Change the `serverpath` property to the location of *JLinkGDBServer* on your system. *JLinkGDBServer* is installed with the *J-Link Software and Documentation pack*.
 
- - On Windows it's usually at `C:/Program Files/SEGGER/JLink/JLinkGDBServerCL`
+ - On Windows it's usually at `C:/Program Files/SEGGER/JLink/JLinkGDBServerCL`. Characters `\` in the path must be replaced by `/`. For example: `"C:/Program Files/SEGGER/JLink/JLinkGDBServerCL.exe"`.
  - On Linux and macOS you can just use `JLinkGDBServer` without the full path if it's on your PATH
 
 Make sure 'Simplicity Commander' is selected in *Tools > Programmer*.

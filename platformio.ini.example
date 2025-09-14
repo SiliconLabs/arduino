@@ -1,0 +1,65 @@
+# Example PlatformIO configuration for SparkFun Thing Plus Matter
+# Copy this to your project as 'platformio.ini' and adjust as needed
+
+[env:sparkfun_thingplus_matter]
+platform = https://github.com/maxgerhardt/platform-siliconlabsefm32/archive/refs/heads/silabs-arduino.zip
+board = thingplusmatter
+framework = arduino
+
+# Use custom framework-arduino-silabs package with Matter library placeholders
+platform_packages =
+    framework-arduino-silabs@https://github.com/yourusername/framework-arduino-silabs.git
+
+# Select Matter protocol stack (requires actual compiled libraries)
+board_build.protocol_stack = matter
+
+# Optional: Upload and debug configuration
+upload_protocol = jlink
+debug_tool = jlink
+
+# Optional: Build flags for Matter development
+build_flags =
+    -DARDUINO_MATTER=1
+    -DARDUINO_MATTER_OVER_THREAD=1
+
+# Alternative configurations for different protocol stacks:
+
+[env:sparkfun_thingplus_matter_ble_arduino]
+platform = https://github.com/maxgerhardt/platform-siliconlabsefm32/archive/refs/heads/silabs-arduino.zip
+board = thingplusmatter
+framework = arduino
+platform_packages =
+    framework-arduino-silabs@https://github.com/yourusername/framework-arduino-silabs.git
+board_build.protocol_stack = ble_arduino
+
+[env:sparkfun_thingplus_matter_ble_silabs]
+platform = https://github.com/maxgerhardt/platform-siliconlabsefm32/archive/refs/heads/silabs-arduino.zip
+board = thingplusmatter
+framework = arduino
+platform_packages =
+    framework-arduino-silabs@https://github.com/yourusername/framework-arduino-silabs.git
+board_build.protocol_stack = ble_silabs
+
+[env:sparkfun_thingplus_matter_noradio]
+platform = https://github.com/maxgerhardt/platform-siliconlabsefm32/archive/refs/heads/silabs-arduino.zip
+board = thingplusmatter
+framework = arduino
+platform_packages =
+    framework-arduino-silabs@https://github.com/yourusername/framework-arduino-silabs.git
+board_build.protocol_stack = none
+
+# Debug configuration example
+[env:sparkfun_thingplus_matter_debug]
+platform = https://github.com/maxgerhardt/platform-siliconlabsefm32/archive/refs/heads/silabs-arduino.zip
+board = thingplusmatter
+framework = arduino
+platform_packages =
+    framework-arduino-silabs@https://github.com/yourusername/framework-arduino-silabs.git
+board_build.protocol_stack = matter
+build_type = debug
+debug_tool = jlink
+upload_protocol = jlink
+build_flags =
+    -DARDUINO_MATTER=1
+    -DARDUINO_MATTER_OVER_THREAD=1
+    -DDEBUG=1

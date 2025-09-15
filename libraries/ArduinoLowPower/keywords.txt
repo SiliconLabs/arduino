@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For Arduino Low Power
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+ArduinoLowPower KEYWORD1
+LowPower        KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+idle                    KEYWORD2
+sleep                   KEYWORD2
+deepSleep               KEYWORD2
+attachInterruptWakeup   KEYWORD2
+deepSleepMemoryWrite    KEYWORD2
+deepSleepMemoryRead     KEYWORD2
+deepSleepMemorySize     KEYWORD2
+wokeUpFromDeepSleep     KEYWORD2

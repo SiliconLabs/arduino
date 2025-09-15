@@ -1,0 +1,29 @@
+id: "bluetooth_hci_reset"
+label: Bluetooth Controller HCI reset
+package: bluetooth_le_controller
+description: "Provides HCI for Bluetooth Controller HCI reset functions"
+
+category: Bluetooth|Host Controller Interface (HCI)
+quality: production
+root_path: protocol/bluetooth/bgstack/ll
+source:
+  - path: utils/hci_packet/src/sl_btctrl_hci_reset.c
+include:
+  - path: utils/hci_packet/inc
+    file_list:
+      - path: sl_btctrl_hci_reset.h
+provides:
+  - name: "bluetooth_hci_reset"
+requires:
+  - name: bluetooth_controller
+  - name: emlib_rmu
+    condition:
+      - device_series_2
+  - name: hal_emu
+    condition:
+      - device_series_3
+conflicts:
+  - name: bluetooth_stack
+metadata:
+  sbom:
+    license: MSLA

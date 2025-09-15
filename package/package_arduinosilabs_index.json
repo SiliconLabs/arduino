@@ -1,0 +1,442 @@
+{
+    "packages": [
+        {
+            "name": "SiliconLabs",
+            "maintainer": "Silicon Labs",
+            "websiteURL": "https://github.com/SiliconLabs/arduino",
+            "email": "arduino@silabs.com",
+            "help": {
+                "online": "https://github.com/SiliconLabs/arduino"
+            },
+            "platforms": [
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "https://github.com/SiliconLabs/arduino/releases/download/1.0.0/silabs_arduino_core-1.0.0.zip",
+                    "version": "1.0.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-1.0.0.zip",
+                    "boards": [
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.14.5",
+                            "name": "simplicitycommander"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabs/arduino"
+                    },
+                    "size": "196725748",
+                    "checksum": "SHA-256:ce17d426c8783b9acc8fd74cb0b4d59a23b96427090aee2046bca39dd5008660"
+                },
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/silabs_arduino_core-2.0.0.zst",
+                    "version": "2.0.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-2.0.0.zst",
+                    "boards": [
+                        {
+                            "name": "Arduino Nano Matter"
+                        },
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "xG24 Dev Kit"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.16.4",
+                            "name": "simplicitycommander"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "0.12.0-arduino1-static",
+                            "name": "openocd"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabs/arduino"
+                    },
+                    "size": 320160894,
+                    "checksum": "SHA-256:75b9690f628cd9334c055ddb02ad559236732f3997ef59c87e833698830f19c7"
+                },
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "https://github.com/SiliconLabs/arduino/releases/download/2.1.0/silabs_arduino_core-2.1.0.zst",
+                    "version": "2.1.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-2.1.0.zst",
+                    "boards": [
+                        {
+                            "name": "Arduino Nano Matter"
+                        },
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "xG24 Dev Kit"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        },
+                        {
+                            "name": "Ezurio Lyra 24P 20dBm Dev Kit"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.16.4",
+                            "name": "simplicitycommander"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "0.12.0-arduino1-static",
+                            "name": "openocd"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabs/arduino"
+                    },
+                    "size": 370773700,
+                    "checksum": "SHA-256:138248fe50e0066144fd660c258479abfd0518b048943dfbd9920f85c26f3aca"
+                },
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "https://github.com/SiliconLabs/arduino/releases/download/2.2.0/silabs_arduino_core-2.2.0.zst",
+                    "version": "2.2.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-2.2.0.zst",
+                    "boards": [
+                        {
+                            "name": "Arduino Nano Matter"
+                        },
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "xG24 Dev Kit"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        },
+                        {
+                            "name": "Ezurio Lyra 24P 20dBm Dev Kit"
+                        },
+                        {
+                            "name": "Seeed Studio XIAO MG24 (Sense)"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.16.4",
+                            "name": "simplicitycommander"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "0.12.0-arduino1-static",
+                            "name": "openocd"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabs/arduino"
+                    },
+                    "size": 448097201,
+                    "checksum": "SHA-256:6ddf48877a3cdbbe6b5ad422ad0e1a15e50c3fe4e59f0bae33ad613b5e7520bc"
+                },
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "https://github.com/SiliconLabs/arduino/releases/download/2.3.0/silabs_arduino_core-2.3.0.zst",
+                    "version": "2.3.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-2.3.0.zst",
+                    "boards": [
+                        {
+                            "name": "Arduino Nano Matter"
+                        },
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "xG24 Dev Kit"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        },
+                        {
+                            "name": "Ezurio Lyra 24P 20dBm Dev Kit"
+                        },
+                        {
+                            "name": "Seeed Studio XIAO MG24 (Sense)"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.16.4",
+                            "name": "simplicitycommander"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "0.12.0-arduino1-static",
+                            "name": "openocd"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabs/arduino"
+                    },
+                    "size": 454553410,
+                    "checksum": "SHA-256:8ac58ce29f485cec311c36cda3e32080c916c9657c13ddaff509cfc65f7e0c9b"
+                },
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "!!local-install-url/silabs_arduino_core-3.0.0.zst",
+                    "version": "3.0.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-3.0.0.zst",
+                    "boards": [
+                        {
+                            "name": "Arduino Nano Matter"
+                        },
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "xG24 Dev Kit"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        },
+                        {
+                            "name": "Ezurio Lyra 24P 20dBm Dev Kit"
+                        },
+                        {
+                            "name": "Seeed Studio XIAO MG24 (Sense)"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.16.4",
+                            "name": "simplicitycommander"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "0.12.0-arduino1-static",
+                            "name": "openocd"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabs/arduino"
+                    },
+                    "size": 370773700,
+                    "checksum": "SHA-256:138248fe50e0066144fd660c258479abfd0518b048943dfbd9920f85c26f3aca"
+                }
+            ],
+            "tools": [
+                {
+                    "version": "12.2.rel1",
+                    "name": "gcc-arm-none-eabi",
+                    "systems": [
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-darwin-x86_64-arm-none-eabi.tar.zst",
+                            "archiveFileName": "arm-gnu-toolchain-12.2.rel1-darwin-x86_64-arm-none-eabi.tar.zst",
+                            "checksum": "SHA-256:8c9d786e48427229c01df060dbf5ffb926fee39360e4773d0811118baef44506",
+                            "size": "191221203"
+                        },
+                        {
+                            "host": "arm64-apple-darwin",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-darwin-arm64-arm-none-eabi.tar.zst",
+                            "archiveFileName": "arm-gnu-toolchain-12.2.rel1-darwin-arm64-arm-none-eabi.tar.zst",
+                            "checksum": "SHA-256:9e9091454d81fc44ca090f4f5cbffeef8cb3d7541b83381198fc761c62029c41",
+                            "size": "184007579"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-mingw-w64-i686-arm-none-eabi.zst",
+                            "archiveFileName": "arm-gnu-toolchain-12.2.rel1-mingw-w64-i686-arm-none-eabi.zst",
+                            "checksum": "SHA-256:0a8788cc3cdfcf8a03189dafc27c2936834bbbab3efc021eaf41c739eef4c253",
+                            "size": "279987372"
+                        },
+                        {
+                            "host": "x86_64-pc-linux-gnu",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.zst",
+                            "archiveFileName": "arm-gnu-toolchain-12.2.rel1-x86_64-arm-none-eabi.tar.zst",
+                            "checksum": "SHA-256:9eb46cf29edb5bcd8b27ae0208f5313c40fd0ff1b8cbbb59cd7aa0c7326d9e5d",
+                            "size": "246980758"
+                        }
+                    ]
+                },
+                {
+                    "version": "1.14.5",
+                    "name": "simplicitycommander",
+                    "systems": [
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/1.0.0/Commander_osx_1v14p5b1276.tgz",
+                            "archiveFileName": "Commander_osx_1v14p5b1276.tgz",
+                            "checksum": "SHA-256:33fa3ad41fe44e1cdfd990521c501d52debfbb957c3baf0f9aa72856f0029eac",
+                            "size": "49738096"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/1.0.0/Commander_win32_x64_1v14p5b1276.zip",
+                            "archiveFileName": "Commander_win32_x64_1v14p5b1276.zip",
+                            "checksum": "SHA-256:157471fe232654ccac21250769cd2e83c19c424495c28dd68614429bc2a87e23",
+                            "size": "33776387"
+                        },
+                        {
+                            "host": "x86_64-pc-linux-gnu",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/1.0.0/Commander_linux_x86_64_1v14p5b1276.tar.bz",
+                            "archiveFileName": "Commander_linux_x86_64_1v14p5b1276.tar.bz",
+                            "checksum": "SHA-256:8294b29387dd9045e19fe0e16590d4032bb5ee6718419460e2f9623dbec581e6",
+                            "size": "34568050"
+                        }
+                    ]
+                },
+                {
+                    "version": "1.16.4",
+                    "name": "simplicitycommander",
+                    "systems": [
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/Commander_osx_1v16p4b1564.zip",
+                            "archiveFileName": "Commander_osx_1v16p4b1564.zip",
+                            "checksum": "SHA-256:676d05d86b0e08d818707532b834b383623d469eb8a1d0eb1e4d6d76cf361f5f",
+                            "size": "50942568"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/Commander_win32_x64_1v16p4b1564.tar.zst",
+                            "archiveFileName": "Commander_win32_x64_1v16p4b1564.tar.zst",
+                            "checksum": "SHA-256:8f6272eda45cbc0e2d0a94ccc077def812e5b2bebc05ada02c2797cbe3222fa3",
+                            "size": "34107510"
+                        },
+                        {
+                            "host": "x86_64-pc-linux-gnu",
+                            "url": "https://github.com/SiliconLabs/arduino/releases/download/2.0.0/Commander_linux_x86_64_1v16p4b1564.tar.zst",
+                            "archiveFileName": "Commander_linux_x86_64_1v16p4b1564.tar.zst",
+                            "checksum": "SHA-256:0d1a2136a824c2f3e9953573502cb80ff459647f41df04d17a30e42140432f8a",
+                            "size": "36553955"
+                        }
+                    ]
+                },
+                {
+                    "version": "0.12.0-arduino1-static",
+                    "name": "openocd",
+                    "systems": [
+                        {
+                            "host": "x86_64-apple-darwin",
+                            "url": "https://downloads.arduino.cc/tools/openocd-0.12.0-arduino1-static-x86_64-apple-darwin19.tar.bz2",
+                            "archiveFileName": "openocd-0.12.0-arduino1-static-x86_64-apple-darwin19.tar.bz2",
+                            "checksum": "SHA-256:098def8648d19a98f437c2b9458743bd78e6093b6883b67d52262dd73482ce31",
+                            "size": "2041728"
+                        },
+                        {
+                            "host": "i686-mingw32",
+                            "url": "https://downloads.arduino.cc/tools/openocd-0.12.0-arduino1-static-i686-w64-mingw32.tar.bz2",
+                            "archiveFileName": "openocd-0.12.0-arduino1-static-i686-w64-mingw32.tar.bz2",
+                            "checksum": "SHA-256:91ef6e8c9abdbcf8c97040b7045a620280716ab542629c2310e44b855475f807",
+                            "size": "2352177"
+                        },
+                        {
+                            "host": "x86_64-pc-linux-gnu",
+                            "url": "https://downloads.arduino.cc/tools/openocd-0.12.0-arduino1-static-x86_64-ubuntu16.04-linux-gnu.tar.bz2",
+                            "archiveFileName": "openocd-0.12.0-arduino1-static-x86_64-ubuntu16.04-linux-gnu.tar.bz2",
+                            "checksum": "SHA-256:c48b4b348a68c3394e29fb7469a9eadf815a029e223b1612faff86bf4e7f053c",
+                            "size": "6478337"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

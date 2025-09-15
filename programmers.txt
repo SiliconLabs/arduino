@@ -1,0 +1,11 @@
+commander.name=Simplicity Commander
+commander.protocol=jlink
+commander.program.tool=simplicitycommander
+commander.program.tool.default=simplicitycommander
+commander.program.extra_params=
+
+openocd.name=OpenOCD
+openocd.protocol=SWD
+openocd.program.tool=openocd
+openocd.program.tool.default=openocd
+openocd.program.extra_params=

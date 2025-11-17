@@ -62,7 +62,11 @@ void setup()
   val = analogRead(PA1);
   Serial.println(val, OCT);
 
-  analogWrite(PA0, 128);
+  analogWrite(PA0, 51);
+  analogWrite(PA1, 102);
+  analogWrite(PA2, 153);
+  analogWrite(PA3, 204);
+  analogWrite(PA4, 255);
 
   tone(PA0, 440, 0);
   noTone(PA0);

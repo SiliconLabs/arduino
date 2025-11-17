@@ -124,7 +124,7 @@ private:
   SemaphoreHandle_t pwm_mutex;
   StaticSemaphore_t pwm_mutex_buf;
 
-  static const uint8_t max_pwm_channels = 3u;
+  static const uint8_t max_pwm_channels = 5u;
   static const uint32_t pwm_stabilization_time_ms = 2u;
 
   uint32_t duty_cycle_set_time;
@@ -164,6 +164,24 @@ private:
    * @return the number of PWM channels in use
    *****************************************************************************/
   uint8_t get_num_of_pwm_channels_in_use();
+
+  /**************************************************************************//**
+   * Returns the timer peripheral for the given PWM channel index
+   *
+   * @param[in] channel_idx PWM channel index (0-4)
+   *
+   * @return Pointer to timer peripheral (TIMER0 or TIMER1)
+   *****************************************************************************/
+  TIMER_TypeDef* get_timer_for_channel(uint8_t channel_idx);
+
+  /**************************************************************************//**
+   * Returns the compare/capture channel number for the given PWM channel index
+   *
+   * @param[in] channel_idx PWM channel index (0-4)
+   *
+   * @return CC channel number (0, 1, or 2)
+   *****************************************************************************/
+  uint8_t get_cc_channel_for_pwm_channel(uint8_t channel_idx);
 
   /**************************************************************************//**
    * Deinitializes all active PWM channels

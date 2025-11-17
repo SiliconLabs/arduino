@@ -163,6 +163,7 @@ testlist_common = {
     "../../libraries/SiliconLabs/examples/ble_xg27_devkit_sensors/ble_xg27_devkit_sensors.ino":                        xg27devkit_ble_silabs,
     "../../libraries/SiliconLabs/examples/dac_sawtooth/dac_sawtooth.ino":                                              boards_with_dac,
     "../../libraries/SiliconLabs/examples/hwinfo/hwinfo.ino":                                                          all_variants,
+    "../../libraries/SiliconLabs/examples/pwm_multi_channel/pwm_multi_channel.ino":                                    all_variants,
     "../../libraries/SiliconLabs/examples/xg27devkit_sensors/xg27devkit_sensors.ino":                                  xg27devkit_ble_silabs,
     "../../libraries/SiliconLabs/examples/thingplusmatter_debug_unix/thingplusmatter_debug_unix.ino":                  all_ble_silabs,
     "../../libraries/SiliconLabs/examples/thingplusmatter_debug_win/thingplusmatter_debug_win.ino":                    all_ble_silabs,

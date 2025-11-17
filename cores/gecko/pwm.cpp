@@ -41,13 +41,13 @@ PwmClass::PwmClass() :
     .polarity  = PWM_ACTIVE_HIGH,
   };
 
-  for (auto& pwm_pin : pwm_pins) {
-    pwm_pin.pin = PIN_NAME_MAX;
-    pwm_pin.inst.timer = TIMER0;
-    pwm_pin.inst.channel = 0;
-    pwm_pin.inst.port = gpioPortA;
-    pwm_pin.inst.pin = 0;
-    pwm_pin.inst.location = 0;
+  for (uint8_t i = 0; i < max_pwm_channels; i++) {
+    pwm_pins[i].pin = PIN_NAME_MAX;
+    pwm_pins[i].inst.timer = get_timer_for_channel(i);
+    pwm_pins[i].inst.channel = get_cc_channel_for_pwm_channel(i);
+    pwm_pins[i].inst.port = gpioPortA;
+    pwm_pins[i].inst.pin = 0;
+    pwm_pins[i].inst.location = 0;
   }
 
   this->pwm_mutex = xSemaphoreCreateMutexStatic(&this->pwm_mutex_buf);
@@ -71,7 +71,7 @@ bool PwmClass::init(PinName pin, int frequency)
   this->pwm_pins[pwm_channel_idx].duty_cycle_percent = 101;
   this->pwm_pins[pwm_channel_idx].inst.port = getSilabsPortFromArduinoPin(pin);
   this->pwm_pins[pwm_channel_idx].inst.pin = getSilabsPinFromArduinoPin(pin);
-  this->pwm_pins[pwm_channel_idx].inst.channel = pwm_channel_idx;
+  this->pwm_pins[pwm_channel_idx].inst.channel = get_cc_channel_for_pwm_channel(pwm_channel_idx);
 
   GPIO_PinModeSet(this->pwm_pins[pwm_channel_idx].inst.port, this->pwm_pins[pwm_channel_idx].inst.pin, gpioModePushPull, 0);
   pwm_config.frequency = frequency;
@@ -237,6 +237,26 @@ void PwmClass::deinit_all_pwm_channels()
     if (pwm_pin.pin != PIN_NAME_MAX) {
       this->stop(pwm_pin.pin);
     }
+  }
+}
+
+TIMER_TypeDef* PwmClass::get_timer_for_channel(uint8_t channel_idx)
+{
+  // Channels 0-2 use TIMER0, channels 3-4 use TIMER1
+  if (channel_idx <= 2) {
+    return TIMER0;
+  } else {
+    return TIMER1;
+  }
+}
+
+uint8_t PwmClass::get_cc_channel_for_pwm_channel(uint8_t channel_idx)
+{
+  // Map PWM channel to timer's CC channel
+  if (channel_idx <= 2) {
+    return channel_idx;  // 0->CC0, 1->CC1, 2->CC2
+  } else {
+    return channel_idx - 3;  // 3->CC0, 4->CC1
   }
 }
 

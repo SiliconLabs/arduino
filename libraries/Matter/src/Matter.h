@@ -44,7 +44,7 @@
 
 using ::chip::CommandId;
 
-extern EmberAfAttributeMetadata bridgedDeviceBasicAttrs[7];
+extern EmberAfAttributeMetadata bridgedDeviceBasicAttrs[8];
 extern EmberAfAttributeMetadata descriptorAttrs[6];
 extern EmberAfAttributeMetadata identifyAttrs[4];
 extern CommandId identifyIncomingCommands[2];

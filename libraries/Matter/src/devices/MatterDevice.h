@@ -68,6 +68,11 @@ public:
     kDeviceType_Thermostat        = 0x000D,
     kDeviceType_WindowCovering    = 0x000E,
     kDeviceType_AirPurifier       = 0x000F,
+    kDeviceType_RainSensor        = 0x0010,
+    kDeviceType_CO2Sensor         = 0x0011,
+    kDeviceType_COSensor          = 0x0012,
+    kDeviceType_TVOCSensor        = 0x0013,
+    kDeviceType_PowerSource       = 0x0014,
     kDeviceType_Unspecified       = 0xFFFF
   };
 
@@ -207,11 +212,11 @@ protected:
   void (*device_change_callback)(void);
 
   static const uint32_t bridged_device_basic_information_cluster_feature_map = 0u;
-  static const uint16_t bridged_device_basic_information_cluster_revision = 2u;
+  static const uint16_t bridged_device_basic_information_cluster_revision = 4u;
 
   static const uint32_t identify_cluster_feature_map = 0u;
-  static const uint16_t identify_cluster_revision = 4u;
+  static const uint16_t identify_cluster_revision = 5u;
 
-  static const uint32_t groups_cluster_feature_map = 0u;
+  uint32_t groups_cluster_feature_map;
   static const uint16_t groups_cluster_revision = 4u;
 };

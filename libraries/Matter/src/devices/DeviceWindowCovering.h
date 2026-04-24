@@ -52,6 +52,9 @@ public:
   void SetActualLiftPosition(uint16_t lift_position);
   uint16_t GetActualLiftPosition();
 
+  void SetStopMotionRequestCallback(void (*window_covering_stop_motion_request_cb)(void));
+  void StopMotionRequest();
+
   void SetCurrentOperationalStatus(OperationalStatus_t operational_status);
 
   uint32_t GetWindowCoveringClusterFeatureMap();
@@ -70,6 +73,7 @@ private:
   uint8_t current_operational_status;
   uint16_t requested_lift_pos;
   uint16_t actual_lift_pos;
+  void (*window_covering_stop_motion_request_cb)(void);
 
   static const uint32_t window_covering_cluster_feature_map = 5u; // 'Lift' and 'Position Aware Lift' feature is supported
   static const uint16_t window_covering_cluster_revision    = 5u;

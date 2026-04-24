@@ -140,10 +140,23 @@ bool emberAfWindowCoveringClusterDownOrCloseCallback(app::CommandHandler* comman
 
 bool emberAfWindowCoveringClusterStopMotionCallback(app::CommandHandler* commandObj,
                                                     const app::ConcreteCommandPath& commandPath,
-                                                    const WindowCovering::Commands::StopMotion::DecodableType& fields)
+                                                    const WindowCovering::Commands::StopMotion::DecodableType& commandData)
 {
-  (void)fields;
+  (void)commandData;
   ChipLogProgress(DeviceLayer, "emberAfWindowCoveringClusterStopMotionCallback");
+
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(commandPath.mEndpointId);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev || !dev->IsReachable()) {
+    commandObj->AddStatus(commandPath, Status::Failure);
+    return false;
+  }
+  if (dev->GetDeviceType() == Device::device_type_t::kDeviceType_WindowCovering) {
+    DeviceWindowCovering* window_covering_device = static_cast<DeviceWindowCovering*>(dev);
+    window_covering_device->StopMotionRequest();
+    commandObj->AddStatus(commandPath, Status::Success);
+    return true;
+  }
   commandObj->AddStatus(commandPath, Status::Failure);
   return false;
 }

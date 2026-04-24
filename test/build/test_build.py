@@ -142,6 +142,18 @@ nano_matter_matter = [
     ["nano_matter", "matter"],
 ]
 
+library_dependencies = {
+    "Adafruit Si7021 Library",
+    "ICM20689",
+    "Seeed Arduino LSM6DS3",
+    "SparkFun Ambient Light Sensor Arduino Library",
+    "SparkFun MAX1704x Fuel Gauge Arduino Library",
+    "SparkFun SGP40 Arduino Library",
+    "STM32duino LSM6DSOX",
+}
+
+# To ignore warnings for builds of a sketch, use:
+# "path/to/sketch.ino": (xg27devkit_ble_silabs, True),
 testlist_quick = {
     "test_sketch/test_sketch.ino":                                                                                     all_variants,
 }
@@ -153,17 +165,17 @@ testlist_common = {
     "../../libraries/SiliconLabs/examples/ble_health_thermometer_client/ble_health_thermometer_client.ino":            all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_hid_keyboard/ble_hid_keyboard.ino":                                      all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_hid_mouse/ble_hid_mouse.ino":                                            ble_silabs_boards_with_imu,
-    "../../libraries/SiliconLabs/examples/ble_hid_mouse_xiao_mg24/ble_hid_mouse_xiao_mg24.ino":                        xiao_mg24_ble_silabs,
+    "../../libraries/SiliconLabs/examples/ble_hid_mouse_xiao_mg24/ble_hid_mouse_xiao_mg24.ino":                        (xiao_mg24_ble_silabs, True),
     "../../libraries/SiliconLabs/examples/ble_lightswitch_client/ble_lightswitch_client.ino":                          all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_lightswitch_server/ble_lightswitch_server.ino":                          all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_minimal/ble_minimal.ino":                                                all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_scan/ble_scan.ino":                                                      all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_spp/ble_spp.ino":                                                        all_ble_silabs,
     "../../libraries/SiliconLabs/examples/ble_thingplus_battery_gauge/ble_thingplus_battery_gauge.ino":                thingplusmatter_ble_silabs,
-    "../../libraries/SiliconLabs/examples/ble_xg27_devkit_sensors/ble_xg27_devkit_sensors.ino":                        xg27devkit_ble_silabs,
+    "../../libraries/SiliconLabs/examples/ble_xg27_devkit_sensors/ble_xg27_devkit_sensors.ino":                        (xg27devkit_ble_silabs, True),
     "../../libraries/SiliconLabs/examples/dac_sawtooth/dac_sawtooth.ino":                                              boards_with_dac,
     "../../libraries/SiliconLabs/examples/hwinfo/hwinfo.ino":                                                          all_variants,
-    "../../libraries/SiliconLabs/examples/xg27devkit_sensors/xg27devkit_sensors.ino":                                  xg27devkit_ble_silabs,
+    "../../libraries/SiliconLabs/examples/xg27devkit_sensors/xg27devkit_sensors.ino":                                  (xg27devkit_ble_silabs, True),
     "../../libraries/SiliconLabs/examples/thingplusmatter_debug_unix/thingplusmatter_debug_unix.ino":                  all_ble_silabs,
     "../../libraries/SiliconLabs/examples/thingplusmatter_debug_win/thingplusmatter_debug_win.ino":                    all_ble_silabs,
     # ezBLE
@@ -198,6 +210,12 @@ testlist_common = {
     # SilabsTFLiteMicro
     "../../libraries/SilabsTFLiteMicro/examples/magic_wand_imu_capture/magic_wand_imu_capture.ino":                    all_ai_ml,
     "../../libraries/SilabsTFLiteMicro/examples/magic_wand/magic_wand.ino":                                            all_ai_ml,
+    # BTHome
+    "../../libraries/BTHome_v2/examples/BTHome_v2_client/BTHome_v2_client.ino":                                                     all_ble_silabs,
+    "../../libraries/BTHome_v2/examples/BTHome_v2_humidity_and_temperature_monitor/BTHome_v2_humidity_and_temperature_monitor.ino": all_ble_silabs,
+    "../../libraries/BTHome_v2/examples/BTHome_v2_internal_temperature_sensor/BTHome_v2_internal_temperature_sensor.ino":           all_ble_silabs,
+    "../../libraries/BTHome_v2/examples/BTHome_v2_server_minimal/BTHome_v2_server_minimal.ino":                                     all_ble_silabs,
+    "../../libraries/BTHome_v2/examples/BTHome_v2_switch/BTHome_v2_switch.ino":                                                     all_ble_silabs,
 }
 
 testlist_matter = {
@@ -205,6 +223,8 @@ testlist_matter = {
     "../../libraries/Matter/examples/matter_air_quality_sensor/matter_air_quality_sensor.ino":                         all_matter,
     "../../libraries/Matter/examples/matter_ble_blinky/matter_ble_blinky.ino":                                         all_matter,
     "../../libraries/Matter/examples/matter_ble_minimal/matter_ble_minimal.ino":                                       all_matter,
+    "../../libraries/Matter/examples/matter_co_sensor/matter_co_sensor.ino":                                           all_matter,
+    "../../libraries/Matter/examples/matter_co2_sensor/matter_co2_sensor.ino":                                         all_matter,
     "../../libraries/Matter/examples/matter_contact_sensor/matter_contact_sensor.ino":                                 all_matter,
     "../../libraries/Matter/examples/matter_decommission/matter_decommission.ino":                                     all_matter,
     "../../libraries/Matter/examples/matter_door_lock/matter_door_lock.ino":                                           all_matter,
@@ -224,19 +244,41 @@ testlist_matter = {
     "../../libraries/Matter/examples/matter_lightbulb_with_button/matter_lightbulb_with_button.ino":                   all_matter,
     "../../libraries/Matter/examples/matter_occupancy_sensor/matter_occupancy_sensor.ino":                             all_matter,
     "../../libraries/Matter/examples/matter_on_off_outlet/matter_on_off_outlet.ino":                                   all_matter,
+    "../../libraries/Matter/examples/matter_power_source/matter_power_source.ino":                                     all_matter,
+    "../../libraries/Matter/examples/matter_power_source_and_sensor/matter_power_source_and_sensor.ino":               all_matter,
     "../../libraries/Matter/examples/matter_pressure_sensor/matter_pressure_sensor.ino":                               all_matter,
+    "../../libraries/Matter/examples/matter_rain_sensor/matter_rain_sensor.ino":                                       all_matter,
     "../../libraries/Matter/examples/matter_sensor_and_bulb/matter_sensor_and_bulb.ino":                               all_matter,
     "../../libraries/Matter/examples/matter_sensor_multiple/matter_sensor_multiple.ino":                               all_matter,
     "../../libraries/Matter/examples/matter_switch/matter_switch.ino":                                                 all_matter,
     "../../libraries/Matter/examples/matter_temp_sensor/matter_temp_sensor.ino":                                       all_matter,
     "../../libraries/Matter/examples/matter_thermostat/matter_thermostat.ino":                                         all_matter,
+    "../../libraries/Matter/examples/matter_tvoc_sensor/matter_tvoc_sensor.ino":                                       all_matter,
     "../../libraries/Matter/examples/matter_window_covering/matter_window_covering.ino":                               all_matter,
+    "../../libraries/Matter/examples/nano_matter_certified_lightbulb/nano_matter_certified_lightbulb.ino":             nano_matter_matter,
     "../../libraries/Matter/examples/nano_matter_lightbulb_color/nano_matter_lightbulb_color.ino":                     nano_matter_matter,
+}
+
+testlist_github = {
+     "test_sketch/test_sketch.ino":                                                                                     all_variants,
+     "../../libraries/SiliconLabs/examples/ble_blinky/ble_blinky.ino":                                                  all_ble_silabs,
+     "../../libraries/SiliconLabs/examples/ble_hid_keyboard/ble_hid_keyboard.ino":                                      all_ble_silabs,
+     "../../libraries/SiliconLabs/examples/ble_thingplus_battery_gauge/ble_thingplus_battery_gauge.ino":                thingplusmatter_ble_silabs,
+     "../../libraries/SiliconLabs/examples/hwinfo/hwinfo.ino":                                                          all_variants,
+     "../../libraries/ezWS2812/examples/blink_all/blink_all.ino":                                                       all_variants,
+     "../../libraries/ArduinoLowPower/examples/DeepSleepExternalOrTimedWakeup/DeepSleepExternalOrTimedWakeup.ino":      all_variants,
+     "../../libraries/WatchdogTimer/examples/watchdog_timer_reset/watchdog_timer_reset.ino":                            all_variants,
+     "../../libraries/SilabsTFLiteMicro/examples/magic_wand/magic_wand.ino":                                            all_ai_ml,
+     "../../libraries/BTHome_v2/examples/BTHome_v2_client/BTHome_v2_client.ino":                                        all_ble_silabs,
+     "../../libraries/Matter/examples/matter_lightbulb/matter_lightbulb.ino":                                           all_matter,
+     "../../libraries/Matter/examples/matter_sensor_and_bulb/matter_sensor_and_bulb.ino":                               all_matter,
+     "../../libraries/Matter/examples/nano_matter_lightbulb_color/nano_matter_lightbulb_color.ino":                     nano_matter_matter,
 }
 
 
 def main():
     print("Silabs Arduino Core build test")
+    print("==============================")
 
     test_config = get_config_from_arguments()
     testlist = testlist_quick
@@ -244,13 +286,19 @@ def main():
         testlist = testlist_quick
     elif test_config == "common":
         testlist = testlist_common
+        arduino_cli_install_library_dependencies()
     elif test_config == "matter":
         testlist = testlist_matter
+        arduino_cli_install_library_dependencies()
+    elif test_config == "github":
+        testlist = testlist_github
+        arduino_cli_install_library_dependencies()
     else:
         testlist = dict()
         testlist.update(testlist_quick)
         testlist.update(testlist_common)
         testlist.update(testlist_matter)
+        arduino_cli_install_library_dependencies()
 
     testcase_count = count_testcases(testlist)
     start_time = time.time()
@@ -265,7 +313,7 @@ def main():
         # Go through each testcase on the testlist
         for sketch_to_test in testlist:
             # Determine the variants to be used in the current test
-            test_variants = testlist[sketch_to_test]
+            test_variants, ignore_warnings = get_testcase_config(testlist[sketch_to_test])
 
             # Build the sketch for the specified variants
             for variant in test_variants:
@@ -273,7 +321,14 @@ def main():
                 total_builds += 1
                 board = variant[0]
                 protocol_stack = variant[1]
-                success, warnings = arduino_cli_build(board, protocol_stack, sketch_to_test, total_builds, testcase_count)
+                success, warnings = arduino_cli_build(
+                    board,
+                    protocol_stack,
+                    sketch_to_test,
+                    total_builds,
+                    testcase_count,
+                    ignore_warnings
+                )
                 if success:
                     successful_builds += 1
                 else:
@@ -316,7 +371,20 @@ def main():
         exit(200)
 
 
-def arduino_cli_build(board, protocol_stack, sketch_path, build_num, testcase_count):
+def get_testcase_config(test_config):
+    """
+    Returns the variants and warning ignore configuration for a testcase
+
+    Testcases can be configured as either:
+    - a plain list of variants, or
+    - a tuple/list in the form of (variants, True) to ignore warnings
+    """
+    if isinstance(test_config, (tuple, list)) and len(test_config) == 2 and isinstance(test_config[1], bool):
+        return test_config[0], test_config[1]
+    return test_config, False
+
+
+def arduino_cli_build(board, protocol_stack, sketch_path, build_num, testcase_count, ignore_warnings=False):
     """
     Builds the specified sketch for the specified variant with Arduino CLI
     """
@@ -342,7 +410,10 @@ def arduino_cli_build(board, protocol_stack, sketch_path, build_num, testcase_co
     build_end_time = time.time()
     total_build_time = int(build_end_time - build_start_time)
     if build_process.returncode == 0:
-        if build_has_warnings:
+        if build_has_warnings and ignore_warnings:
+            print("Build successful with warnings ignored!")
+            build_has_warnings = False
+        elif build_has_warnings:
             print("Build successful with warnings!")
         else:
             print("Build successful!")
@@ -352,13 +423,38 @@ def arduino_cli_build(board, protocol_stack, sketch_path, build_num, testcase_co
     return False, build_has_warnings
 
 
+def arduino_cli_install_library_dependencies():
+    """
+    Installs the required Arduino libraries for the tests
+    """
+    print()
+    print("Installing library dependencies...")
+    print("----------------------------------")
+    for library in library_dependencies:
+        print(f"Installing '{library}'...")
+        install_process = subprocess.Popen(
+            ["arduino-cli", "lib", "install", library],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+        stdout, stderr = install_process.communicate(timeout=60)
+        print(stderr.decode("utf-8"))
+        print(stdout.decode("utf-8"))
+        if install_process.returncode != 0:
+            print("Failed to install library dependencies")
+            exit(100)
+    print("----------------------------------")
+    print()
+
+
 def count_testcases(testlist):
     """
     Counts the number of total testcases in a test list
     """
     testcase_count = 0
-    for testpath,variant in testlist.items():
-        testcase_count += len(variant)
+    for testpath, test_config in testlist.items():
+        variants, _ = get_testcase_config(test_config)
+        testcase_count += len(variants)
     return testcase_count
 
 
@@ -369,18 +465,21 @@ def get_config_from_arguments():
     try:
         input_config_name = sys.argv[1]
     except Exception:
-        print("No configuration argument provided - running all available tests")
+        print("Running all available tests")
         return "all"
 
     if input_config_name == "quick":
-        print("Running quick tests only")
+        print("Running quick tests")
         return "quick"
     elif input_config_name == "common":
-        print("Running common tests only")
+        print("Running common tests")
         return "common"
     elif input_config_name == "matter":
-        print("Running Matter tests only")
+        print("Running Matter tests")
         return "matter"
+    elif input_config_name == "github":
+        print("Running tests for GitHub CI")
+        return "github"
     return "all"
 
 

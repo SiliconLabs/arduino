@@ -117,7 +117,8 @@ bool MatterOnOffPluginUnit::begin()
   int result = AddDeviceEndpoint(pluginunit_device,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gOnOffPluginUnitDeviceType),
-                                 Span<DataVersion>(new_pluginunit_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_pluginunit_data_version, ArraySize(OnOffPluginUnitEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(pluginunit_device);
     free(new_endpoint);

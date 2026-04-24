@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2026 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -40,12 +40,20 @@
 #include "semphr.h"
 #include "sl_status.h"
 
-enum analog_references {
+enum analog_reference_t {
   AR_INTERNAL1V2 = 0, // Internal 1.2V reference
   AR_EXTERNAL_1V25,   // External 1.25V reference
   AR_VDD,             // VDD (unbuffered to ground)
   AR_08VDD,           // 0.8 * VDD (buffered to ground)
   AR_MAX              // Maximum value
+};
+
+enum analog_gain_t {
+  ANALOG_GAIN_0_5X = 0,  // 0.5x gain
+  ANALOG_GAIN_1X,        // 1x gain
+  ANALOG_GAIN_2X,        // 2x gain
+  ANALOG_GAIN_4X,        // 4x gain
+  ANALOG_GAIN_MAX        // Maximum value
 };
 
 namespace arduino {
@@ -69,7 +77,7 @@ public:
   /***************************************************************************//**
    * Sets the ADC voltage reference
    *
-   * @param[in] reference The selected voltage reference from 'analog_references'
+   * @param[in] reference The selected voltage reference from 'analog_reference_t'
    ******************************************************************************/
   void set_reference(uint8_t reference);
 
@@ -79,6 +87,13 @@ public:
    * @param[in] resolution The selected read resolution in bits
    ******************************************************************************/
   void set_read_resolution(uint8_t resolution);
+
+  /***************************************************************************//**
+   * Sets the ADC gain factor
+   *
+   * @param[in] gain The selected gain factor from 'analog_gain_t'
+   ******************************************************************************/
+  void set_gain(analog_gain_t gain);
 
   /***************************************************************************//**
    * Starts ADC in scan (continuous) mode
@@ -114,16 +129,15 @@ private:
    * Initializes the ADC hardware as single shot
    *
    * @param[in] pin The pin number of the ADC input
-   * @param[in] reference The selected voltage reference from 'analog_references'
    ******************************************************************************/
-  void init_single(PinName pin, uint8_t reference);
+  void init_single(PinName pin);
 
   /***************************************************************************//**
    * Initializes the ADC hardware in scan (continuous) mode
    *
    * @param[in] pin The pin number of the ADC input
    ******************************************************************************/
-  void init_scan(PinName pin, uint8_t reference);
+  void init_scan(PinName pin);
 
   /**************************************************************************//**
    * Initializes the DMA hardware
@@ -141,8 +155,10 @@ private:
   bool paused_transfer;
 
   PinName current_adc_pin;
-  uint8_t current_adc_reference;
+  IADC_CfgReference_t current_adc_reference;
+  uint32_t current_adc_vref;
   uint8_t current_read_resolution;
+  IADC_CfgAnalogGain_t current_adc_gain;
 
   LDMA_Descriptor_t ldma_descriptor;
   unsigned int dma_channel;

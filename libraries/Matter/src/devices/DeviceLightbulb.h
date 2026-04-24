@@ -114,7 +114,7 @@ private:
   static const uint32_t level_control_cluster_feature_map = 3u;   // On/Off (bit 0) and Lighting support (bit 1) enabled
   static const uint32_t color_control_cluster_feature_map = 1u;   // Hue/Saturation support (bit 0) enabled
 
-  static const uint16_t onoff_cluster_revision = 4u;
+  static const uint16_t onoff_cluster_revision = 6u;
   static const uint16_t level_control_cluster_revision = 5u;
   static const uint16_t color_control_cluster_revision = 6u;
 

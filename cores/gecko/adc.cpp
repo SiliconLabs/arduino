@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2026 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,10 @@ AdcClass::AdcClass() :
   initialized_scan(false),
   paused_transfer(false),
   current_adc_pin(PD2),
-  current_adc_reference(AR_VDD),
+  current_adc_reference(iadcCfgReferenceVddx),
+  current_adc_vref(3300),
   current_read_resolution(this->max_read_resolution_bits),
+  current_adc_gain(iadcCfgAnalogGain1x),
   user_onsampling_finished_callback(nullptr),
   adc_mutex(nullptr)
 {
@@ -44,7 +46,7 @@ AdcClass::AdcClass() :
   configASSERT(this->adc_mutex);
 }
 
-void AdcClass::init_single(PinName pin, uint8_t reference)
+void AdcClass::init_single(PinName pin)
 {
   // Set up the ADC pin as an input
   pinMode(pin, INPUT);
@@ -60,36 +62,10 @@ void AdcClass::init_single(PinName pin, uint8_t reference)
   CMU_ClockEnable(cmuClock_GPIO, true);
   CMU_ClockEnable(cmuClock_PRS, true);
 
-  IADC_CfgReference_t sl_adc_reference;
-  uint32_t sl_adc_vref;
-
-  // Set the voltage reference
-  switch (reference) {
-    case AR_INTERNAL1V2:
-      sl_adc_reference = iadcCfgReferenceInt1V2;
-      sl_adc_vref = 1200;
-      break;
-
-    case AR_EXTERNAL_1V25:
-      sl_adc_reference = iadcCfgReferenceExt1V25;
-      sl_adc_vref = 1250;
-      break;
-
-    case AR_VDD:
-      sl_adc_reference = iadcCfgReferenceVddx;
-      sl_adc_vref = 3300;
-      break;
-
-    case AR_08VDD:
-      sl_adc_reference = iadcCfgReferenceVddX0P8Buf;
-      sl_adc_vref = 2640;
-      break;
-
-    default:
-      return;
-  }
-  all_configs.configs[0].reference = sl_adc_reference;
-  all_configs.configs[0].vRef = sl_adc_vref;
+  // Set the voltage reference and gain
+  all_configs.configs[0].reference = this->current_adc_reference;
+  all_configs.configs[0].vRef = this->current_adc_vref;
+  all_configs.configs[0].analogGain = this->current_adc_gain;
 
   // Reset the ADC
   IADC_reset(IADC0);
@@ -135,7 +111,7 @@ void AdcClass::init_single(PinName pin, uint8_t reference)
   this->initialized_single = true;
 }
 
-void AdcClass::init_scan(PinName pin, uint8_t reference)
+void AdcClass::init_scan(PinName pin)
 {
   // Set up the ADC pin as an input
   pinMode(pin, INPUT);
@@ -159,40 +135,11 @@ void AdcClass::init_scan(PinName pin, uint8_t reference)
   // Set the HFSCLK prescale value here
   init.srcClkPrescale = IADC_calcSrcClkPrescale(IADC0, 20000000, 0);
 
-  IADC_CfgReference_t sl_adc_reference;
-  uint32_t sl_adc_vref;
-
-  // Set the voltage reference
-  switch (reference) {
-    case AR_INTERNAL1V2:
-      sl_adc_reference = iadcCfgReferenceInt1V2;
-      sl_adc_vref = 1200;
-      break;
-
-    case AR_EXTERNAL_1V25:
-      sl_adc_reference = iadcCfgReferenceExt1V25;
-      sl_adc_vref = 1250;
-      break;
-
-    case AR_VDD:
-      sl_adc_reference = iadcCfgReferenceVddx;
-      sl_adc_vref = 3300;
-      break;
-
-    case AR_08VDD:
-      sl_adc_reference = iadcCfgReferenceVddX0P8Buf;
-      sl_adc_vref = 2640;
-      break;
-
-    default:
-      return;
-  }
-
-  // Set the voltage reference
-  all_configs.configs[0].reference = sl_adc_reference;
-  all_configs.configs[0].vRef = sl_adc_vref;
+  // Set the voltage reference and gain
+  all_configs.configs[0].reference = this->current_adc_reference;
+  all_configs.configs[0].vRef = this->current_adc_vref;
   all_configs.configs[0].osrHighSpeed = iadcCfgOsrHighSpeed2x;
-  all_configs.configs[0].analogGain = iadcCfgAnalogGain1x;
+  all_configs.configs[0].analogGain = this->current_adc_gain;
 
   /*
    * CLK_SRC_ADC must be prescaled by some value greater than 1 to
@@ -304,7 +251,7 @@ uint16_t AdcClass::get_sample(PinName pin)
 
   if (!this->initialized_single || (pin != this->current_adc_pin)) {
     this->current_adc_pin = pin;
-    this->init_single(this->current_adc_pin, this->current_adc_reference);
+    this->init_single(this->current_adc_pin);
   }
   // Clear single done interrupt
   IADC_clearInt(IADC0, IADC_IF_SINGLEDONE);
@@ -326,15 +273,43 @@ uint16_t AdcClass::get_sample(PinName pin)
 
 void AdcClass::set_reference(uint8_t reference)
 {
-  if (reference >= AR_MAX || reference == this->current_adc_reference) {
+  if (reference >= AR_MAX) {
     return;
   }
   xSemaphoreTake(this->adc_mutex, portMAX_DELAY);
-  this->current_adc_reference = reference;
+
+  // Set the voltage reference
+  switch ((analog_reference_t)reference) {
+    case AR_INTERNAL1V2:
+      this->current_adc_reference = iadcCfgReferenceInt1V2;
+      this->current_adc_vref = 1200;
+      break;
+
+    case AR_EXTERNAL_1V25:
+      this->current_adc_reference = iadcCfgReferenceExt1V25;
+      this->current_adc_vref = 1250;
+      break;
+
+    case AR_VDD:
+      this->current_adc_reference = iadcCfgReferenceVddx;
+      this->current_adc_vref = 3300;
+      break;
+
+    case AR_08VDD:
+      this->current_adc_reference = iadcCfgReferenceVddX0P8Buf;
+      this->current_adc_vref = 2640;
+      break;
+
+    default:
+      this->current_adc_reference = iadcCfgReferenceVddx;
+      this->current_adc_vref = 3300;
+      break;
+  }
+
   if (this->initialized_single) {
-    this->init_single(this->current_adc_pin, this->current_adc_reference);
+    this->init_single(this->current_adc_pin);
   } else if (this->initialized_scan) {
-    this->init_scan(this->current_adc_pin, this->current_adc_reference);
+    this->init_scan(this->current_adc_pin);
   }
   xSemaphoreGive(this->adc_mutex);
 }
@@ -348,6 +323,43 @@ void AdcClass::set_read_resolution(uint8_t resolution)
   this->current_read_resolution = resolution;
 }
 
+void AdcClass::set_gain(analog_gain_t gain) {
+  if (gain >= ANALOG_GAIN_MAX) {
+    return;
+  }
+  xSemaphoreTake(this->adc_mutex, portMAX_DELAY);
+
+  switch (gain) {
+    case ANALOG_GAIN_0_5X:
+      this->current_adc_gain = iadcCfgAnalogGain0P5x;
+      break;
+
+    case ANALOG_GAIN_1X:
+      this->current_adc_gain = iadcCfgAnalogGain1x;
+      break;
+
+    case ANALOG_GAIN_2X:
+      this->current_adc_gain = iadcCfgAnalogGain2x;
+      break;
+
+    case ANALOG_GAIN_4X:
+      this->current_adc_gain = iadcCfgAnalogGain4x;
+      break;
+
+    default:
+      this->current_adc_gain = iadcCfgAnalogGain1x;
+      break;
+  }
+
+  if (this->initialized_single) {
+    this->init_single(this->current_adc_pin);
+  } else if (this->initialized_scan) {
+    this->init_scan(this->current_adc_pin);
+  }
+
+  xSemaphoreGive(this->adc_mutex);
+}
+
 sl_status_t AdcClass::scan_start(PinName pin, uint32_t *buffer, uint32_t size, void (*user_onsampling_finished_callback)())
 {
   sl_status_t status = SL_STATUS_FAIL;
@@ -357,7 +369,7 @@ sl_status_t AdcClass::scan_start(PinName pin, uint32_t *buffer, uint32_t size, v
     // Initialize in scan mode
     this->current_adc_pin = pin;
     this->user_onsampling_finished_callback = user_onsampling_finished_callback;
-    this->init_scan(this->current_adc_pin, this->current_adc_reference);
+    this->init_scan(this->current_adc_pin);
     status = this->init_dma(buffer, size);
   } else if (this->initialized_scan && this->paused_transfer) {
     // Resume DMA transfer if paused
@@ -368,7 +380,7 @@ sl_status_t AdcClass::scan_start(PinName pin, uint32_t *buffer, uint32_t size, v
     this->deinit();
     this->current_adc_pin = pin;
     this->user_onsampling_finished_callback = user_onsampling_finished_callback;
-    this->init_scan(this->current_adc_pin, this->current_adc_reference);
+    this->init_scan(this->current_adc_pin);
     status = this->init_dma(buffer, size);
   } else {
     xSemaphoreGive(this->adc_mutex);

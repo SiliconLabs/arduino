@@ -43,7 +43,7 @@ constexpr CommandId doorLockIncomingCommands[] = {
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(doorLockAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::LockState::Id, INT8U, 1, ATTRIBUTE_MASK_NULLABLE),  // LockState
 DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::LockType::Id, INT8U, 1, 0),                         // LockType
-DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::ActuatorEnabled::Id, INT8U, 1, 0),                  // ActuatorEnabled
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::ActuatorEnabled::Id, BOOLEAN, 1, 0),                // ActuatorEnabled
 DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::OperatingMode::Id, INT8U, 1, 0),                    // OperatingMode
 DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::SupportedOperatingModes::Id, INT16U, 2, 0),         // SupportedOperatingModes
 DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                    // FeatureMap
@@ -121,7 +121,8 @@ bool MatterDoorLock::begin()
   int result = AddDeviceEndpoint(door_lock_device,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gDoorLockDeviceTypes),
-                                 Span<DataVersion>(new_device_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_device_data_version, ArraySize(doorLockEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(door_lock_device);
     free(new_endpoint);

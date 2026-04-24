@@ -113,7 +113,8 @@ bool MatterFlow::begin()
   int result = AddDeviceEndpoint(sensor,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gFlowSensorDeviceTypes),
-                                 Span<DataVersion>(new_sensor_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_sensor_data_version, ArraySize(flowMeasurementEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(sensor);
     free(new_endpoint);

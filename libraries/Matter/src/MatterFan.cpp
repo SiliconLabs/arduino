@@ -117,7 +117,8 @@ bool MatterFan::begin()
   int result = AddDeviceEndpoint(fan_device,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gFanDeviceTypes),
-                                 Span<DataVersion>(new_device_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_device_data_version, ArraySize(fanControlEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(fan_device);
     free(new_endpoint);

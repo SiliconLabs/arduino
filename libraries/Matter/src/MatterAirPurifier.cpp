@@ -124,7 +124,8 @@ bool MatterAirPurifier::begin()
   int result = AddDeviceEndpoint(device,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gAirPurifierDeviceTypes),
-                                 Span<DataVersion>(new_device_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_device_data_version, ArraySize(airPurifierEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(device);
     free(new_endpoint);

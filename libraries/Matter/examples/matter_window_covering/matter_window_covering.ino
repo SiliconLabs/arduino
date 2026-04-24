@@ -23,11 +23,15 @@ MatterWindowCovering matter_blinds;
 
 void update_onboard_led(uint8_t brightness);
 
+volatile bool window_covering_stop_requested_flag = false;
+void window_covering_stop_requested();
+
 void setup()
 {
   Serial.begin(115200);
   Matter.begin();
   matter_blinds.begin();
+  matter_blinds.set_stop_request_callback(window_covering_stop_requested);
   pinMode(LED_BUILTIN, OUTPUT);
   update_onboard_led(0);
 
@@ -54,6 +58,11 @@ void setup()
     delay(200);
   }
   Serial.println("Matter device is now online");
+
+  // Set the initial position to fully open
+  matter_blinds.set_actual_lift_position_percent(100);
+  matter_blinds.set_current_operation(MatterWindowCovering::WINDOW_COVERING_STOPPED);
+  update_onboard_led(255);
 }
 
 void loop()
@@ -62,6 +71,8 @@ void loop()
   uint16_t requested_lift_raw = matter_blinds.get_requested_lift_position_raw();
   // Return if the requested lift position is the same as the current - no movement requested
   if (current_lift_raw == requested_lift_raw) {
+    // Clear stop requests if there is no movement
+    window_covering_stop_requested_flag = false;
     return;
   }
 
@@ -102,9 +113,18 @@ void loop()
     // Print the current percent
     Serial.printf("%d%%\n", current_percent);
     // Delay a small amount to simulate a real motor actuating
-    delay(50);
+    delay(100);
     // Update the Matter network with the current position
     matter_blinds.set_actual_lift_position_percent(current_percent);
+    // Handle stop requests while moving
+    if (window_covering_stop_requested_flag) {
+      Serial.println("Stop requested");
+      window_covering_stop_requested_flag = false;
+      // Set the requested position to the current position and break the loop
+      requested_lift_raw = matter_blinds.get_actual_lift_position_raw();
+      matter_blinds.set_requested_lift_position_raw(requested_lift_raw);
+      break;
+    }
   } while (current_percent != requested_percent);
 
   // Set the actual position to the requested position
@@ -116,6 +136,10 @@ void loop()
   // Print the current position
   Serial.printf("Moved to %u%%\n", matter_blinds.get_actual_lift_position_percent());
   current_lift_raw = requested_lift_raw;
+}
+
+void window_covering_stop_requested() {
+  window_covering_stop_requested_flag = true;
 }
 
 void update_onboard_led(uint8_t brightness)

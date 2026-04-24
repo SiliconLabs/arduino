@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright 2024 Silicon Laboratories Inc. www.silabs.com
+ * Copyright 2026 Silicon Laboratories Inc. www.silabs.com
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -46,12 +46,7 @@ uint32_t micros()
 
 void delay(uint32_t ms)
 {
-  uint32_t div = portTICK_PERIOD_MS;
-  if (div == 0) {
-    div = 1;
-  }
-  const TickType_t xDelay = ms / div;
-  vTaskDelay(xDelay);
+  vTaskDelay(pdMS_TO_TICKS(ms));
 }
 
 void delayMicroseconds(unsigned int us)

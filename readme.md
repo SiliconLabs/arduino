@@ -48,7 +48,7 @@ Burning the bootloader fully erases the flash memory first, then burns the bootl
 ## Radio protocol variants
 Each board supports a number of different radio protocol stacks (like *'Matter'*, *'BLE (Arduino)'*, *'BLE (Silabs)'* and *'None'*) which can be selected under *'Tools > Protocol stack'* in the Arduino IDE.
 
- - Selecting `Matter` includes the Matter stack - which is quite resource heavy. Selecting this is only recommended when developing Matter applications. BLE is included, but cannot be used by users as the Matter SDK takes ownership of it. Matter examples will only work with this option.
+ - Selecting `Matter` includes the Matter stack - which is quite resource heavy. Selecting this is only recommended when developing Matter applications. BLE is also included and can be used for custom applications after the Matter pairing finished. Matter examples will only work with this option.
  - Selecting `BLE (Arduino)` provides compatibility with the [ArduinoBLE](https://github.com/arduino-libraries/ArduinoBLE) library and is moderately resource heavy. This variant is compatible with all ArduinoBLE examples and applications based on the library.
  - Selecting `BLE (Silabs)` includes Silicon Labs' BLE stack and API ([BGAPI](https://docs.silabs.com/bluetooth/latest/bluetooth-stack-api/)) - which is moderately resource heavy. Select this if you're developing BLE applications based on BGAPI. The included Silicon Labs BLE examples will only work with this option.
  - Selecting `None` does not include a radio protocol stack in your sketch - and saves a considerable amount of Flash/RAM. You can use your board as a regular Arduino without wireless hardware.
@@ -74,6 +74,7 @@ See the docs for the Matter library [here](libraries/Matter/readme.md).
  - **ezWS2812 💡** - driver for WS2812 LEDs using the hardware SPI or GPIO
  - **Matter** ![Matter](doc/matter_logo_icon.png) - [[docs](libraries/Matter/readme.md)]
  - **OneWire 🧵** - driver for the OneWire protocol for Silicon Labs devices
+ - **Silabs BTHome v2 🏠** - library for creating BLE based smart sensors
  - **Si7210_hall** - driver for Si7210 hall sensors
  - **SilabsMicrophoneAnalog 🎙️** - driver for analog microphones [[docs](libraries/SilabsMicrophonerAnalog/readme.md)]
  - **SilabsMicrophonePDM 🎤** - driver for PDM microphones
@@ -97,6 +98,7 @@ There are some additional functions besides the standard Arduino API you can cal
  - `setCPUClock()` - sets the CPU clock speed - it can be one of `CPU_39MHZ`, `CPU_76MHZ`, `CPU_78MHZ`, `CPU_80MHZ`
  - `getCPUClock()` - returns the current CPU speed in hertz
  - `getCPUCycleCount()` - returns the current CPU cycle counter value - overflows often - useful for precision timing
+ - `analogGain()` - selects the gain factor for the ADC hardware
  - `analogReferenceDAC()` - selects the voltage reference for the DAC hardware
  - `getCurrentBoardType()` - returns the current hardware platform (board) the sketch is running on
  - `getCurrentRadioStackType()` - returns the type of the radio stack the sketch was compiled with

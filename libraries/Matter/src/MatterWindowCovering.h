@@ -56,9 +56,12 @@ public:
   uint16_t get_actual_lift_position_raw();
   uint8_t get_actual_lift_position_percent();
 
+  void set_requested_lift_position_raw(uint16_t lift_position);
+  void set_requested_lift_position_percent(uint8_t lift_position_percent);
   uint16_t get_requested_lift_position_raw();
   uint8_t get_requested_lift_position_percent();
 
+  void set_stop_request_callback(void (*window_covering_stop_request_cb)(void));
   void operator=(uint16_t lift_position);
 
 private:

@@ -59,6 +59,8 @@ void setup()
   val = analogRead(PA0);
   Serial.println(val, HEX);
   analogReadResolution(5);
+  analogReference(AR_INTERNAL1V2);
+  analogGain(ANALOG_GAIN_2X);
   val = analogRead(PA1);
   Serial.println(val, OCT);
 

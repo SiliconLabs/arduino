@@ -124,7 +124,8 @@ bool MatterSwitch::begin()
   int result = AddDeviceEndpoint(new_switch_device,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gSwitchDeviceTypes),
-                                 Span<DataVersion>(new_switch_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_switch_data_version, ArraySize(switchEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(new_switch_device);
     free(new_endpoint);

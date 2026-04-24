@@ -32,9 +32,9 @@ using namespace ::chip::Platform;
 using namespace ::chip::Credentials;
 using namespace ::chip::app::Clusters;
 
-const EmberAfDeviceType gOnOffDeviceType[] = { { DEVICE_TYPE_ON_OFF_LIGHT, DEVICE_VERSION_DEFAULT } };
-const EmberAfDeviceType gDimmableBulbDeviceType[] = { { DEVICE_TYPE_DIMMABLE_LIGHT, DEVICE_VERSION_DEFAULT } };
-const EmberAfDeviceType gExtendedColorBulbDeviceType[] = { { DEVICE_TYPE_EXTENDED_COLOR_LIGHT, DEVICE_VERSION_DEFAULT } };
+const EmberAfDeviceType gOnOffDeviceType[] = { { DEVICE_TYPE_ON_OFF_LIGHT, DEVICE_VERSION_LIGHTBULB } };
+const EmberAfDeviceType gDimmableBulbDeviceType[] = { { DEVICE_TYPE_DIMMABLE_LIGHT, DEVICE_VERSION_LIGHTBULB } };
+const EmberAfDeviceType gExtendedColorBulbDeviceType[] = { { DEVICE_TYPE_EXTENDED_COLOR_LIGHT, DEVICE_VERSION_LIGHTBULB } };
 
 constexpr CommandId onOffIncomingCommands[] = {
   app::Clusters::OnOff::Commands::Off::Id,
@@ -86,8 +86,8 @@ constexpr CommandId colorControlIncomingCommands[] = {
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(onOffAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnOff::Id, BOOLEAN, 1, 0),                                       /* OnOff */
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::GlobalSceneControl::Id, BOOLEAN, 1, 0),                          /* GlobalSceneControl */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnTime::Id, INT16U, 2, 0),                                       /* OnTime */
-DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OffWaitTime::Id, INT16U, 2, 0),                                  /* OffWaitTime */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OnTime::Id, INT16U, 2, ATTRIBUTE_MASK_WRITABLE),                 /* OnTime */
+DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::OffWaitTime::Id, INT16U, 2, ATTRIBUTE_MASK_WRITABLE),            /* OffWaitTime */
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::StartUpOnOff::Id, INT8U, 1, ATTRIBUTE_MASK_WRITABLE_NULLABLE),   /* StartUpOnOff */
 DECLARE_DYNAMIC_ATTRIBUTE(OnOff::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                                 /* FeatureMap */
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                         /* ClusterRevision auto added by LIST_END */
@@ -121,6 +121,14 @@ DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(SimpleLightbulbEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(OnOff::Id, onOffAttrs, ZAP_CLUSTER_MASK(SERVER), onOffIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 DECLARE_DYNAMIC_CLUSTER(BridgedDeviceBasicInformation::Id, bridgedDeviceBasicAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER), identifyIncomingCommands, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Groups::Id, groupsAttrs, ZAP_CLUSTER_MASK(SERVER), groupsIncomingCommands, groupsOutgoingCommands),
+DECLARE_DYNAMIC_CLUSTER_LIST_END;
+
+// Simple Lightbulb endpoint cluster list - no bridge
+DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(SimpleLightbulbNoBridgeEndpointClusters)
+DECLARE_DYNAMIC_CLUSTER(OnOff::Id, onOffAttrs, ZAP_CLUSTER_MASK(SERVER), onOffIncomingCommands, nullptr),
+DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Identify::Id, identifyAttrs, ZAP_CLUSTER_MASK(SERVER), identifyIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Groups::Id, groupsAttrs, ZAP_CLUSTER_MASK(SERVER), groupsIncomingCommands, groupsOutgoingCommands),
 DECLARE_DYNAMIC_CLUSTER_LIST_END;
@@ -186,6 +194,25 @@ bool MatterLightbulb::begin()
 /***************************************************************************//**
  * Initializes the MatterLightbulb instance
  *
+ * @param[in] bridged_device sets whether the endpoint should be bridged and
+ * include the BridgedDeviceBasicInformation cluster or not.
+ *
+ * @return true if the initialization succeeded, false otherwise
+ ******************************************************************************/
+bool MatterLightbulb::begin(bool bridged_device)
+{
+  if (bridged_device) {
+    return this->begin();
+  } else {
+    return this->begin_internal(lightbulb_simple,
+                                SimpleLightbulbNoBridgeEndpointClusters,
+                                ArraySize(SimpleLightbulbNoBridgeEndpointClusters));
+  }
+}
+
+/***************************************************************************//**
+ * Initializes the MatterLightbulb instance
+ *
  * @return true if the initialization succeeded, false otherwise
  ******************************************************************************/
 bool MatterLightbulb::begin_internal(bulb_types_e bulb_type, EmberAfCluster* endpoint_clusters, uint8_t cluster_count)
@@ -243,17 +270,20 @@ bool MatterLightbulb::begin_internal(bulb_types_e bulb_type, EmberAfCluster* end
     result = AddDeviceEndpoint(new_lightbulb_device,
                                new_endpoint,
                                Span<const EmberAfDeviceType>(gOnOffDeviceType),
-                               Span<DataVersion>(new_bulb_data_version, dataversion_size), 1);
+                               Span<DataVersion>(new_bulb_data_version, cluster_count),
+                               1);
   } else if (bulb_type == lightbulb_dimmable) {
     result = AddDeviceEndpoint(new_lightbulb_device,
                                new_endpoint,
                                Span<const EmberAfDeviceType>(gDimmableBulbDeviceType),
-                               Span<DataVersion>(new_bulb_data_version, dataversion_size), 1);
+                               Span<DataVersion>(new_bulb_data_version, cluster_count),
+                               1);
   } else if (bulb_type == lightbulb_color) {
     result = AddDeviceEndpoint(new_lightbulb_device,
                                new_endpoint,
                                Span<const EmberAfDeviceType>(gExtendedColorBulbDeviceType),
-                               Span<DataVersion>(new_bulb_data_version, dataversion_size), 1);
+                               Span<DataVersion>(new_bulb_data_version, cluster_count),
+                               1);
   }
 
   if (result < 0) {
@@ -279,6 +309,9 @@ bool MatterLightbulb::begin_internal(bulb_types_e bulb_type, EmberAfCluster* end
 
   // Start the Identify cluster server
   emberAfIdentifyClusterServerInitCallback(new_lightbulb_device->GetEndpointId());
+
+  // Start the Groups cluster server
+  emberAfGroupsClusterServerInitCallback(new_lightbulb_device->GetEndpointId());
 
   if (bulb_type == lightbulb_dimmable || bulb_type == lightbulb_color) {
     // Call the LevelControl init callback one more time to have the min/max values set.

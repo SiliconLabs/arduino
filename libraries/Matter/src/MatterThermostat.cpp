@@ -123,7 +123,8 @@ bool MatterThermostat::begin()
   int result = AddDeviceEndpoint(new_thermostat_device,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gThermostatDeviceTypes),
-                                 Span<DataVersion>(new_sensor_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_sensor_data_version, ArraySize(thermostatEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(new_thermostat_device);
     free(new_endpoint);

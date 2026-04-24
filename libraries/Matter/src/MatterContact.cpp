@@ -35,7 +35,7 @@ const EmberAfDeviceType gContactSensorDeviceTypes[] = { { DEVICE_TYPE_CONTACT_SE
 
 // Boolean state cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(booleanStateAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(BooleanState::Attributes::StateValue::Id, INT8U, 1, 0),               /* StateValue */
+DECLARE_DYNAMIC_ATTRIBUTE(BooleanState::Attributes::StateValue::Id, BOOLEAN, 1, 0),             /* StateValue */
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                           /* ClusterRevision auto added by LIST_END */
 
 // Contact sensor cluster list
@@ -110,7 +110,8 @@ bool MatterContact::begin()
   int result = AddDeviceEndpoint(sensor,
                                  new_endpoint,
                                  Span<const EmberAfDeviceType>(gContactSensorDeviceTypes),
-                                 Span<DataVersion>(new_sensor_data_version, dataversion_size), 1);
+                                 Span<DataVersion>(new_sensor_data_version, ArraySize(contactSensorEndpointClusters)),
+                                 1);
   if (result < 0) {
     delete(sensor);
     free(new_endpoint);

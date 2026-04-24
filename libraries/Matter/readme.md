@@ -35,9 +35,11 @@ Boards supporting OpenThread RCP:
  - Seeed Studio XIAO MG24 (Sense)
  - SparkFun Thing Plus Matter MGM240P
 
-To set up your board as an OpenThread RCP do the following:
+You can use the python script '*extra_firmware_flasher.py*' under '*extra/firmware/*' to automatically flash the appropriate OpenThread RCP firmware on your board.
+
+To manually set up your board as an OpenThread RCP do the following:
  - Flash the bootloader on your device
- - Flash *'extra/openthread_rcp/openthread_rcp_\<boardname>.hex'* on your device
+ - Flash *'extra/firmware/openthread_rcp_\<boardname>.hex'* on your device
  - Plug the board into your Raspberry Pi via USB
  - Follow the steps in the Raspberry Pi OTBR guide
 
@@ -45,8 +47,10 @@ Read more and get the Raspberry Pi OTBR image [here](https://docs.silabs.com/mat
 
 ## Supported Matter devices
 
+ - Air purifier
  - Air quality sensor
  - Contact sensor
+ - Concentration measurement (CO, CO2, TVOC)
  - Door lock
  - Fan
  - Flow measurement
@@ -57,7 +61,9 @@ Read more and get the Raspberry Pi OTBR image [here](https://docs.silabs.com/mat
  - Color lightbulb
  - Occupancy sensor
  - On/Off Plug-in Unit / Outlet
+ - Power source (battery)
  - Pressure measurement
+ - Rain sensor
  - Switch
  - Temperature measurement
  - Thermostat
@@ -201,6 +207,22 @@ Sets the serial number of the device.
 
 ```MatterAirQuality::AirQuality_t get_air_quality();```
 
+## class MatterCO
+
+```void set_measured_value(float value);```
+
+```float get_measured_value();```
+
+```void set_measured_value(uint32_t value);```
+
+## class MatterCO2
+
+```void set_measured_value(float value);```
+
+```float get_measured_value();```
+
+```void set_measured_value(uint32_t value);```
+
 ## class MatterContact
 
 Class for creating and controlling a Matter Contact Sensor appliance.
@@ -332,6 +354,62 @@ Has all the methods of ```MatterDimmableLightbulb``` and adds the following:
 
 ```void toggle();```
 
+## class MatterSimplePowerSource
+
+Class for creating and controlling a simple Matter Power Source appliance with battery percent and battery charge level support.
+
+```void set_battery_percent(uint8_t value);```
+
+```uint8_t get_battery_percent();```
+
+```void set_battery_charge_level(uint8_t value);```
+
+```uint8_t get_battery_charge_level();```
+
+## class MatterPowerSource
+
+Class for creating and controlling a Matter Power Source appliance with battery attributes.
+
+```void set_status(uint8_t value);```
+
+```uint8_t get_status();```
+
+```void set_order(uint8_t value);```
+
+```uint8_t get_order();```
+
+```void set_description(const char* value);```
+
+```const char* get_description();```
+
+```void set_bat_voltage(uint32_t value);```
+
+```uint32_t get_bat_voltage();```
+
+```void set_bat_percent_remaining(uint8_t value);```
+
+```uint8_t get_bat_percent_remaining();```
+
+```void set_bat_time_remaining(uint32_t value);```
+
+```uint32_t get_bat_time_remaining();```
+
+```void set_bat_charge_level(uint8_t value);```
+
+```uint8_t get_bat_charge_level();```
+
+```void set_bat_replacement_needed(bool value);```
+
+```bool get_bat_replacement_needed();```
+
+```void set_bat_replaceability(uint8_t value);```
+
+```uint8_t get_bat_replaceability();```
+
+```void set_bat_present(bool value);```
+
+```bool get_bat_present();```
+
 ## class MatterPressure
 
 ```void set_measured_value(int16_t value);```
@@ -341,6 +419,12 @@ Has all the methods of ```MatterDimmableLightbulb``` and adds the following:
 ```void set_measured_value(double value);```
 
 ```int16_t get_measured_value();```
+
+## class MatterRain
+
+```void set_measured_value(bool value);```
+
+```bool get_measured_value();```
 
 ## class MatterSwitch
 
@@ -398,6 +482,14 @@ Has all the methods of ```MatterDimmableLightbulb``` and adds the following:
 
 ```void set_system_mode(thermostat_mode_t system_mode);```
 
+## class MatterTVOC
+
+```void set_measured_value(float value);```
+
+```float get_measured_value();```
+
+```void set_measured_value(uint32_t value);```
+
 ## class MatterWindowCovering
 
 ```void set_current_operation(window_covering_current_operation_t current_operation);```
@@ -410,6 +502,12 @@ Has all the methods of ```MatterDimmableLightbulb``` and adds the following:
 
 ```uint8_t get_actual_lift_position_percent();```
 
+```void set_requested_lift_position_raw(uint16_t lift_position);```
+
+```void set_requested_lift_position_percent(uint8_t lift_position_percent);```
+
 ```uint16_t get_requested_lift_position_raw();```
 
 ```uint8_t get_requested_lift_position_percent();```
+
+```void set_stop_request_callback(void (*window_covering_stop_request_cb)(void));```

@@ -38,7 +38,8 @@ Device::Device(const char* device_name) :
   groups_cluster_name_support(0),
   location(""),
   endpoint_id(0),
-  device_change_callback(nullptr)
+  device_change_callback(nullptr),
+  groups_cluster_feature_map(0)
 {
   chip::Platform::CopyString(this->device_name, device_name);
   chip::Platform::CopyString(this->vendor_name, "Silicon Labs");
@@ -332,6 +333,10 @@ CHIP_ERROR Device::HandleWriteGroupsAttribute(ClusterId clusterId,
 
   if (attributeId == Groups::Attributes::NameSupport::Id) {
     this->groups_cluster_name_support = *buffer;
+  } else if (attributeId == Groups::Attributes::FeatureMap::Id) {
+    uint32_t featureMap;
+    memcpy(&featureMap, buffer, sizeof(featureMap));
+    this->groups_cluster_feature_map = featureMap;
   } else {
     return CHIP_ERROR_INTERNAL;
   }

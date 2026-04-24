@@ -41,6 +41,7 @@ public:
   MatterLightbulb();
   ~MatterLightbulb();
   virtual bool begin();
+  bool begin(bool bridged_device);
   void end();
 
   void set_onoff(bool value);

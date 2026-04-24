@@ -35,6 +35,7 @@ using namespace arduino;
 #include <algorithm>
 #include "FreeRTOS.h"
 #include "FreeRTOSConfig.h"
+#include "projdefs.h"
 #include "task.h"
 #include "arduino_variant.h"
 
@@ -92,8 +93,8 @@ using std::abs;
  * Sets the DAC voltage reference
  * Possible values:
  *  - DAC_VREF_1V25
- *  - DAC_VREF_2V5,
- *  - DAC_VREF_AVDD,
+ *  - DAC_VREF_2V5
+ *  - DAC_VREF_AVDD
  *  - DAC_VREF_EXTERNAL_PIN
  *
  * @param[in] reference The selected reference from 'dac_voltage_references'
@@ -103,7 +104,25 @@ void analogReferenceDAC(uint8_t reference);
 typedef enum _dac_channel_t dac_channel_t;
 void analogWrite(dac_channel_t dac_channel, int value);
 void analogWriteResolution(int resolution);
+
+/***************************************************************************//**
+ * Sets the ADC read resolution bits
+ *
+ * @param[in] resolution The selected resolution in bits
+ ******************************************************************************/
 void analogReadResolution(int resolution);
+
+/***************************************************************************//**
+ * Sets the ADC gain factor
+ * Possible values:
+ *  - ANALOG_GAIN_0_5X
+ *  - ANALOG_GAIN_1X
+ *  - ANALOG_GAIN_2X
+ *  - ANALOG_GAIN_4X
+ *
+ * @param[in] gain The selected gain factor from 'analog_gain_t'
+ ******************************************************************************/
+void analogGain(analog_gain_t gain);
 
 /***************************************************************************//**
  * Starts continuous ADC sample acquisition using DMA

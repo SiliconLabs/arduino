@@ -348,18 +348,16 @@ namespace Globals {
 // Global structs.
 namespace Structs {
 
-namespace TestGlobalStruct {
+namespace AtomicAttributeStatusStruct {
     enum class Fields : uint8_t {
-    kName = 0,
-    kMyBitmap = 1,
-    kMyEnum = 2,
+    kAttributeID = 0,
+    kStatusCode = 1,
     };
 
     struct Type {
     public:
-        chip::CharSpan name    ;
-        DataModel::Nullable<chip::BitMask<Globals::TestGlobalBitmap>> myBitmap ;
-        Optional<DataModel::Nullable<Globals::TestGlobalEnum>> myEnum;
+        chip::AttributeId attributeID     = static_cast<chip::AttributeId>(0);
+        uint8_t statusCode     = static_cast<uint8_t>(0);
 
         CHIP_ERROR Decode(TLV::TLVReader &reader);
 
@@ -370,7 +368,7 @@ namespace TestGlobalStruct {
 
     using DecodableType = Type;
 
-} // namespace TestGlobalStruct
+} // namespace AtomicAttributeStatusStruct
 
 namespace LocationDescriptorStruct {
     enum class Fields : uint8_t {
@@ -396,16 +394,18 @@ namespace LocationDescriptorStruct {
 
 } // namespace LocationDescriptorStruct
 
-namespace AtomicAttributeStatusStruct {
+namespace TestGlobalStruct {
     enum class Fields : uint8_t {
-    kAttributeID = 0,
-    kStatusCode = 1,
+    kName = 0,
+    kMyBitmap = 1,
+    kMyEnum = 2,
     };
 
     struct Type {
     public:
-        chip::AttributeId attributeID     = static_cast<chip::AttributeId>(0);
-        uint8_t statusCode     = static_cast<uint8_t>(0);
+        chip::CharSpan name    ;
+        DataModel::Nullable<chip::BitMask<Globals::TestGlobalBitmap>> myBitmap ;
+        Optional<DataModel::Nullable<Globals::TestGlobalEnum>> myEnum;
 
         CHIP_ERROR Decode(TLV::TLVReader &reader);
 
@@ -416,7 +416,7 @@ namespace AtomicAttributeStatusStruct {
 
     using DecodableType = Type;
 
-} // namespace AtomicAttributeStatusStruct
+} // namespace TestGlobalStruct
 
 } // namespace Structs
 

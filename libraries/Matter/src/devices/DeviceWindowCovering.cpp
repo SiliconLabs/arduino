@@ -30,7 +30,8 @@ DeviceWindowCovering::DeviceWindowCovering(const char* device_name) :
   Device(device_name),
   current_operational_status(kOperationalStatus_Stopped),
   requested_lift_pos(0u),
-  actual_lift_pos(0u)
+  actual_lift_pos(0u),
+  window_covering_stop_motion_request_cb(nullptr)
 {
   this->SetDeviceType(device_type_t::kDeviceType_WindowCovering);
 }
@@ -93,6 +94,18 @@ void DeviceWindowCovering::SetActualLiftPosition(uint16_t lift_position)
 uint16_t DeviceWindowCovering::GetActualLiftPosition()
 {
   return this->actual_lift_pos;
+}
+
+void DeviceWindowCovering::SetStopMotionRequestCallback(void (*window_covering_stop_motion_request_cb)(void))
+{
+  this->window_covering_stop_motion_request_cb = window_covering_stop_motion_request_cb;
+}
+
+void DeviceWindowCovering::StopMotionRequest()
+{
+  if (this->window_covering_stop_motion_request_cb) {
+    this->window_covering_stop_motion_request_cb();
+  }
 }
 
 uint32_t DeviceWindowCovering::GetWindowCoveringClusterFeatureMap()

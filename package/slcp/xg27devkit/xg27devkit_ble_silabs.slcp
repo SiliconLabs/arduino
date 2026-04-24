@@ -18,10 +18,12 @@ filter:
 component:
   - id: bluetooth_stack
   - id: bluetooth_feature_legacy_advertiser
+  - id: bluetooth_feature_extended_advertiser
   - id: bluetooth_feature_connection
   - id: bluetooth_feature_gatt
   - id: bluetooth_feature_gatt_server
   - id: bluetooth_feature_legacy_scanner
+  - id: bluetooth_feature_extended_scanner
   - id: bluetooth_feature_sm
   - id: bluetooth_feature_system
   - id: bootloader_interface

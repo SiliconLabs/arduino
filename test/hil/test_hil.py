@@ -9,6 +9,7 @@ from testcases.testcase_hil_basic_smoke import testcase_hil_basic_smoke
 from testcases.testcase_hil_serial_echo import testcase_hil_serial_echo
 from testcases.testcase_hil_eeprom import testcase_hil_eeprom
 from testcases.testcase_hil_watchdog import testcase_hil_watchdog
+from testcases.testcase_hil_adc import testcase_hil_adc
 from testcases.testcase_hil_thingplus_battery import testcase_hil_thingplus_battery
 from testcases.testcase_hil_imu_spi import testcase_hil_imu_spi
 from testcases.testcase_hil_si7021_wire import testcase_hil_si7021_wire
@@ -53,6 +54,7 @@ testcase_list = {
     "serial_echo": testcase_hil_serial_echo,
     "watchdog": testcase_hil_watchdog,
     "eeprom": testcase_hil_eeprom,
+    "adc": testcase_hil_adc,
     "thingplus_battery": testcase_hil_thingplus_battery,
     "imu_spi": testcase_hil_imu_spi,
     "si7021_wire": testcase_hil_si7021_wire,
@@ -196,11 +198,23 @@ def count_number_of_tests(boards):
     return total_tests * len(testcase_list)
 
 
+def print_available_board_configs():
+    board_names = []
+    for board, _variant in all_variants:
+        if board not in board_names:
+            board_names.append(board)
+
+    print("Supported boards:")
+    for board in board_names:
+        print(f"  {board}")
+
+
 def get_board_and_port_and_cfg_file_from_arguments():
     try:
         input_board_name = sys.argv[1]
     except Exception:
-        print("Please provide a target board name in the first argument!")
+        print("Please provide a target board name or config file path in the first argument!")
+        print_available_board_configs()
         exit(-1)
 
     # Check if we have been provided with a config file
@@ -221,6 +235,7 @@ def get_board_and_port_and_cfg_file_from_arguments():
             break
     if not found:
         print(f"Board with the name '{input_board_name}' not found!")
+        print_available_board_configs()
         exit(-1)
 
     return input_board_name, upload_port, None

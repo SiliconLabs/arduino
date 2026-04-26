@@ -38,7 +38,7 @@ constexpr CommandId thermostatIncomingCommands[] = {
   kInvalidCommandId,
 };
 
-// Temperature sensor cluster attributes
+// Thermostat cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(thermostatAttrs)
 DECLARE_DYNAMIC_ATTRIBUTE(Thermostat::Attributes::LocalTemperature::Id, INT16S, 2, 0),                                /* Local Temperature */
 DECLARE_DYNAMIC_ATTRIBUTE(Thermostat::Attributes::ControlSequenceOfOperation::Id, INT8U, 1, 0),                       /* Control Sequence Of Operation */
@@ -51,7 +51,7 @@ DECLARE_DYNAMIC_ATTRIBUTE(Thermostat::Attributes::MaxHeatSetpointLimit::Id, INT1
 DECLARE_DYNAMIC_ATTRIBUTE(Thermostat::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                                    /* FeatureMap */
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                                 /* ClusterRevision auto added by LIST_END */
 
-// Temperature sensor cluster list
+// Thermostat cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(thermostatEndpointClusters)
 DECLARE_DYNAMIC_CLUSTER(Thermostat::Id, thermostatAttrs, ZAP_CLUSTER_MASK(SERVER), thermostatIncomingCommands, nullptr),
 DECLARE_DYNAMIC_CLUSTER(Descriptor::Id, descriptorAttrs, ZAP_CLUSTER_MASK(SERVER), nullptr, nullptr),

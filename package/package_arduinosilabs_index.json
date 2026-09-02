@@ -322,10 +322,66 @@
                 {
                     "category": "Silicon Labs",
                     "name": "Silicon Labs",
-                    "url": "!!local-install-url/silabs_arduino_core-4.0.0.zst",
+                    "url": "https://github.com/SiliconLabsSoftware/arduino/releases/download/4.0.0/silabs_arduino_core-4.0.0.zst",
                     "version": "4.0.0",
                     "architecture": "silabs",
                     "archiveFileName": "silabs_arduino_core-4.0.0.zst",
+                    "boards": [
+                        {
+                            "name": "Arduino Nano Matter"
+                        },
+                        {
+                            "name": "SparkFun Thing Plus Matter"
+                        },
+                        {
+                            "name": "xG24 Explorer Kit"
+                        },
+                        {
+                            "name": "xG24 Dev Kit"
+                        },
+                        {
+                            "name": "xG27 Dev Kit"
+                        },
+                        {
+                            "name": "BGM220 Explorer Kit"
+                        },
+                        {
+                            "name": "Ezurio Lyra 24P 20dBm Dev Kit"
+                        },
+                        {
+                            "name": "Seeed Studio XIAO MG24 (Sense)"
+                        }
+                    ],
+                    "toolsDependencies": [
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "12.2.rel1",
+                            "name": "gcc-arm-none-eabi"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "1.16.4",
+                            "name": "simplicitycommander"
+                        },
+                        {
+                            "packager": "SiliconLabs",
+                            "version": "0.12.0-arduino1-static",
+                            "name": "openocd"
+                        }
+                    ],
+                    "help": {
+                        "online": "https://github.com/SiliconLabsSoftware/arduino"
+                    },
+                    "size": 602647107,
+                    "checksum": "SHA-256:63947ef379284e7e98dc720afc777f345a3a63316b68a35514995bcc2e2ca513"
+                },
+                {
+                    "category": "Silicon Labs",
+                    "name": "Silicon Labs",
+                    "url": "!!local-install-url/silabs_arduino_core-5.0.0.zst",
+                    "version": "5.0.0",
+                    "architecture": "silabs",
+                    "archiveFileName": "silabs_arduino_core-5.0.0.zst",
                     "boards": [
                         {
                             "name": "Arduino Nano Matter"

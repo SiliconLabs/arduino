@@ -36,18 +36,38 @@ const EmberAfDeviceType gDoorLockDeviceTypes[] = { { DEVICE_TYPE_DOOR_LOCK, DEVI
 constexpr CommandId doorLockIncomingCommands[] = {
   app::Clusters::DoorLock::Commands::LockDoor::Id,
   app::Clusters::DoorLock::Commands::UnlockDoor::Id,
+  app::Clusters::DoorLock::Commands::SetUser::Id,
+  app::Clusters::DoorLock::Commands::GetUser::Id,
+  app::Clusters::DoorLock::Commands::ClearUser::Id,
+  app::Clusters::DoorLock::Commands::SetCredential::Id,
+  app::Clusters::DoorLock::Commands::GetCredentialStatus::Id,
+  app::Clusters::DoorLock::Commands::ClearCredential::Id,
   kInvalidCommandId,
 };
 
+constexpr uint32_t doorLockSupportedFeatures =
+  static_cast<uint32_t>(DoorLock::Feature::kPinCredential)
+  | static_cast<uint32_t>(DoorLock::Feature::kRfidCredential)
+  | static_cast<uint32_t>(DoorLock::Feature::kUser);
+
 // Door lock cluster attributes
 DECLARE_DYNAMIC_ATTRIBUTE_LIST_BEGIN(doorLockAttrs)
-DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::LockState::Id, INT8U, 1, ATTRIBUTE_MASK_NULLABLE),  // LockState
-DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::LockType::Id, INT8U, 1, 0),                         // LockType
-DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::ActuatorEnabled::Id, BOOLEAN, 1, 0),                // ActuatorEnabled
-DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::OperatingMode::Id, INT8U, 1, 0),                    // OperatingMode
-DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::SupportedOperatingModes::Id, INT16U, 2, 0),         // SupportedOperatingModes
-DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                    // FeatureMap
-DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                               // ClusterRevision auto added by LIST_END
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::LockState::Id, INT8U, 1, ATTRIBUTE_MASK_NULLABLE),          // LockState
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::LockType::Id, INT8U, 1, 0),                                 // LockType
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::ActuatorEnabled::Id, BOOLEAN, 1, 0),                        // ActuatorEnabled
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::OperatingMode::Id, INT8U, 1, 0),                            // OperatingMode
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::SupportedOperatingModes::Id, INT16U, 2, 0),                 // SupportedOperatingModes
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::NumberOfTotalUsersSupported::Id, INT16U, 2, 0),             // NumberOfTotalUsersSupported
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::NumberOfPINUsersSupported::Id, INT16U, 2, 0),               // NumberOfPINUsersSupported
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::NumberOfRFIDUsersSupported::Id, INT16U, 2, 0),              // NumberOfRFIDUsersSupported
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::NumberOfCredentialsSupportedPerUser::Id, INT8U, 1, 0),      // NumberOfCredentialsSupportedPerUser
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::MaxPINCodeLength::Id, INT8U, 1, 0),                         // MaxPINCodeLength
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::MinPINCodeLength::Id, INT8U, 1, 0),                         // MinPINCodeLength
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::MaxRFIDCodeLength::Id, INT8U, 1, 0),                        // MaxRFIDCodeLength
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::MinRFIDCodeLength::Id, INT8U, 1, 0),                        // MinRFIDCodeLength
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::CredentialRulesSupport::Id, BITMAP8, 1, 0),                 // CredentialRulesSupport
+DECLARE_DYNAMIC_ATTRIBUTE(DoorLock::Attributes::FeatureMap::Id, BITMAP32, 4, 0),                            // FeatureMap
+DECLARE_DYNAMIC_ATTRIBUTE_LIST_END();                                                                       // ClusterRevision auto added by LIST_END
 
 // Door lock endpoint cluster list
 DECLARE_DYNAMIC_CLUSTER_LIST_BEGIN(doorLockEndpointClusters)
@@ -63,9 +83,38 @@ MatterDoorLock::MatterDoorLock() :
   door_lock_device(nullptr),
   device_endpoint(nullptr),
   endpoint_dataversion_storage(nullptr),
+  feature_map(doorLockSupportedFeatures),
   initialized(false)
 {
   ;
+}
+
+bool MatterDoorLock::setFeatures(uint32_t feature_map)
+{
+  if (this->initialized || (feature_map & ~doorLockSupportedFeatures) != 0) {
+    return false;
+  }
+  this->feature_map = feature_map;
+  return true;
+}
+
+bool MatterDoorLock::setFeatures(Feature feature)
+{
+  return this->setFeatures(static_cast<uint32_t>(feature));
+}
+
+bool MatterDoorLock::setFeatures(Feature feature1, Feature feature2)
+{
+  return this->setFeatures(static_cast<uint32_t>(feature1) | static_cast<uint32_t>(feature2));
+}
+
+bool MatterDoorLock::setFeatures(std::initializer_list<Feature> features)
+{
+  uint32_t feature_map = 0;
+  for (Feature feature : features) {
+    feature_map |= static_cast<uint32_t>(feature);
+  }
+  return this->setFeatures(feature_map);
 }
 
 /***************************************************************************//**
@@ -88,7 +137,7 @@ bool MatterDoorLock::begin()
   }
 
   // Create new device
-  DeviceDoorLock* door_lock_device = new (std::nothrow)DeviceDoorLock("Door lock");
+  DeviceDoorLock* door_lock_device = new (std::nothrow)DeviceDoorLock("Door lock", this->feature_map);
   if (door_lock_device == nullptr) {
     return false;
   }
@@ -213,4 +262,65 @@ void MatterDoorLock::operator=(bool state)
 MatterDoorLock::operator bool()
 {
   return this->is_locked();
+}
+
+/***************************************************************************//**
+ * Provisions a PIN or RFID credential from the sketch
+ *
+ * @param[in] type the credential type (CredentialTypeEnum::kPin or kRfid)
+ * @param[in] index the 1-based credential index
+ * @param[in] data the raw credential bytes (PIN digits or RFID UID)
+ * @param[in] len the length of 'data' in bytes
+ *
+ * @return true if the credential was provisioned, false otherwise
+ ******************************************************************************/
+bool MatterDoorLock::set_credential(CredentialTypeEnum type, uint16_t index, const uint8_t* data, uint8_t len)
+{
+  if (!this->initialized) {
+    return false;
+  }
+  return this->door_lock_device->SetLocalCredential(type, index, data, len);
+}
+
+/***************************************************************************//**
+ * Clears a previously provisioned PIN or RFID credential
+ *
+ * @param[in] type the credential type (CredentialTypeEnum::kPin or kRfid)
+ * @param[in] index the 1-based credential index
+ *
+ * @return true if the credential was cleared, false otherwise
+ ******************************************************************************/
+bool MatterDoorLock::clear_credential(CredentialTypeEnum type, uint16_t index)
+{
+  if (!this->initialized) {
+    return false;
+  }
+  return this->door_lock_device->ClearLocalCredential(type, index);
+}
+
+/***************************************************************************//**
+ * Sets the callback that's called whenever a credential is provisioned or cleared
+ *
+ * @param[in] credential_changed_cb the callback to call
+ ******************************************************************************/
+void MatterDoorLock::set_credential_changed_callback(void (*credential_changed_cb)(CredentialTypeEnum type, uint16_t index))
+{
+  if (!this->initialized) {
+    return;
+  }
+  this->door_lock_device->SetCredentialChangedCallback(credential_changed_cb);
+}
+
+/***************************************************************************//**
+ * Reports that a physically-presented credential (matched by the sketch itself) authorized an unlock
+ *
+ * @param[in] type the credential type that was matched (e.g. CredentialTypeEnum::kRfid)
+ * @param[in] index the 1-based index of the previously provisioned credential that was matched
+ ******************************************************************************/
+void MatterDoorLock::report_credential_unlock(CredentialTypeEnum type, uint16_t index)
+{
+  if (!this->initialized) {
+    return;
+  }
+  this->door_lock_device->ReportCredentialUnlock(type, index);
 }

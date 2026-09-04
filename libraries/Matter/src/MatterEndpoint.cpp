@@ -230,6 +230,37 @@ void MatterWindowCoveringPluginServerInitCallback()
   ;
 }
 
+// Validates an optional keypad PIN against the stored credentials and, on a match, reports the
+// lock/unlock operation through the rich SetLockState() overload so a LockOperation event with
+// credential attribution is emitted. Falls back to a plain state update when no PIN is presented,
+// matching the previous behavior.
+static bool HandleDoorLockCommand(DeviceDoorLock* door_lock_device,
+                                  DeviceDoorLock::lock_state_t state,
+                                  const Optional<chip::ByteSpan>& pinCode,
+                                  DoorLock::OperationErrorEnum& err)
+{
+  if (pinCode.HasValue()) {
+    uint16_t userIndex = 0;
+    uint16_t credentialIndex = 0;
+    if (!door_lock_device->ValidatePIN(pinCode.Value(), userIndex, credentialIndex)) {
+      err = DoorLock::OperationErrorEnum::kInvalidCredential;
+      return false;
+    }
+
+    Nullable<uint16_t> userIndexNullable = (userIndex == 0) ? Nullable<uint16_t>() : Nullable<uint16_t>(userIndex);
+    CredentialStruct credential;
+    credential.credentialType = CredentialTypeEnum::kPin;
+    credential.credentialIndex = credentialIndex;
+    List<const CredentialStruct> credentialList(&credential, 1);
+
+    return door_lock_device->SetLockState(state, OperationSourceEnum::kKeypad, userIndexNullable,
+                                          Nullable<List<const CredentialStruct>>(credentialList));
+  }
+
+  door_lock_device->SetLockState(state);
+  return true;
+}
+
 bool emberAfPluginDoorLockOnDoorLockCommand(chip::EndpointId endpointId,
                                             const Nullable<chip::FabricIndex>& fabricIdx,
                                             const Nullable<chip::NodeId>& nodeId,
@@ -242,9 +273,7 @@ bool emberAfPluginDoorLockOnDoorLockCommand(chip::EndpointId endpointId,
     return false;
   }
   if (dev->GetDeviceType() == Device::device_type_t::kDeviceType_DoorLock) {
-    DeviceDoorLock* door_lock_device = static_cast<DeviceDoorLock*>(dev);
-    door_lock_device->SetLockState(DeviceDoorLock::lock_state_t::LOCKED);
-    return true;
+    return HandleDoorLockCommand(static_cast<DeviceDoorLock*>(dev), DeviceDoorLock::lock_state_t::LOCKED, pinCode, err);
   }
   return false;
 }
@@ -261,9 +290,55 @@ bool emberAfPluginDoorLockOnDoorUnlockCommand(chip::EndpointId endpointId,
     return false;
   }
   if (dev->GetDeviceType() == Device::device_type_t::kDeviceType_DoorLock) {
-    DeviceDoorLock* door_lock_device = static_cast<DeviceDoorLock*>(dev);
-    door_lock_device->SetLockState(DeviceDoorLock::lock_state_t::UNLOCKED);
-    return true;
+    return HandleDoorLockCommand(static_cast<DeviceDoorLock*>(dev), DeviceDoorLock::lock_state_t::UNLOCKED, pinCode, err);
   }
   return false;
+}
+
+bool emberAfPluginDoorLockGetUser(chip::EndpointId endpointId, uint16_t userIndex, EmberAfPluginDoorLockUserInfo& user)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpointId);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev || (dev->GetDeviceType() != Device::device_type_t::kDeviceType_DoorLock)) {
+    return false;
+  }
+  return static_cast<DeviceDoorLock*>(dev)->GetUser(userIndex, user);
+}
+
+bool emberAfPluginDoorLockSetUser(chip::EndpointId endpointId, uint16_t userIndex, chip::FabricIndex creator,
+                                  chip::FabricIndex modifier, const chip::CharSpan& userName, uint32_t uniqueId,
+                                  UserStatusEnum userStatus, UserTypeEnum usertype, CredentialRuleEnum credentialRule,
+                                  const CredentialStruct* credentials, size_t totalCredentials)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpointId);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev || (dev->GetDeviceType() != Device::device_type_t::kDeviceType_DoorLock)) {
+    return false;
+  }
+  return static_cast<DeviceDoorLock*>(dev)->SetUser(userIndex, creator, modifier, userName, uniqueId, userStatus,
+                                                     usertype, credentialRule, credentials, totalCredentials);
+}
+
+bool emberAfPluginDoorLockGetCredential(chip::EndpointId endpointId, uint16_t credentialIndex, CredentialTypeEnum credentialType,
+                                        EmberAfPluginDoorLockCredentialInfo& credential)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpointId);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev || (dev->GetDeviceType() != Device::device_type_t::kDeviceType_DoorLock)) {
+    return false;
+  }
+  return static_cast<DeviceDoorLock*>(dev)->GetCredential(credentialIndex, credentialType, credential);
+}
+
+bool emberAfPluginDoorLockSetCredential(chip::EndpointId endpointId, uint16_t credentialIndex, chip::FabricIndex creator,
+                                        chip::FabricIndex modifier, DlCredentialStatus credentialStatus,
+                                        CredentialTypeEnum credentialType, const chip::ByteSpan& credentialData)
+{
+  uint16_t endpointIndex = emberAfGetDynamicIndexFromEndpoint(endpointId);
+  Device* dev = GetDeviceForEndpointIndex(endpointIndex);
+  if (!dev || (dev->GetDeviceType() != Device::device_type_t::kDeviceType_DoorLock)) {
+    return false;
+  }
+  return static_cast<DeviceDoorLock*>(dev)->SetCredential(credentialIndex, creator, modifier, credentialStatus,
+                                                           credentialType, credentialData);
 }

@@ -74,7 +74,7 @@ public:
   bool SetLockState(lock_state_t state,
                     OperationSourceEnum opSource,
                     const chip::app::DataModel::Nullable<uint16_t>& userIndex = chip::app::DataModel::NullNullable,
-                    const chip::app::DataModel::Nullable<chip::app::DataModel::List<const CredentialStructType>>& credentials = chip::app::DataModel::NullNullable);
+                    const chip::app::DataModel::Nullable<chip::app::DataModel::List<const CredentialStructType> >& credentials = chip::app::DataModel::NullNullable);
 
   // Compares a presented PIN against the stored PIN credentials. On a match, returns true and fills
   // in the matching credential index and the index of the user it belongs to (0 if the credential
@@ -84,9 +84,9 @@ public:
   // Backing storage for the emberAfPluginDoorLock{Get,Set}{User,Credential} weak callbacks.
   bool GetUser(uint16_t userIndex, EmberAfPluginDoorLockUserInfo& user);
   bool SetUser(uint16_t userIndex, chip::FabricIndex creator, chip::FabricIndex modifier,
-              const chip::CharSpan& userName, uint32_t uniqueId, UserStatusEnum userStatus,
-              UserTypeEnum userType, CredentialRuleEnum credentialRule,
-              const CredentialStructType* credentials, size_t totalCredentials);
+               const chip::CharSpan& userName, uint32_t uniqueId, UserStatusEnum userStatus,
+               UserTypeEnum userType, CredentialRuleEnum credentialRule,
+               const CredentialStructType* credentials, size_t totalCredentials);
   bool GetCredential(uint16_t credentialIndex, CredentialTypeEnum credentialType, EmberAfPluginDoorLockCredentialInfo& credential);
   bool SetCredential(uint16_t credentialIndex, chip::FabricIndex creator, chip::FabricIndex modifier,
                      DlCredentialStatus credentialStatus, CredentialTypeEnum credentialType,

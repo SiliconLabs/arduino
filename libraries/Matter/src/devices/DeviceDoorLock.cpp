@@ -59,7 +59,7 @@ void DeviceDoorLock::SetLockState(DeviceDoorLock::lock_state_t state)
 bool DeviceDoorLock::SetLockState(DeviceDoorLock::lock_state_t state,
                                   OperationSourceEnum opSource,
                                   const Nullable<uint16_t>& userIndex,
-                                  const Nullable<List<const CredentialStructType>>& credentials)
+                                  const Nullable<List<const CredentialStructType> >& credentials)
 {
   this->SetLockState(state);
   return DoorLockServer::Instance().SetLockState(this->endpoint_id,
@@ -305,7 +305,7 @@ bool DeviceDoorLock::ReportCredentialUnlock(CredentialTypeEnum type, uint16_t in
   credential.credentialIndex = index;
   List<const CredentialStructType> credentialList(&credential, 1);
 
-  return this->SetLockState(lock_state_t::UNLOCKED, opSource, userIndex, Nullable<List<const CredentialStructType>>(credentialList));
+  return this->SetLockState(lock_state_t::UNLOCKED, opSource, userIndex, Nullable<List<const CredentialStructType> >(credentialList));
 }
 
 void DeviceDoorLock::SetCredentialChangedCallback(void (*credential_changed_cb)(CredentialTypeEnum type, uint16_t index))

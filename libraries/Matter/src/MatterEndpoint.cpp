@@ -254,7 +254,7 @@ static bool HandleDoorLockCommand(DeviceDoorLock* door_lock_device,
     List<const CredentialStruct> credentialList(&credential, 1);
 
     return door_lock_device->SetLockState(state, OperationSourceEnum::kKeypad, userIndexNullable,
-                                          Nullable<List<const CredentialStruct>>(credentialList));
+                                          Nullable<List<const CredentialStruct> >(credentialList));
   }
 
   door_lock_device->SetLockState(state);
@@ -316,7 +316,7 @@ bool emberAfPluginDoorLockSetUser(chip::EndpointId endpointId, uint16_t userInde
     return false;
   }
   return static_cast<DeviceDoorLock*>(dev)->SetUser(userIndex, creator, modifier, userName, uniqueId, userStatus,
-                                                     usertype, credentialRule, credentials, totalCredentials);
+                                                    usertype, credentialRule, credentials, totalCredentials);
 }
 
 bool emberAfPluginDoorLockGetCredential(chip::EndpointId endpointId, uint16_t credentialIndex, CredentialTypeEnum credentialType,
@@ -340,5 +340,5 @@ bool emberAfPluginDoorLockSetCredential(chip::EndpointId endpointId, uint16_t cr
     return false;
   }
   return static_cast<DeviceDoorLock*>(dev)->SetCredential(credentialIndex, creator, modifier, credentialStatus,
-                                                           credentialType, credentialData);
+                                                          credentialType, credentialData);
 }

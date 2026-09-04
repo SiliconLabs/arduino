@@ -90,7 +90,8 @@ bool MatterThermostat::begin()
   }
 
   // Create new device
-  DeviceThermostat* new_thermostat_device = new (std::nothrow)DeviceThermostat("Thermostat", 20, 20);
+  // Set the initial local temperature and heating setpoint to 20C
+  DeviceThermostat* new_thermostat_device = new (std::nothrow)DeviceThermostat("Thermostat", 2000, 2000);
   if (new_thermostat_device == nullptr) {
     return false;
   }

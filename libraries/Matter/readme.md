@@ -241,6 +241,63 @@ Class for creating and controlling a Matter Contact Sensor appliance.
 
 ```void toggle();```
 
+Door locks can also use PIN and RFID credentials. The
+[`matter_door_lock_credentials`](examples/matter_door_lock_credentials/matter_door_lock_credentials.ino)
+example demonstrates local provisioning, credential changes from a Matter controller, and
+reporting an RFID credential unlock.
+
+```bool set_credential(CredentialTypeEnum type, uint16_t index, const uint8_t *credential, size_t length);```
+
+Adds or replaces a credential at the specified index.
+
+```bool clear_credential(CredentialTypeEnum type, uint16_t index);```
+
+Removes the credential at the specified index.
+
+```void report_credential_unlock(CredentialTypeEnum type, uint16_t index);```
+
+Reports that a physical credential was presented and unlocks the door. The example simulates an
+RFID reader through the Serial Monitor by accepting `deadbeef`, which matches the demonstration
+UID `DE:AD:BE:EF`. Replace the example PIN `1234` and RFID UID before using this on real hardware.
+
+```bool setFeatures(uint32_t feature_map);```
+
+```bool setFeatures(std::initializer_list<Feature> features);```
+
+Selects the Door Lock features before calling `begin()`. The supported features are
+`MatterDoorLock::Feature::kPinCredential`, `MatterDoorLock::Feature::kRfidCredential`, and
+`MatterDoorLock::Feature::kUser`. The default is to enable all three. For example:
+
+```cpp
+matter_door_lock.setFeatures({ MatterDoorLock::Feature::kPinCredential,
+                               MatterDoorLock::Feature::kRfidCredential });
+matter_door_lock.begin();
+```
+
+The list can contain one or more features. `setFeatures()` returns `false` if called after `begin()`
+or if unsupported feature bits are provided. Disabled PIN, RFID, and User operations are rejected
+by the device.
+
+## Selecting Matter features from a sketch
+
+Features can be selected in the sketch by choosing the appropriate appliance class or its
+initialization method. For example:
+
+```cpp
+MatterLightbulb lightbulb;             // On/Off
+MatterDimmableLightbulb dimmable;      // On/Off + dimming
+MatterColorLightbulb color;            // On/Off + dimming + color
+```
+
+Some appliances also provide specialized initialization methods, such as
+`MatterSwitch::beginWithBinding()` for a switch with the Binding cluster, or `begin(false)` for
+an appliance that should not use the default bridged endpoint. A sketch can instantiate several
+appliances to expose multiple Matter endpoints.
+
+For other appliance classes, the Matter `FeatureMap`, clusters, device types, and supported
+commands are defined by the library. They cannot currently be changed through a generic API in the
+sketch.
+
 ## class MatterFan
 
 Class for creating and controlling a Matter Fan appliance.

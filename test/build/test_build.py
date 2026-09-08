@@ -243,6 +243,7 @@ testlist_matter = {
     "../../libraries/Matter/examples/matter_contact_sensor/matter_contact_sensor.ino":                                 all_matter,
     "../../libraries/Matter/examples/matter_decommission/matter_decommission.ino":                                     all_matter,
     "../../libraries/Matter/examples/matter_door_lock/matter_door_lock.ino":                                           all_matter,
+    "../../libraries/Matter/examples/matter_door_lock_credentials/matter_door_lock_credentials.ino":                   all_matter,
     "../../libraries/Matter/examples/matter_fan/matter_fan.ino":                                                       all_matter,
     "../../libraries/Matter/examples/matter_flow_sensor/matter_flow_sensor.ino":                                       all_matter,
     "../../libraries/Matter/examples/matter_humidity_sensor/matter_humidity_sensor.ino":                               all_matter,

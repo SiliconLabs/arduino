@@ -143,6 +143,7 @@ def arduino_cli_build_and_flash(board, protocol_stack, sketch_path, port=None):
     print(f"Uploading '{sketch_path}' to '{board}' ({protocol_stack}) on '{port}'")
     print("-"*40)
 
+    upload_start_time = time.time()
     upload_process = subprocess.Popen(
         ["arduino-cli", "upload", sketch_path, "-b", fqbn, "-p", port],
         stdout=subprocess.PIPE,
@@ -156,7 +157,11 @@ def arduino_cli_build_and_flash(board, protocol_stack, sketch_path, port=None):
         print("Upload failed!")
         return False
 
+    upload_end_time = time.time()
+    total_upload_time = int(upload_end_time - upload_start_time)
+
     print("Upload successful!")
+    print(f"Upload time: {total_upload_time // 60}m {total_upload_time % 60}s")
     return True
 
 

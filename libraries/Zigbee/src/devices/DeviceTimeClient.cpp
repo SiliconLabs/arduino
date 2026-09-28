@@ -212,6 +212,28 @@ DeviceTimeClient* DeviceTimeClient::GetRegisteredTimeClient(uint8_t endpoint_id)
   return nullptr;
 }
 
+void DeviceTimeClient::HandleIncomingCommand(uint8_t endpoint_id,
+                                             uint16_t cluster_id,
+                                             bool cluster_specific,
+                                             uint8_t direction,
+                                             uint8_t command_id,
+                                             const uint8_t* payload,
+                                             uint16_t payload_length)
+{
+  if (payload == nullptr
+      || cluster_id != ZCL_TIME_CLUSTER_ID
+      || cluster_specific
+      || direction != ZCL_DIRECTION_SERVER_TO_CLIENT
+      || command_id != ZCL_READ_ATTRIBUTES_RESPONSE_COMMAND_ID) {
+    return;
+  }
+
+  DeviceTimeClient* time_client = GetRegisteredTimeClient(endpoint_id);
+  if (time_client) {
+    time_client->HandleTimeReadAttributesResponse(payload, payload_length);
+  }
+}
+
 void DeviceTimeClient::HandleAttributeChange(uint16_t cluster_id,
                                              uint16_t attribute_id,
                                              uint8_t size,
@@ -266,25 +288,4 @@ void DeviceTimeClient::AppendAttributeId(uint8_t* buffer, uint16_t attribute_id,
 {
   buffer[offset++] = static_cast<uint8_t>(attribute_id & 0xFF);
   buffer[offset++] = static_cast<uint8_t>(attribute_id >> 8);
-}
-
-extern "C" bool sl_zigbee_af_pre_command_received_cb(sl_zigbee_af_cluster_command_t* cmd)
-{
-  if (cmd == nullptr
-      || cmd->apsFrame == nullptr
-      || cmd->buffer == nullptr
-      || cmd->apsFrame->clusterId != ZCL_TIME_CLUSTER_ID
-      || cmd->clusterSpecific
-      || cmd->direction != ZCL_DIRECTION_SERVER_TO_CLIENT
-      || cmd->commandId != ZCL_READ_ATTRIBUTES_RESPONSE_COMMAND_ID
-      || cmd->payloadStartIndex > cmd->bufLen) {
-    return false;
-  }
-
-  DeviceTimeClient* time_client = DeviceTimeClient::GetRegisteredTimeClient(cmd->apsFrame->destinationEndpoint);
-  if (time_client) {
-    time_client->HandleTimeReadAttributesResponse(&cmd->buffer[cmd->payloadStartIndex],
-                                                  cmd->bufLen - cmd->payloadStartIndex);
-  }
-  return false;
 }

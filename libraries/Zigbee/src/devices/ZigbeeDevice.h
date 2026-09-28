@@ -34,7 +34,7 @@
 class ZigbeeDevice {
 public:
   static const uint8_t kMaxNameSize = 32;
-  static const uint8_t kMaxEndpoints = 31;
+  static const uint8_t kMaxEndpoints = 34;
 
   ZigbeeDevice(const char* device_name, uint8_t endpoint_id);
   virtual ~ZigbeeDevice();
@@ -50,6 +50,19 @@ public:
 
   void SetDeviceChangeCallback(void (*cb)(void));
   void CallDeviceChangeCallback();
+
+  virtual uint32_t HandleAttributePreChange(uint16_t cluster_id,
+                                            uint16_t attribute_id,
+                                            uint8_t size,
+                                            uint8_t* value);
+
+  virtual bool HandleCommand(uint16_t cluster_id,
+                             bool cluster_specific,
+                             uint8_t direction,
+                             uint8_t command_id,
+                             const uint8_t* payload,
+                             uint16_t payload_length,
+                             uint8_t& status);
 
   virtual void HandleAttributeChange(uint16_t cluster_id,
                                      uint16_t attribute_id,

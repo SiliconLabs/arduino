@@ -6,7 +6,7 @@ The Arduino Zigbee library lets users create Zigbee 3.0 smart home
 devices on Silicon Labs hardware. It wraps the Silicon Labs EmberZNet stack and
 the generated Zigbee endpoint configuration with Arduino-style classes for
 lights, outlets, contact sensors, switches, temperature sensors, humidity
-sensors, and light sensors.
+sensors, light sensors, and thermostats.
 
 The library is intended for Silicon Labs based Arduino boards with the
 Zigbee protocol stack selected.
@@ -60,6 +60,7 @@ flasher script, firmware files, and Home Assistant ZHA setup link.
 | `zigbee_switch` | Creates an On/Off switch that sends On, Off, and Toggle commands to bound lights. |
 | `zigbee_switch_dimmer` | Creates a switch that sends On/Off and Level Control dimming commands to bound lights. |
 | `zigbee_temp_sensor` | Publishes the board CPU temperature through the Zigbee Temperature Measurement cluster. |
+| `zigbee_thermostat` | Creates a Zigbee thermostat with local temperature, heating setpoint, configurable heat setpoint limits, OFF/HEAT system mode, and IDLE/HEATING HVAC action. |
 | `zigbee_end_device` | Publishes the board CPU temperature through the Zigbee Temperature Measurement cluster and joins the Zigbee network as an end device. |
 | `zigbee_humidity_sensor` | Publishes a simulated relative humidity value through the Zigbee Relative Humidity Measurement cluster. |
 | `zigbee_light_sensor` | Publishes a simulated illuminance value through the Zigbee Illuminance Measurement cluster. |
@@ -271,11 +272,11 @@ measurement is written, or Identify starts/stops. Register the callback after th
 appliance `begin()` call, because the underlying endpoint object is created
 during `begin()`.
 
-The generated endpoint configuration currently supports 30 application
+The generated endpoint configuration currently supports 33 application
 endpoints: three On/Off lights, three temperature sensors, three humidity
 sensors, three On/Off switches, three dimmable lights, three light sensors,
 three color dimmable lights, three On/Off plug-in units, three contact
-sensors, and three power sources. It also provides one opt-in Time Client endpoint.
+sensors, three power sources, and three thermostats. It also provides one opt-in Time Client endpoint.
 
 ## Identifying a Device
 
@@ -787,6 +788,98 @@ void loop()
 {
   temperature.set_measured_value_celsius(getCPUTemp());
   delay(2000);
+}
+```
+
+## ZigbeeThermostat
+
+Header:
+
+```cpp
+#include <ZigbeeThermostat.h>
+```
+
+Creates a heat-only Thermostat endpoint. Local temperature, heating setpoint,
+and heating limits use signed hundredths of a degree Celsius in the raw API.
+For example, `2150` means `21.50 C`. The convenience Celsius APIs do the
+conversion for you.
+
+The system mode API exposes `OFF` and `HEAT`.
+Remote writes to Occupied Heating Setpoint, Min Heat Setpoint Limit,
+Max Heat Setpoint Limit, and System Mode update the local object, and local
+calls write the Zigbee Thermostat server attributes. If a new limit excludes
+the current heating setpoint, the setpoint is clamped into the new range.
+The HVAC action API reports whether the thermostat is actually idle or actively
+heating using the Zigbee Thermostat Running Mode and Running State attributes.
+
+API:
+
+```cpp
+enum thermostat_mode_t {
+  OFF = 0,
+  HEAT = 4
+};
+
+enum thermostat_hvac_action_t {
+  IDLE = 0,
+  HEATING = 1
+};
+
+bool begin();
+void end();
+
+int16_t get_local_temperature_raw();
+void set_local_temperature_raw(int16_t local_temp);
+int16_t get_heating_setpoint_raw();
+void set_heating_setpoint_raw(int16_t heating_setpoint);
+
+float get_local_temperature();
+void set_local_temperature(float local_temp);
+float get_heating_setpoint();
+void set_heating_setpoint(float heating_setpoint);
+
+void set_absolute_minimum_heating_setpoint(float abs_min_heating_setpoint);
+void set_minimum_heating_setpoint(float min_heating_setpoint);
+void set_absolute_maximum_heating_setpoint(float abs_max_heating_setpoint);
+void set_maximum_heating_setpoint(float max_heating_setpoint);
+float get_absolute_minimum_heating_setpoint();
+float get_minimum_heating_setpoint();
+float get_absolute_maximum_heating_setpoint();
+float get_maximum_heating_setpoint();
+
+thermostat_mode_t get_system_mode();
+void set_system_mode(thermostat_mode_t system_mode);
+thermostat_hvac_action_t get_hvac_action();
+void set_hvac_action(thermostat_hvac_action_t hvac_action);
+bool send_attribute_report();
+```
+
+Example:
+
+```cpp
+#include <ZigbeeThermostat.h>
+ZigbeeThermostat thermostat;
+
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+  Zigbee.begin();
+  thermostat.begin();
+  thermostat.set_local_temperature(21.5f);
+  thermostat.set_heating_setpoint(23.0f);
+  thermostat.set_system_mode(ZigbeeThermostat::HEAT);
+  thermostat.send_attribute_report();
+}
+
+void loop()
+{
+  ZigbeeThermostat::thermostat_hvac_action_t action = ZigbeeThermostat::IDLE;
+  if (thermostat.get_system_mode() == ZigbeeThermostat::HEAT && thermostat.get_local_temperature() < thermostat.get_heating_setpoint()) {
+    action = ZigbeeThermostat::HEATING;
+  }
+  thermostat.set_hvac_action(action);
+  digitalWrite(LED_BUILTIN, action == ZigbeeThermostat::HEATING ? LED_BUILTIN_ACTIVE : LED_BUILTIN_INACTIVE);
+  delay(50);
 }
 ```
 

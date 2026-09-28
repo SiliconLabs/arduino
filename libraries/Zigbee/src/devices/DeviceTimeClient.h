@@ -47,6 +47,13 @@ public:
   static void RegisterTimeClient(DeviceTimeClient* time_client);
   static void UnregisterTimeClient(DeviceTimeClient* time_client);
   static DeviceTimeClient* GetRegisteredTimeClient(uint8_t endpoint_id);
+  static void HandleIncomingCommand(uint8_t endpoint_id,
+                                    uint16_t cluster_id,
+                                    bool cluster_specific,
+                                    uint8_t direction,
+                                    uint8_t command_id,
+                                    const uint8_t* payload,
+                                    uint16_t payload_length);
 
   void HandleAttributeChange(uint16_t cluster_id,
                              uint16_t attribute_id,

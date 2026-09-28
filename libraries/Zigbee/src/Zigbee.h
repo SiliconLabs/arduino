@@ -60,7 +60,8 @@ enum ZigbeeEndpointType {
   ZIGBEE_ON_OFF_PLUGIN_UNIT = 7,
   ZIGBEE_CONTACT_SENSOR = 8,
   ZIGBEE_POWER_SOURCE = 9,
-  ZIGBEE_ENDPOINT_TYPE_COUNT = 10
+  ZIGBEE_THERMOSTAT = 10,
+  ZIGBEE_ENDPOINT_TYPE_COUNT = 11
 };
 
 enum ZigbeeDeviceType {
@@ -76,7 +77,7 @@ enum ZigbeePowerSourceType {
 class ZigbeeClass {
 public:
   static const uint8_t kEndpointsPerType = 3u;
-  static const uint8_t kApplicationEndpointCount = 30u;
+  static const uint8_t kApplicationEndpointCount = 33u;
   static const uint8_t kTimeClientEndpointId = 240u;
   static constexpr uint8_t kMinPairingChannel = 11u;
   static constexpr uint8_t kMaxPairingChannel = 26u;

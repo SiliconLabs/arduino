@@ -26,6 +26,7 @@
 
 #include "Zigbee.h"
 #include "ZigbeeAfLock.h"
+#include "devices/DeviceTimeClient.h"
 
 extern "C" {
 #include "af.h"
@@ -193,7 +194,7 @@ extern "C" void sl_zigbee_af_stack_status_cb(sl_status_t status)
   }
 }
 
-// Callback from EmberZNet when an attribute changes due to a remote ZCL command
+// Callback from EmberZNet when an attribute changes
 extern "C" void sl_zigbee_af_post_attribute_change_cb(uint8_t endpoint,
                                                       sl_zigbee_af_cluster_id_t cluster_id,
                                                       sl_zigbee_af_attribute_id_t attribute_id,
@@ -211,6 +212,70 @@ extern "C" void sl_zigbee_af_post_attribute_change_cb(uint8_t endpoint,
   if (dev) {
     dev->HandleAttributeChange(cluster_id, attribute_id, size, value);
   }
+}
+
+// Callback from EmberZNet before an attribute changes
+extern "C" sl_zigbee_af_status_t sl_zigbee_af_pre_attribute_change_cb(uint8_t endpoint,
+                                                                      sl_zigbee_af_cluster_id_t cluster_id,
+                                                                      sl_zigbee_af_attribute_id_t attribute_id,
+                                                                      uint8_t mask,
+                                                                      uint16_t manufacturer_code,
+                                                                      uint8_t type,
+                                                                      uint8_t size,
+                                                                      uint8_t* value)
+{
+  (void)mask;
+  (void)manufacturer_code;
+  (void)type;
+
+  ZigbeeDevice* dev = zigbee_endpoint_get_device(endpoint);
+  if (dev == nullptr) {
+    return SL_ZIGBEE_ZCL_STATUS_SUCCESS;
+  }
+
+  return static_cast<sl_zigbee_af_status_t>(dev->HandleAttributePreChange(cluster_id,
+                                                                          attribute_id,
+                                                                          size,
+                                                                          value));
+}
+
+extern "C" bool sl_zigbee_af_pre_command_received_cb(sl_zigbee_af_cluster_command_t* cmd)
+{
+  if (cmd == nullptr
+      || cmd->apsFrame == nullptr
+      || cmd->buffer == nullptr
+      || cmd->payloadStartIndex > cmd->bufLen) {
+    return false;
+  }
+
+  uint8_t endpoint_id = cmd->apsFrame->destinationEndpoint;
+  uint16_t payload_length = cmd->bufLen - cmd->payloadStartIndex;
+  const uint8_t* payload = &cmd->buffer[cmd->payloadStartIndex];
+
+  ZigbeeDevice* dev = zigbee_endpoint_get_device(endpoint_id);
+  if (dev) {
+    uint8_t status = SL_ZIGBEE_ZCL_STATUS_SUCCESS;
+    bool handled = dev->HandleCommand(cmd->apsFrame->clusterId,
+                                      cmd->clusterSpecific,
+                                      cmd->direction,
+                                      cmd->commandId,
+                                      payload,
+                                      payload_length,
+                                      status);
+    if (handled) {
+      sl_zigbee_af_send_default_response(cmd, static_cast<sl_zigbee_af_status_t>(status));
+      return true;
+    }
+  }
+
+  DeviceTimeClient::HandleIncomingCommand(endpoint_id,
+                                          cmd->apsFrame->clusterId,
+                                          cmd->clusterSpecific,
+                                          cmd->direction,
+                                          cmd->commandId,
+                                          payload,
+                                          payload_length);
+  return false;
 }
 
 // Callbacks from the Identify plugin when a remote Identify command changes state

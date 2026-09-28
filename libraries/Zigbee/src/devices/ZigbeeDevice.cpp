@@ -99,3 +99,33 @@ void ZigbeeDevice::CallDeviceChangeCallback()
     this->device_change_callback();
   }
 }
+
+uint32_t ZigbeeDevice::HandleAttributePreChange(uint16_t cluster_id,
+                                                uint16_t attribute_id,
+                                                uint8_t size,
+                                                uint8_t* value)
+{
+  (void)cluster_id;
+  (void)attribute_id;
+  (void)size;
+  (void)value;
+  return 0;
+}
+
+bool ZigbeeDevice::HandleCommand(uint16_t cluster_id,
+                                 bool cluster_specific,
+                                 uint8_t direction,
+                                 uint8_t command_id,
+                                 const uint8_t* payload,
+                                 uint16_t payload_length,
+                                 uint8_t& status)
+{
+  (void)cluster_id;
+  (void)cluster_specific;
+  (void)direction;
+  (void)command_id;
+  (void)payload;
+  (void)payload_length;
+  status = 0;
+  return false;
+}

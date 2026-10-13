@@ -80,6 +80,14 @@ public:
   static bool isDeviceCommissioned();
   static bool isDeviceThreadConnected();
   void decommission();
+  void set_vendor_name(const char* vendor_name);
+  void set_product_name(const char* product_name);
+  void set_hardware_version(uint16_t hardware_version);
+  void set_hardware_version_string(const char* hardware_version);
+  void set_software_version(uint32_t software_version);
+  void set_software_version_string(const char* software_version);
+private:
+  void set_matter_device_property_string(char* dest, size_t capacity, const char* src);
 };
 
 extern MatterClass Matter;

@@ -25,10 +25,12 @@
  */
 
 #include "Matter.h"
+#include <silabs_stubs.h>
 #include <util/endpoint-config-api.h>
 #include <QRCodeSetupPayloadParser.h>
 #include <ManualSetupPayloadGenerator.h>
 #include <ProvisionManager.h>
+#include <cstring>
 
 using namespace chip;
 using namespace chip::app;
@@ -187,6 +189,48 @@ void MatterClass::begin()
   InitDynamicEndpointHandler();
 }
 
+void MatterClass::set_vendor_name(const char* vendor_name)
+{
+  this->set_matter_device_property_string(
+    arduino_matter_vendor_name,
+    kArduinoMatterDeviceNameCapacity,
+    vendor_name);
+}
+
+void MatterClass::set_product_name(const char* product_name)
+{
+  this->set_matter_device_property_string(
+    arduino_matter_product_name,
+    kArduinoMatterDeviceNameCapacity,
+    product_name);
+}
+
+void MatterClass::set_hardware_version(uint16_t hardware_version)
+{
+  arduino_matter_hardware_version = hardware_version;
+}
+
+void MatterClass::set_hardware_version_string(const char* hardware_version)
+{
+  this->set_matter_device_property_string(
+    arduino_matter_hardware_version_string,
+    kArduinoMatterHardwareVersionStringCapacity,
+    hardware_version);
+}
+
+void MatterClass::set_software_version(uint32_t software_version)
+{
+  arduino_matter_software_version = software_version;
+}
+
+void MatterClass::set_software_version_string(const char* software_version)
+{
+  this->set_matter_device_property_string(
+    arduino_matter_software_version_string,
+    kArduinoMatterSoftwareVersionStringCapacity,
+    software_version);
+}
+
 void MatterClass::disableBridgeEndpoint()
 {
   // The bridge endpoint is on index 1
@@ -265,6 +309,15 @@ void MatterClass::decommission()
     // The device will reboot after the decommissioning has completed
     yield();
   }
+}
+
+void MatterClass::set_matter_device_property_string(char* dest, size_t capacity, const char* src)
+{
+  if (!dest || !src || capacity == 0) {
+    return;
+  }
+  std::strncpy(dest, src, capacity - 1);
+  dest[capacity - 1] = '\0';
 }
 
 MatterClass Matter;

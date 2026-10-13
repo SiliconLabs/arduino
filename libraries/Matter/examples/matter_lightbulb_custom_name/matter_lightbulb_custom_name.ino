@@ -1,10 +1,15 @@
 /*
    Matter lightbulb with custom properties
 
-   This example show how custom properties like 'device name', 'manufacturer name', product name' and 'serial number'
-   can be set to customize Matter devices. The example creates a simple on/off lightbulb,
-   then sets the mentioned properties to a custom value with the Arduino Matter API.
-   These properties can be changed on all Matter devices - this example just focuses on a single lightbulb.
+   This example shows how custom properties like device name, manufacturer/vendor name,
+   product name and serial number can be set to customize Matter devices.
+
+   There are two identity layers:
+   - Root Basic Information (the Matter device itself): Matter.set_vendor_name() / Matter.set_product_name()
+   - Bridged endpoints (the lightbulb appliance): matter_bulb.set_* APIs
+
+   Root names are used when NVM has not been factory-provisioned; provisioned NVM values
+   take precedence over Matter.set_*().
 
    NOTE: some Matter ecosystems may ignore or choose not to display the values set here.
 
@@ -28,9 +33,19 @@ MatterLightbulb matter_bulb;
 void setup()
 {
   Serial.begin(115200);
+
+  // Root Basic Information (node-level) - set before Matter.begin() / commissioning
+  Matter.set_vendor_name("Aperture Science Innovators");
+  Matter.set_product_name("Enrichment Core");
+  Matter.set_hardware_version(9999);
+  Matter.set_hardware_version_string("v9.999");
+  Matter.set_software_version(1957);
+  Matter.set_software_version_string("1.9.57");
+
   Matter.begin();
   matter_bulb.begin();
 
+  // Bridged endpoint properties for the lightbulb appliance
   // Initial display name that can be changed by the user in the client apps
   matter_bulb.set_device_name("Chell's bulb");
   // Vendor/manufacturer name - cannot be changed by users

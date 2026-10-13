@@ -33,6 +33,7 @@ MatterSimplePowerSource matter_power_source;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter power and temp sensor");
   Matter.begin();
   matter_temp_sensor.begin();
   matter_power_source.begin();

@@ -46,6 +46,7 @@ MatterLightbulb matter_bulb;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter+BLE dual-control bulb");
   Matter.begin();
   matter_bulb.begin();
 

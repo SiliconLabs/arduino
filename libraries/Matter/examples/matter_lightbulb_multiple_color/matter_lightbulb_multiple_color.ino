@@ -32,6 +32,7 @@ void handle_color_bulb();
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter color and dimmable bulbs");
   Matter.begin();
   matter_dimmable_bulb.begin();
   matter_color_bulb.begin();

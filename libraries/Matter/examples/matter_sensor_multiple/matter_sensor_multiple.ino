@@ -25,6 +25,7 @@ MatterHumidity matter_humidity_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter temp and humidity sensors");
   Matter.begin();
   matter_temp_sensor.begin();
   matter_humidity_sensor.begin();

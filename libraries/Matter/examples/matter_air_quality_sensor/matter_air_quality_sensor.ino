@@ -27,6 +27,7 @@ MatterAirQuality matter_air_quality_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter air quality sensor");
   Matter.begin();
   matter_air_quality_sensor.begin();
 

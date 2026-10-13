@@ -31,6 +31,7 @@ volatile bool button_pressed = false;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter door lock");
   Matter.begin();
   matter_door_lock.begin();
 

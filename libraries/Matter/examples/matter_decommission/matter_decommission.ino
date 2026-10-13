@@ -31,6 +31,7 @@ void setup()
 {
   Serial.begin(115200);
 
+  Matter.set_product_name("Matter on/off lightbulb");
   Matter.begin();
   matter_bulb.begin();
   pinMode(BTN_BUILTIN, INPUT_PULLUP);

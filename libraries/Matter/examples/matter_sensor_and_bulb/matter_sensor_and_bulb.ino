@@ -29,6 +29,7 @@ void update_onboard_led(uint8_t brightness);
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter lightbulb and temp sensor");
   Matter.begin();
   matter_dimmable_bulb.begin();
   matter_temp_sensor.begin();

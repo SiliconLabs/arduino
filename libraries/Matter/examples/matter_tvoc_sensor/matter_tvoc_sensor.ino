@@ -39,6 +39,7 @@ MatterTVOC matter_tvoc_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter TVOC sensor");
   Matter.begin();
   matter_tvoc_sensor.begin();
 

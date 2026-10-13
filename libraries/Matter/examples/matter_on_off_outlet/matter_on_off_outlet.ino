@@ -27,6 +27,7 @@ volatile bool button_pressed = false;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter on/off outlet");
   Matter.begin();
   matter_outlet.begin();
 

@@ -23,6 +23,7 @@ MatterIlluminance matter_illuminance_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter illuminance sensor");
   Matter.begin();
   matter_illuminance_sensor.begin();
 

@@ -24,6 +24,7 @@ using FanMode = DeviceFan::fan_mode_t;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter fan");
   Matter.begin();
   matter_fan.begin();
 

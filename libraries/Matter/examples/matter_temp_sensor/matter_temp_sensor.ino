@@ -23,6 +23,7 @@ MatterTemperature matter_temp_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter temperature sensor");
   Matter.begin();
   matter_temp_sensor.begin();
 

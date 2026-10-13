@@ -26,6 +26,7 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   Serial.begin(115200);
+  Matter.set_product_name("Matter thermostat");
   Matter.begin();
   matter_thermostat.begin();
 

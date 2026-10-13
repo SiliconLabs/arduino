@@ -26,6 +26,7 @@ void update_onboard_led(uint8_t brightness);
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter dimmable lightbulb");
   Matter.begin();
   matter_dimmable_bulb.begin();
 

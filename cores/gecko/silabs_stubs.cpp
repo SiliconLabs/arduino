@@ -26,11 +26,27 @@
 
 #ifdef ARDUINO_MATTER
 
+#include "silabs_stubs.h"
 #include "sl_common.h"
 #include <app/CommandHandler.h>
 #include <app/util/attribute-storage.h>
 #include <app/reporting/reporting.h>
 #include <MatterBLE.h>
+
+// Root BasicInformation fallbacks used when NVM provision data is absent
+// CHIP_DEVICE_CONFIG_* macros are patched to these symbols at SDK gen time
+extern "C" {
+#ifdef ARDUINO_NANO_MATTER
+char arduino_matter_vendor_name[kArduinoMatterDeviceNameCapacity] = "Arduino";
+#else
+char arduino_matter_vendor_name[kArduinoMatterDeviceNameCapacity] = "Silicon Labs";
+#endif
+char arduino_matter_product_name[kArduinoMatterDeviceNameCapacity] = "Matter device";
+char arduino_matter_hardware_version_string[kArduinoMatterHardwareVersionStringCapacity] = "v1.0";
+uint16_t arduino_matter_hardware_version = 1;
+char arduino_matter_software_version_string[kArduinoMatterSoftwareVersionStringCapacity] = "v1.0";
+uint32_t arduino_matter_software_version = 1;
+}
 
 using namespace ::chip;
 using namespace ::chip::Platform;

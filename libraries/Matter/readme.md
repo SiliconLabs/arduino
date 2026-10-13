@@ -140,6 +140,24 @@ The class has the following methods available:
 ```void begin();```
 Starts Matter and the dynamic endpoint handler on the device. Must be called before calling ```begin()``` on any appliance class.
 
+```void set_vendor_name(const char* vendor_name);```
+Sets the manufacturer/vendor name exposed on the root Basic Information cluster. Call this in ```setup()``` before commissioning. Has no effect if the device was factory-provisioned with a vendor name in NVM (provisioned values take precedence). Maximum length is 32 characters.
+
+```void set_product_name(const char* product_name);```
+Sets the product/model name exposed on the root Basic Information cluster. Call this in ```setup()``` before commissioning. Has no effect if the device was factory-provisioned with a product name in NVM (provisioned values take precedence). Maximum length is 32 characters.
+
+```void set_hardware_version(uint16_t hardware_version);```
+Sets the hardware version number exposed on the root Basic Information cluster. Call this in ```setup()``` before commissioning. Has no effect if the device was factory-provisioned with a hardware version in NVM.
+
+```void set_hardware_version_string(const char* hardware_version);```
+Sets the hardware version string exposed on the root Basic Information cluster. Call this in ```setup()``` before commissioning. Has no effect if the device was factory-provisioned with a hardware version string in NVM. Maximum length is 32 characters.
+
+```void set_software_version(uint32_t software_version);```
+Sets the software version number exposed on the root Basic Information cluster. Call this in ```setup()``` before commissioning. Not backed by NVM provision storage — the value set here (or the default) is always used.
+
+```void set_software_version_string(const char* software_version);```
+Sets the software version string exposed on the root Basic Information cluster. Call this in ```setup()``` before commissioning. Not backed by NVM provision storage — the value set here (or the default) is always used. Maximum length is 63 characters.
+
 ```String getManualPairingCode();```
 Returns the manual pairing code required for onboarding the device on a Matter network.
 
@@ -175,16 +193,18 @@ When this function returns *true* it means that your appliance is able to commun
 
 ```set_device_change_callback(void (*matter_device_changed_cb)(void))``` can be called to set a callback function which will be called when any of the device's properties are changed by the Matter controller.
 
-All appliance classes have the following methods for setting it's custom properties:
+All appliance classes have the following methods for setting it's custom properties.
+These apply to the appliance's bridged endpoint (`BridgedDeviceBasicInformation`), not the root node.
+Use ```Matter.set_vendor_name()``` / ```Matter.set_product_name()``` to configure the root Basic Information cluster.
 
 ```void set_device_name(const char* device_name);```
 Sets the name of the device.
 
 ```void set_vendor_name(const char* vendor_name);```
-Sets the manufacturer/vendor name of the device.
+Sets the manufacturer/vendor name of the bridged endpoint.
 
 ```void set_product_name(const char* product_name);```
-Sets the model/product name of the device.
+Sets the model/product name of the bridged endpoint.
 
 ```void set_serial_number(const char* serial_number);```
 Sets the serial number of the device.

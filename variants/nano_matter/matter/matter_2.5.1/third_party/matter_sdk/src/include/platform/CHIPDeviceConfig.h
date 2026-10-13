@@ -233,7 +233,21 @@
  * Human readable string identifying version of the product assigned by the device vendor.
  */
 #ifndef CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION_STRING
-#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION_STRING "v1.0"
+/* Arduino Matter library runtime-overridable properties */
+#include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern char arduino_matter_vendor_name[33];
+extern char arduino_matter_product_name[33];
+extern char arduino_matter_hardware_version_string[33];
+extern uint16_t arduino_matter_hardware_version;
+extern char arduino_matter_software_version_string[64];
+extern uint32_t arduino_matter_software_version;
+#ifdef __cplusplus
+}
+#endif
+#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION_STRING arduino_matter_hardware_version_string
 #endif
 
 /**

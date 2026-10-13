@@ -83,13 +83,27 @@
  *  @brief Fallback value for the basic information cluster's Vendor name attribute
  *   if the actual vendor name is not provisioned in the device memory.
  */
-#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME "Arduino"
+/* Arduino Matter library runtime-overridable properties */
+#include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
+extern char arduino_matter_vendor_name[33];
+extern char arduino_matter_product_name[33];
+extern char arduino_matter_hardware_version_string[33];
+extern uint16_t arduino_matter_hardware_version;
+extern char arduino_matter_software_version_string[64];
+extern uint32_t arduino_matter_software_version;
+#ifdef __cplusplus
+}
+#endif
+#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME  arduino_matter_vendor_name
 
 /**
  *  @brief Fallback value for the basic information cluster's product name attribute
  *   if the actual vendor name is not provisioned in the device memory.
  */
-#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME "Matter device"
+#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME arduino_matter_product_name
 #endif // CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS
 
 #if defined(SL_WIFI)

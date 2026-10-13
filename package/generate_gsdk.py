@@ -344,15 +344,40 @@ def patch_matter_max_dynamic_endpoint_count():
     print("Patched max number of dynamic Matter endpoints")
 
 
+def _arduino_matter_runtime_externs():
+    """
+    Extern symbols owned by the Arduino Matter library for runtime-overridable
+    root BasicInformation fallbacks (used when NVM provision data is absent)
+    """
+    return (
+        "/* Arduino Matter library runtime-overridable properties */\n"
+        "#include <stdint.h>\n"
+        "#ifdef __cplusplus\n"
+        "extern \"C\" {\n"
+        "#endif\n"
+        "extern char arduino_matter_vendor_name[33];\n"
+        "extern char arduino_matter_product_name[33];\n"
+        "extern char arduino_matter_hardware_version_string[33];\n"
+        "extern uint16_t arduino_matter_hardware_version;\n"
+        "extern char arduino_matter_software_version_string[64];\n"
+        "extern uint32_t arduino_matter_software_version;\n"
+        "#ifdef __cplusplus\n"
+        "}\n"
+        "#endif\n"
+    )
+
+
 def patch_matter_device_descriptors(vendor_name, vendor_id):
     """
     Patches device descriptors (like name and manufacturer) in the Matter config file
     """
     chip_device_config_file_path = "matter_" + matter_extension_version + "/third_party/matter_sdk/src/include/platform/CHIPDeviceConfig.h"
+    runtime_externs = _arduino_matter_runtime_externs()
 
     with open(slc_output_dir + chip_device_config_file_path, "r") as in_file:
         buf = in_file.readlines()
 
+    hw_string_externs_injected = False
     with open(slc_output_dir + chip_device_config_file_path, "w") as out_file:
         for line in buf:
             #if "#define CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS 1" in line:
@@ -364,7 +389,10 @@ def patch_matter_device_descriptors(vendor_name, vendor_id):
             if "#define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_NAME" in line:
                  line = "#define CHIP_DEVICE_CONFIG_DEVICE_PRODUCT_NAME \"Matter device\"\n"
             if "#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION_STRING" in line:
-                 line = "#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION_STRING \"v1.0\"\n"
+                if not hw_string_externs_injected:
+                    out_file.write(runtime_externs)
+                    hw_string_externs_injected = True
+                line = "#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION_STRING arduino_matter_hardware_version_string\n"
             if "#define CHIP_DEVICE_CONFIG_TEST_SERIAL_NUMBER" in line:
                  line = "#define CHIP_DEVICE_CONFIG_TEST_SERIAL_NUMBER \"42069\"\n"
             out_file.write(line)
@@ -373,14 +401,52 @@ def patch_matter_device_descriptors(vendor_name, vendor_id):
     with open(slc_output_dir + platform_config_header_path, "r") as in_file:
         buf = in_file.readlines()
 
+    # Replace compile-time TEST_* string literals with extern buffers owned by the
+    # Arduino Matter library so sketches can override root BasicInformation names
+    # at runtime when NVM provisioned values are absent.
+    runtime_vendor_name_define = "#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME  arduino_matter_vendor_name\n"
+    runtime_product_name_define = "#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME arduino_matter_product_name\n"
+    externs_injected = False
+
     with open(slc_output_dir + platform_config_header_path, "w") as out_file:
         for line in buf:
             #if "#define CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS 1" in line:
             #    line = "#define CHIP_DEVICE_CONFIG_ENABLE_TEST_SETUP_PARAMS 0\n"
-            if "#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME" in line:
-                 line = "#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME \"Matter device\"\n"
             if "#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME" in line:
-                line = "#define CHIP_DEVICE_CONFIG_TEST_VENDOR_NAME \"" + vendor_name + "\"\n"
+                if not externs_injected:
+                    out_file.write(runtime_externs)
+                    externs_injected = True
+                line = runtime_vendor_name_define
+            if "#define CHIP_DEVICE_CONFIG_TEST_PRODUCT_NAME" in line:
+                if not externs_injected:
+                    out_file.write(runtime_externs)
+                    externs_injected = True
+                line = runtime_product_name_define
+            out_file.write(line)
+
+    # Software/hardware version numbers and software version string live in sl_matter_config.h
+    matter_config_path = "config/sl_matter_config.h"
+    with open(slc_output_dir + matter_config_path, "r") as in_file:
+        buf = in_file.readlines()
+
+    version_externs_injected = False
+    with open(slc_output_dir + matter_config_path, "w") as out_file:
+        for line in buf:
+            if line.startswith("#define CHIP_DEVICE_CONFIG_DEVICE_SOFTWARE_VERSION "):
+                if not version_externs_injected:
+                    out_file.write(runtime_externs)
+                    version_externs_injected = True
+                line = "#define CHIP_DEVICE_CONFIG_DEVICE_SOFTWARE_VERSION arduino_matter_software_version\n"
+            if line.startswith("#define CHIP_DEVICE_CONFIG_DEVICE_SOFTWARE_VERSION_STRING"):
+                if not version_externs_injected:
+                    out_file.write(runtime_externs)
+                    version_externs_injected = True
+                line = "#define CHIP_DEVICE_CONFIG_DEVICE_SOFTWARE_VERSION_STRING arduino_matter_software_version_string\n"
+            if line.startswith("#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION "):
+                if not version_externs_injected:
+                    out_file.write(runtime_externs)
+                    version_externs_injected = True
+                line = "#define CHIP_DEVICE_CONFIG_DEFAULT_DEVICE_HARDWARE_VERSION arduino_matter_hardware_version\n"
             out_file.write(line)
 
     print("Patched Matter device descriptors")

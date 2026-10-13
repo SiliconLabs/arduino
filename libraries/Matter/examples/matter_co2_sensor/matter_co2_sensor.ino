@@ -39,6 +39,7 @@ MatterCO2 matter_co2_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter CO2 sensor");
   Matter.begin();
   matter_co2_sensor.begin();
 

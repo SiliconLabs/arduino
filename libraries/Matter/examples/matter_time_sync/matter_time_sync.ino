@@ -40,6 +40,7 @@ void on_timezone_updated()
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter temperature sensor");
   Matter.begin();
   matter_temp_sensor.begin();
   matter_time.begin();

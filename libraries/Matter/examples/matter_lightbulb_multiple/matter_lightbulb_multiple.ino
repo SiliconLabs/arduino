@@ -32,6 +32,7 @@ void handle_bulb_1();
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter on/off lightbulbs");
   Matter.begin();
   matter_bulb_0.begin();
   matter_bulb_1.begin();

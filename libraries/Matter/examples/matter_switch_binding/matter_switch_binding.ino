@@ -45,6 +45,7 @@ volatile bool button_pressed = false;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter switch");
   Matter.begin();
   matter_switch.beginWithBinding();
 

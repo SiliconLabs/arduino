@@ -29,6 +29,7 @@ void window_covering_stop_requested();
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter window covering");
   Matter.begin();
   matter_blinds.begin();
   matter_blinds.set_stop_request_callback(window_covering_stop_requested);

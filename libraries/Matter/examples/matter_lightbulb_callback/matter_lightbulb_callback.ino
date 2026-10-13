@@ -34,6 +34,7 @@ void setup()
   matter_device_event_semaphore = xSemaphoreCreateBinaryStatic(&matter_device_event_semaphore_buf);
 
   Serial.begin(115200);
+  Matter.set_product_name("Matter on/off lightbulb");
   Matter.begin();
   matter_bulb.begin();
   // Register the device change callback function

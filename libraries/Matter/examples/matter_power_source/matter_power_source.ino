@@ -28,6 +28,7 @@ MatterPowerSource matter_power_source;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter power source");
   Matter.begin();
   matter_power_source.begin();
 

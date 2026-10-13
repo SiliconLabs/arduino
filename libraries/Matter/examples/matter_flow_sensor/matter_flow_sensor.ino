@@ -23,6 +23,7 @@ MatterFlow matter_flow_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter flow sensor");
   Matter.begin();
   matter_flow_sensor.begin();
 

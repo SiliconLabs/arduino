@@ -26,6 +26,7 @@ void setup()
   pinMode(LED_BUILTIN, OUTPUT);
   digitalWrite(LED_BUILTIN, LED_BUILTIN_INACTIVE);
   Serial.begin(115200);
+  Matter.set_product_name("Matter water valve");
   Matter.begin();
   matter_water_valve.begin();
 

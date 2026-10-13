@@ -28,6 +28,7 @@ void update_leds();
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter color lightbulb");
   Matter.begin();
   matter_color_bulb.begin();
   matter_color_bulb.boost_saturation(51); // Boost saturation by 20 percent

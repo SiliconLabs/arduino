@@ -27,6 +27,7 @@ void handle_button_release();
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter contact sensor");
   Matter.begin();
   matter_contact_sensor.begin();
 

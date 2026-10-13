@@ -24,6 +24,7 @@ MatterOccupancy matter_occupancy_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter occupancy sensor");
   Matter.begin();
   matter_occupancy_sensor.begin();
 

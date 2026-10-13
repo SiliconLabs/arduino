@@ -35,6 +35,7 @@ volatile bool button_pressed = false;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter on/off lightbulb");
   Matter.begin();
   // Disable the bridge endpoint
   Matter.disableBridgeEndpoint();

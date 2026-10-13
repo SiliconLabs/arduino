@@ -23,6 +23,7 @@ MatterPressure matter_pressure_sensor;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter pressure sensor");
   Matter.begin();
   matter_pressure_sensor.begin();
 

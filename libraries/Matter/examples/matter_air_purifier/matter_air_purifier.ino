@@ -28,6 +28,7 @@ volatile bool button_pressed = false;
 void setup()
 {
   Serial.begin(115200);
+  Matter.set_product_name("Matter air purifier");
   Matter.begin();
   matter_air_purifier.begin();
 

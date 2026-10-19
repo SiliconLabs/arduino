@@ -14,6 +14,7 @@ jobs:
       github.event.label.name == 'Run CI Quick' ||
       github.event.label.name == 'Run CI Common' ||
       github.event.label.name == 'Run CI Matter' ||
+      github.event.label.name == 'Run CI Zigbee' ||
       github.event.label.name == 'Run CI GitHub' ||
       github.event.label.name == 'Run CI Full'
     runs-on: ubuntu-latest
@@ -23,7 +24,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            for (const name of ['Run CI Quick', 'Run CI Common', 'Run CI Matter', 'Run CI GitHub', 'Run CI Full']) {
+            for (const name of ['Run CI Quick', 'Run CI Common', 'Run CI Matter', 'Run CI Zigbee', 'Run CI GitHub', 'Run CI Full']) {
               try {
                 await github.rest.issues.removeLabel({
                   owner: context.repo.owner,

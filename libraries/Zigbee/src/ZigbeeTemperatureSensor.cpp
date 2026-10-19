@@ -111,7 +111,7 @@ void ZigbeeTemperatureSensor::set_measured_value_celsius(float celsius)
   } else if (scaled > 32767.0f) {
     scaled = 32767.0f;
   }
-  set_measured_value_raw(static_cast<int16_t>(scaled));
+  this->set_measured_value_raw(static_cast<int16_t>(scaled));
 }
 
 int16_t ZigbeeTemperatureSensor::get_measured_value_raw()
@@ -139,6 +139,34 @@ void ZigbeeTemperatureSensor::set_max_value_raw(int16_t value)
   if (this->sensor_device) {
     this->sensor_device->SetMaxMeasuredValue(value);
   }
+}
+
+void ZigbeeTemperatureSensor::set_min_value_celsius(float celsius)
+{
+  if (!isfinite(celsius)) {
+    return;
+  }
+  float scaled = celsius * 100.0f;
+  if (scaled < -27315.0f) {
+    scaled = -27315.0f;
+  } else if (scaled > 32767.0f) {
+    scaled = 32767.0f;
+  }
+  this->set_min_value_raw(static_cast<int16_t>(scaled));
+}
+
+void ZigbeeTemperatureSensor::set_max_value_celsius(float celsius)
+{
+  if (!isfinite(celsius)) {
+    return;
+  }
+  float scaled = celsius * 100.0f;
+  if (scaled < -27315.0f) {
+    scaled = -27315.0f;
+  } else if (scaled > 32767.0f) {
+    scaled = 32767.0f;
+  }
+  this->set_max_value_raw(static_cast<int16_t>(scaled));
 }
 
 bool ZigbeeTemperatureSensor::send_attribute_report()

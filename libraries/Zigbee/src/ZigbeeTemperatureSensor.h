@@ -43,6 +43,8 @@ public:
   float get_measured_value_celsius();
   void set_min_value_raw(int16_t value);
   void set_max_value_raw(int16_t value);
+  void set_min_value_celsius(float celsius);
+  void set_max_value_celsius(float celsius);
 
   bool send_attribute_report();
   bool get_attribute_report_sent();

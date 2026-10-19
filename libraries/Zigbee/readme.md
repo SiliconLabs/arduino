@@ -756,15 +756,18 @@ API:
 bool begin();
 void end();
 
-void set_measured_value(int16_t value);
+void set_measured_value_raw(int16_t value);
 void set_measured_value_celsius(float celsius);
-bool set_reporting_interval(uint16_t min_interval_s, uint16_t max_interval_s);
+int16_t get_measured_value_raw();
+float get_measured_value_celsius();
+void set_min_value_raw(int16_t value);
+void set_max_value_raw(int16_t value);
+void set_min_value_celsius(float celsius);
+void set_max_value_celsius(float celsius);
+
 bool send_attribute_report();
 bool get_attribute_report_sent();
-int16_t get_measured_value();
-float get_measured_value_celsius();
-void set_min_value(int16_t value);
-void set_max_value(int16_t value);
+bool set_reporting_interval(uint16_t min_interval_s, uint16_t max_interval_s);
 
 operator float();
 void operator=(float celsius);
@@ -780,8 +783,8 @@ void setup()
 {
   Zigbee.begin();
   temperature.begin();
-  temperature.set_min_value(-4000);  // -40.00 C
-  temperature.set_max_value(12500);  // 125.00 C
+  temperature.set_min_value_celsius(-40.0f);  // -40.00 C
+  temperature.set_max_value_celsius(125.0f);  // 125.00 C
 }
 
 void loop()

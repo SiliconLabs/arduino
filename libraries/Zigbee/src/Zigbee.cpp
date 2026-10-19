@@ -373,6 +373,8 @@ ZigbeeClass::ZigbeeClass() :
   started(false),
   endpoint_allocated(),
   time_client_endpoint_allocated(false),
+  vendor_name_set(false),
+  product_name_set(false),
   device_type(ZIGBEE_DEVICE_TYPE_ROUTER),
   power_source(ZIGBEE_POWER_SOURCE_TYPE_MAINS)
 {
@@ -392,6 +394,7 @@ void ZigbeeClass::setVendorName(const char* name)
                                                         ZCL_MANUFACTURER_NAME_ATTRIBUTE_ID,
                                                         zcl_string,
                                                         ZCL_CHAR_STRING_ATTRIBUTE_TYPE);
+  this->vendor_name_set = true;
 }
 
 void ZigbeeClass::setProductName(const char* name)
@@ -408,6 +411,7 @@ void ZigbeeClass::setProductName(const char* name)
                                                         ZCL_MODEL_IDENTIFIER_ATTRIBUTE_ID,
                                                         zcl_string,
                                                         ZCL_CHAR_STRING_ATTRIBUTE_TYPE);
+  this->product_name_set = true;
 }
 
 void ZigbeeClass::setFirmwareVersion(const char* version)
@@ -469,6 +473,13 @@ void ZigbeeClass::begin()
 
   if (sl_zigbee_af_network_state() == SL_ZIGBEE_NO_NETWORK) {
     sl_zigbee_af_network_steering_start();
+  }
+
+  if (!this->vendor_name_set) {
+    this->setVendorName("Silicon Labs");
+  }
+  if (!this->product_name_set) {
+    this->setProductName("Zigbee device");
   }
 }
 

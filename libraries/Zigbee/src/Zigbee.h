@@ -120,6 +120,8 @@ private:
   bool started;
   bool endpoint_allocated[kApplicationEndpointCount];
   bool time_client_endpoint_allocated;
+  bool vendor_name_set;
+  bool product_name_set;
   ZigbeeDeviceType device_type;
   ZigbeePowerSourceType power_source;
 };

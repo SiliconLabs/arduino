@@ -30,7 +30,7 @@ jobs:
       ARDUINO_DATA_DIR: ${{ github.workspace }}/.arduino-data
       ARDUINO_DOWNLOADS_DIR: ${{ github.workspace }}/.arduino-downloads
       ARDUINO_CLI_CACHE_VERSION: v1
-      SILABS_CORE_BASE_VERSION: 4.0.0
+      SILABS_CORE_BASE_VERSION: 5.0.0
 
     steps:
       - name: Check out repo

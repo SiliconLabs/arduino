@@ -14,7 +14,7 @@
    - xG24 Dev Kit
    - Seeed Studio XIAO MG24 (Sense)
 
-   Author: Tamas Jozsi (Silicon Labs)
+   Author: Ludovic BOUE
  */
 #include <Matter.h>
 #include <MatterTemperature.h>
